@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface ActionChariteRepository extends JpaRepository<ActionCharite, Long> {
 
-    List<ActionCharite> findByStatut(StatutAction statut);
+    List<ActionCharite> findByStatus(StatutAction statut);
 
     List<ActionCharite> findByOrganisationId(Long organisationId);
 

@@ -4,15 +4,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import ma.emsi.gestionactioncharite.entity.Participation;
-import ma.emsi.gestionactioncharite.repository.ParticipationRepository;
+import ma.emsi.gestionactioncharite.repository.Participationrepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 
-public class Participationserviceimpl implements ParticipationService{
-    private final ParticipationRepository participationRepository;
+public class Participationserviceimpl implements ParticipationService {
+    private final Participationrepository participationRepository;
 
     @Override
     @Transactional

@@ -1,7 +1,8 @@
 package ma.emsi.gestionactioncharite.service;
+
 import ma.emsi.gestionactioncharite.entity.Don;
 import ma.emsi.gestionactioncharite.entity.StatutDon;
-import ma.emsi.gestionactioncharite.repository.DonRepository;
+import ma.emsi.gestionactioncharite.repository.Donrepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,9 +13,9 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class DonImpl  implements  Don{
+public class DonImpl implements DonService {
 
-    private final DonRepository donRepository;
+    private final Donrepository donRepository;
 
     @Override
     @Transactional
@@ -79,4 +80,3 @@ public class DonImpl  implements  Don{
         donRepository.deleteById(id);
     }
 }
-

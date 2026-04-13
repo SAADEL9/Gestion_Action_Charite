@@ -1,11 +1,11 @@
 package ma.emsi.gestionactioncharite.service;
+
 import ma.emsi.gestionactioncharite.entity.Don;
-import ma.emsi.gestionactioncharite.entity.StatutDon;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface Don {
+public interface DonService {
     Don save(Don don);
 
     Optional<Don> findById(Long id);
@@ -24,4 +24,3 @@ public interface Don {
 
     void delete(Long id);
 }
-

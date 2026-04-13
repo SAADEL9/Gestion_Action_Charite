@@ -1,18 +1,17 @@
 package ma.emsi.gestionactioncharite.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+
 @Entity
 @Data
 @Getter
 @Setter
+@Table(name = "action_charite")
 public class ActionCharite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,5 +24,15 @@ public class ActionCharite {
     private String lieu;
     private Double objectifCollect;
     private Double sommeAcuelle;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    private StatutAction status;
+
+    @ManyToOne
+    @JoinColumn(name = "organisation_id")
+    private Organisation organisation;
+
+    @ManyToOne
+    @JoinColumn(name = "categorie_id")
+    private Categorie categorie;
 }

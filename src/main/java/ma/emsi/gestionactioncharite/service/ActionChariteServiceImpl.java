@@ -1,6 +1,7 @@
 package ma.emsi.gestionactioncharite.service;
 
 import ma.emsi.gestionactioncharite.entity.ActionCharite;
+import ma.emsi.gestionactioncharite.entity.StatutAction;
 import ma.emsi.gestionactioncharite.repository.ActionChariteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class ActionChariteServiceImpl implements ActionChariteService {
     public ActionCharite publier(Long id) {
         ActionCharite action = actionChariteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Action non trouvée : " + id));
-        action.setStatus("PUBLIEE");
+        action.setStatus(StatutAction.PUBLIEE);
         return actionChariteRepository.save(action);
     }
 
@@ -47,7 +48,7 @@ public class ActionChariteServiceImpl implements ActionChariteService {
     public ActionCharite archiver(Long id) {
         ActionCharite action = actionChariteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Action non trouvée : " + id));
-        action.setStatus("ARCHIVEE");
+        action.setStatus(StatutAction.ARCHIVEE);
         return actionChariteRepository.save(action);
     }
 
