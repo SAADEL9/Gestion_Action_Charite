@@ -1,4 +1,5 @@
 package ma.emsi.gestionactioncharite.repository;
+
 import ma.emsi.gestionactioncharite.entity.ActionCharite;
 import ma.emsi.gestionactioncharite.entity.StatutAction;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -7,7 +8,10 @@ import java.util.List;
 
 @Repository
 public interface ActionChariteRepository extends JpaRepository<ActionCharite, Long> {
-    List<ActionCharite> findByStatus(String status);
 
+    List<ActionCharite> findByStatut(StatutAction statut);
 
+    List<ActionCharite> findByOrganisationId(Long organisationId);
+
+    List<ActionCharite> findByCategorieId(Long categorieId);
 }

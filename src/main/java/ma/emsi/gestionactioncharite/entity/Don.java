@@ -1,24 +1,40 @@
 package ma.emsi.gestionactioncharite.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDate;
+
 @Entity
-@Data
-@Getter
-@Setter
+@Data                    // @Getter et @Setter sont inclus dans @Data — supprimés
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(name = "dons")
 public class Don {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private Double montant;
+
     private LocalDate dateDon;
-    private String status;
+
+    @Enumerated(EnumType.STRING)   // était un String brut — remplacé par l'enum
+    private StatutDon status;
+
     private String transactionId;
+
+    @Enumerated(EnumType.STRING)   // champ manquant ajouté
+    private MethodePaiement methodePaiement;
+
+    @ManyToOne(fetch = FetchType.LAZY)    // relation manquante ajoutée
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)    // relation manquante ajoutée
+    @JoinColumn(name = "action_id", nullable = false)
+    private ActionCharite action;
 }

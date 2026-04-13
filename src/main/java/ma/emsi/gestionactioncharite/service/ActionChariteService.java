@@ -11,8 +11,6 @@ public interface ActionChariteService {
 
     List<ActionCharite> findAll();
 
-    List<ActionCharite> findByStatut(String statut);
-
     ActionCharite update(Long id, ActionCharite action);
 
     ActionCharite publier(Long id);

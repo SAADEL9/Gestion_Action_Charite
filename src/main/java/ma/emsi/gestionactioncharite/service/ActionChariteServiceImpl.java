@@ -28,10 +28,6 @@ public class ActionChariteServiceImpl implements ActionChariteService {
         return actionChariteRepository.findAll();
     }
 
-    @Override
-    public List<ActionCharite> findByStatut(String statut) {
-        return actionChariteRepository.findByStatus(statut);
-    }
 
     @Override
     public ActionCharite update(Long id, ActionCharite action) {
