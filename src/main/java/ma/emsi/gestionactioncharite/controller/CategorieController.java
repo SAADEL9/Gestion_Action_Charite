@@ -19,7 +19,6 @@ public class CategorieController {
         model.addAttribute("categories", categorieService.findAll());
         return "categorie/list";
     }
-
     @GetMapping("/create")
     public String showCreateForm(Model model) {
         model.addAttribute("categorie", new Categorie());
