@@ -9,6 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Controller
 @RequestMapping("/actions")
 @RequiredArgsConstructor
@@ -20,7 +23,16 @@ public class ActionChariteController {
 
     @GetMapping
     public String findAll(Model model) {
-        model.addAttribute("actions", actionChariteService.findAll());
+        var actions = actionChariteService.findAll();
+        Map<Long, Double> progression = new HashMap<>();
+        for (var a : actions) {
+            if (a != null && a.getId() != null) {
+                progression.put(a.getId(), actionChariteService.getProgression(a.getId()));
+            }
+        }
+
+        model.addAttribute("actions", actions);
+        model.addAttribute("progression", progression);
         return "action/list";
     }
 

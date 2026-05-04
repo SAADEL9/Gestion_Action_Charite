@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D&eacute;tail organisation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+    <div th:replace="layout/navbar :: navbar"></div>
+
+    <main class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="page-title mb-0">D&eacute;tail organisation</h1>
+            <div class="d-flex gap-2">
+                <a th:href="@{/organisations}" class="btn btn-outline-secondary">Retour</a>
+                <a th:if="${organisation != null}" th:href="@{/organisations/edit/{id}(id=${organisation.id})}" class="btn btn-primary">Modifier</a>
+            </div>
+        </div>
+
+        <div th:if="${organisation == null}" class="alert alert-warning">Organisation introuvable.</div>
+
+        <div th:if="${organisation != null}" class="row g-4">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="mb-3" th:text="${organisation.nom}"></h3>
+
+                        <p class="text-muted mb-4" th:text="${organisation.description}"></p>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="text-muted">Email</div>
+                                <div class="fw-semibold" th:text="${organisation.email}"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-muted">T&eacute;l&eacute;phone</div>
+                                <div class="fw-semibold" th:text="${organisation.telephone}"></div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="text-muted">Adresse</div>
+                                <div class="fw-semibold" th:text="${organisation.adresse}"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-muted">Statut</div>
+                                <div>
+                                    <span class="badge bg-info text-dark" th:text="${organisation.status}"></span>
+                                    <span class="badge bg-success" th:if="${organisation.valide}">Valid&eacute;e</span>
+                                    <span class="badge bg-warning text-dark" th:unless="${organisation.valide}">En attente</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-muted">Date de cr&eacute;ation</div>
+                                <div class="fw-semibold" th:text="${organisation.dateCreation != null ? #dates.format(organisation.dateCreation, 'dd/MM/yyyy') : ''}"></div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="text-muted">Adresse l&eacute;gale</div>
+                                <div class="fw-semibold" th:text="${organisation.adresseLegal}"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-muted">Num&eacute;ro fiscal</div>
+                                <div class="fw-semibold" th:text="${organisation.numeroFiscal}"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-muted">Contact principal</div>
+                                <div class="fw-semibold" th:text="${organisation.contactPrincipal}"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-muted">Logo</div>
+                                <div class="fw-semibold text-break" th:text="${organisation.logo}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header bg-transparent">
+                        <h5 class="card-title mb-0">Actions</h5>
+                    </div>
+                    <div class="card-body d-grid gap-2">
+                        <a th:href="@{/organisations/edit/{id}(id=${organisation.id})}" class="btn btn-outline-primary">Modifier</a>
+                        <a th:href="@{/organisations/delete/{id}(id=${organisation.id})}" class="btn btn-outline-danger"
+                           onclick="return confirm('Etes-vous sur ?')">Supprimer</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
