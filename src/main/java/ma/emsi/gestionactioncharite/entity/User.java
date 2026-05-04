@@ -24,11 +24,16 @@ public class User {
     
     @Column(unique = true, nullable = false)
     private String email;
-    
+    private String telephone;
+
+    @Column(length = 500)
+    private String adresse;
     private String motDePasse;
     private String photoProfil;
     private LocalDate dateInscription;
-    
+    @Builder.Default
+    @Column(name = "is_actif")
+    private boolean actif = true;
     @Enumerated(EnumType.STRING)
     private Role role;
     

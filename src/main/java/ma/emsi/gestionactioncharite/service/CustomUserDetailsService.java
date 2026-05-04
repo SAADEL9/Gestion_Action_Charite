@@ -14,13 +14,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserService userService;
 
     @Override
+
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        // Your entity User (ma.emsi.gestionactioncharite.entity.User)
-        User user = userService.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé : " + email));
+        User user = userService.findEntityByEmail(email);
 
-        // Spring Security User — used with full package name to avoid conflict
         return org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getMotDePasse())

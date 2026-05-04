@@ -9,7 +9,7 @@
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
-    <div th:replace="layout/navbar :: navbar"></div>
+    <div th:replace="~{layout/navbar :: navbar}"></div>
 
     <main class="container py-4">
         <h1 class="page-title mb-4" th:text="${user != null and user.id != null ? 'Modifier utilisateur' : 'Nouvel utilisateur'}"></h1>
@@ -104,4 +104,3 @@
     </script>
 </body>
 </html>
-
