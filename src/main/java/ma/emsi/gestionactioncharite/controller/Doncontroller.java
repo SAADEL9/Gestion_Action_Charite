@@ -34,7 +34,7 @@ public class Doncontroller {
 
     @GetMapping("/action/{actionId}")
     public ResponseEntity<List<Don>> findByAction(@PathVariable Long actionId) {
-        return ResponseEntity.ok(donService.findByActionId(actionId));
+        return ResponseEntity.ok(donService.findByActionChariteId(actionId));
     }
 
     @PostMapping

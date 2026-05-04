@@ -11,7 +11,7 @@ import java.util.List;
 public interface Participationrepository extends JpaRepository<Participation, Long> {
     List<Participation> findByUserId(Long userId);
 
-    List<Participation> findByActionId(Long actionId);
+    List<Participation> findByActionChariteId(Long actionId);
 
-    boolean existsByUserIdAndActionId(Long userId, Long actionId);
+    boolean existsByUserIdAndActionChariteId(Long userId, Long actionId);
 }

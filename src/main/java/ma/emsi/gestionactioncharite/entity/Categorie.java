@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -23,5 +26,8 @@ public class Categorie {
     private String description;
 
     private String icone;
+    @OneToMany(mappedBy = "categorie", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<ActionCharite> actions = new ArrayList<>();
 }
 

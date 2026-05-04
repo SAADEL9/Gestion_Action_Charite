@@ -57,7 +57,7 @@ public class ActionChariteServiceImpl implements ActionChariteService {
         ActionCharite action = actionChariteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Action non trouvée : " + id));
         if (action.getObjectifCollect() == null || action.getObjectifCollect() == 0) return 0.0;
-        return (action.getSommeAcuelle() / action.getObjectifCollect()) * 100;
+        return (action.getSommeActuelle() / action.getObjectifCollect()) * 100;
     }
 
     @Override

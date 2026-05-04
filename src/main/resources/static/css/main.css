@@ -1,0 +1,107 @@
+:root {
+    --primary-color: #4f46e5;
+    --primary-hover: #4338ca;
+    --secondary-color: #64748b;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --info-color: #0ea5e9;
+    --background-color: #f8fafc;
+    --card-bg: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+}
+
+.navbar {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    font-size: 1.5rem;
+}
+
+.card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    border-radius: 0.5rem;
+    padding: 0.6rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: scale(1.02);
+}
+
+.badge {
+    padding: 0.5em 1em;
+    border-radius: 2rem;
+    font-weight: 600;
+}
+
+.stat-card {
+    background: white;
+    padding: 2rem;
+    text-align: center;
+    border-radius: 1rem;
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+    padding: 6rem 0;
+    margin-bottom: 4rem;
+    border-radius: 0 0 3rem 3rem;
+}
+
+.progress {
+    height: 0.8rem;
+    border-radius: 1rem;
+    background-color: #e2e8f0;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
+    border-radius: 1rem;
+}
+
+/* Fix for the "Red Color" issue - making badges colorful and distinct */
+.badge-status-brouillon { background-color: var(--secondary-color); }
+.badge-status-publiee { background-color: var(--info-color); }
+.badge-status-en_cours { background-color: var(--primary-color); }
+.badge-status-terminee { background-color: var(--success-color); }
+.badge-status-archivee { background-color: #475569; }

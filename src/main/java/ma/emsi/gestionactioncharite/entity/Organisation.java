@@ -1,27 +1,52 @@
 package ma.emsi.gestionactioncharite.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
-@Data
-@Getter @Setter
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(name = "organisations")
 public class Organisation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
     private String nom;
+    private String email;
+    private String telephone;
+    private String adresse;
+    
     private String adresseLegal;
     private String numeroFiscal;
     private String contactPrincipal;
-    private String logo ;
+    private String logo;
+    
+    @Column(length = 1000)
     private String description;
+    
     private LocalDate dateCreation;
+    
+    @Enumerated(EnumType.STRING)
     private StatusOrganisation status;
+    
+    @Builder.Default
+    private boolean valide = false;
+
+    @ManyToOne
+    @JoinColumn(name = "admin_id")
+    private User admin;
+
+    @OneToMany(mappedBy = "organisation", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<ActionCharite> actions = new ArrayList<>();
 }
+
+

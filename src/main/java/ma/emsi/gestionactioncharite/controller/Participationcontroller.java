@@ -35,7 +35,7 @@ public class Participationcontroller {
 
     @GetMapping("/action/{actionId}")
     public ResponseEntity<List<Participation>> findByAction(@PathVariable Long actionId) {
-        return ResponseEntity.ok(participationService.findByActionId(actionId));
+        return ResponseEntity.ok(participationService.findByActionChariteId(actionId));
     }
 
     @PostMapping

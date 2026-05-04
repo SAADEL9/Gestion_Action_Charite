@@ -1,9 +1,10 @@
 package ma.emsi.gestionactioncharite.service;
+
 import ma.emsi.gestionactioncharite.entity.User;
 import ma.emsi.gestionactioncharite.repository.UserRepository;
-import ma.emsi.gestionactioncharite.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 

@@ -12,6 +12,6 @@ import java.util.List;
 public interface Donrepository extends JpaRepository<Don, Long> {
     List<Don> findByUserId(Long userId);
 
-    List<Don> findByActionId(Long actionId);
+    List<Don> findByActionChariteId(Long actionId);
 
-    List<Don> findByStatus(StatutDon status);}
+    List<Don> findByStatus(StatutDon statut);}

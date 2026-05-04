@@ -14,7 +14,7 @@ public interface DonService {
 
     List<Don> findByUserId(Long userId);
 
-    List<Don> findByActionId(Long actionId);
+    List<Don> findByActionChariteId(Long actionId);
 
     Don confirmer(Long id);
 

@@ -18,9 +18,9 @@ public class Participationserviceimpl implements ParticipationService {
     @Transactional
     public Participation inscrire(Participation participation) {
         Long userId = participation.getUser().getId();
-        Long actionId = participation.getAction().getId();
+        Long actionId = participation.getActionCharite().getId();
 
-        if (participationRepository.existsByUserIdAndActionId(userId, actionId)) {
+        if (participationRepository.existsByUserIdAndActionChariteId(userId, actionId)) {
             throw new RuntimeException("L'utilisateur est déjà inscrit à cette action");
         }
 
@@ -45,8 +45,8 @@ public class Participationserviceimpl implements ParticipationService {
     }
 
     @Override
-    public List<Participation> findByActionId(Long actionId) {
-        return participationRepository.findByActionId(actionId);
+    public List<Participation> findByActionChariteId(Long actionId) {
+        return participationRepository.findByActionChariteId(actionId);
     }
 
     @Override

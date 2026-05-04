@@ -41,8 +41,8 @@ public class DonImpl implements DonService {
     }
 
     @Override
-    public List<Don> findByActionId(Long actionId) {
-        return donRepository.findByActionId(actionId);
+    public List<Don> findByActionChariteId(Long actionId) {
+        return donRepository.findByActionChariteId(actionId);
     }
 
     @Override

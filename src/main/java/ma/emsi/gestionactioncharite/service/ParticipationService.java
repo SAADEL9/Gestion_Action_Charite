@@ -14,7 +14,7 @@ public interface ParticipationService {
 
     List<Participation> findByUserId(Long userId);
 
-    List<Participation> findByActionId(Long actionId);
+    List<Participation> findByActionChariteId(Long actionId);
 
     Participation marquerPresence(Long id, boolean present);
 

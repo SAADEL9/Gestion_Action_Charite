@@ -6,7 +6,8 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Data                    // @Getter et @Setter sont inclus dans @Data — supprimés
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -34,7 +35,7 @@ public class Don {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)    // relation manquante ajoutée
-    @JoinColumn(name = "action_id", nullable = false)
-    private ActionCharite action;
+    @ManyToOne
+    @JoinColumn(name = "action_id")
+    private ActionCharite actionCharite;
 }

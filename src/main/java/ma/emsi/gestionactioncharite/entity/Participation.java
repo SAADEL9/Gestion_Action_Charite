@@ -6,7 +6,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -28,5 +29,5 @@ public class Participation {
 
     @ManyToOne(fetch = FetchType.LAZY)    // relation manquante ajoutée
     @JoinColumn(name = "action_id", nullable = false)
-    private ActionCharite action;
+    private ActionCharite actionCharite;
 }
