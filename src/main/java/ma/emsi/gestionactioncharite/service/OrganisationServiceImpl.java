@@ -52,6 +52,11 @@ public class OrganisationServiceImpl implements OrganisationService {
     }
 
     @Override
+    public Optional<Organisation> findFirstByAdminId(Long adminId) {
+        return organisationRepository.findFirstByAdminId(adminId);
+    }
+
+    @Override
     public Organisation update(Long id, Organisation organisation) {
         Organisation existing = organisationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Organisation non trouvée : " + id));

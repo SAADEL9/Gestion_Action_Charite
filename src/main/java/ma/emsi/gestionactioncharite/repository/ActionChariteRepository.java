@@ -14,4 +14,8 @@ public interface ActionChariteRepository extends JpaRepository<ActionCharite, Lo
     List<ActionCharite> findByOrganisationId(Long organisationId);
 
     List<ActionCharite> findByCategorieId(Long categorieId);
+
+    long countByOrganisationId(Long organisationId);
+
+    List<ActionCharite> findTop5ByOrganisationIdOrderByDateCreationDescIdDesc(Long organisationId);
 }

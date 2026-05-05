@@ -9,6 +9,7 @@ public interface OrganisationService {
     Organisation createOrganisation(User user, Organisation organisation);
     Optional<Organisation> findById(Long id);
     List<Organisation> findAll();
+    Optional<Organisation> findFirstByAdminId(Long adminId);
     Organisation update(Long id, Organisation organisation);
     Organisation valider(Long id);
     Organisation rejeter(Long id);

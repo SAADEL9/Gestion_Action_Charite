@@ -5,10 +5,11 @@ import ma.emsi.gestionactioncharite.entity.Don;
 import ma.emsi.gestionactioncharite.entity.Participation;
 import ma.emsi.gestionactioncharite.entity.Organisation;
 import ma.emsi.gestionactioncharite.service.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
@@ -31,7 +32,16 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(Model model, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            boolean isAdmin = authentication.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .anyMatch("ROLE_ADMIN"::equals);
+            if (isAdmin) {
+                return "redirect:/admin/dashboard";
+            }
+        }
+
         // Get statistics
         List<ActionCharite> allActions = actionChariteService.findAll();
         List<Don> allDons = donService.findAll();

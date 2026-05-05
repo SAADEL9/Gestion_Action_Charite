@@ -14,4 +14,6 @@ public interface Participationrepository extends JpaRepository<Participation, Lo
     List<Participation> findByActionChariteId(Long actionId);
 
     boolean existsByUserIdAndActionChariteId(Long userId, Long actionId);
+
+    long countByActionChariteOrganisationId(Long organisationId);
 }
