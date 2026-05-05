@@ -18,8 +18,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/login", "/register", "/css/**", "/js/**", "/images/**", "/uploads/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/organisations/create", "/organisations/edit/**")
+                        .hasAnyAuthority("ORG_ADMIN", "ADMIN")
+
+                        .requestMatchers("/", "/organisations", "/organisations/*").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

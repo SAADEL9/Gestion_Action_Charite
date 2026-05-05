@@ -33,10 +33,10 @@ public class User {
     private String photoProfil;
     private LocalDate dateInscription;
     @Builder.Default
-    @Column(name = "is_actif")
+    @Column(name = "is_actif",nullable = false, columnDefinition = "boolean default true")
     private boolean actif = true;
     @Builder.Default
-    @Column(name = "organisation_request_pending")
+    @Column(name = "organisation_request_pending",nullable = false, columnDefinition = "boolean default false")
     private boolean organisationRequestPending = false;
     @Enumerated(EnumType.STRING)
     @Builder.Default

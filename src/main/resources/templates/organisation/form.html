@@ -15,7 +15,7 @@
         <h1 class="page-title mb-4" th:text="${organisation != null and organisation.id != null ? 'Modifier organisation' : 'Nouvelle organisation'}"></h1>
 
         <form th:action="${organisation != null and organisation.id != null ? '/organisations/edit/' + organisation.id : '/organisations/create'}"
-              th:object="${organisation}" method="post" class="needs-validation" novalidate>
+              th:object="${organisation}" method="post" class="needs-validation" novalidate  enctype="multipart/form-data">
             <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
             <div class="row g-4">
@@ -73,7 +73,12 @@
                                 <div class="col-md-6">
                                     <div class="mb-3">
                                         <label for="logo" class="form-label">Logo (URL)</label>
-                                        <input id="logo" class="form-control" type="text" th:field="*{logo}">
+                                        <input id="logo" class="form-control" type="file" name="logoFile" accept="image/*">
+                                        <div th:if="${organisation != null and organisation.logo != null}" class="mt-2">
+                                            <img th:src="${organisation.logo}" style="max-height: 80px;">
+                                            <small class="text-muted d-block">Logo actuel</small>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>

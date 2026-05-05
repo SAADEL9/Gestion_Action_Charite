@@ -9,6 +9,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/organisations")
@@ -40,7 +47,20 @@ public class OrganisationController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('ORG_ADMIN', 'ADMIN')")
-    public String create(@AuthenticationPrincipal UserDetails principal, @ModelAttribute Organisation organisation) {
+    public String create(
+            @AuthenticationPrincipal UserDetails principal,
+            @ModelAttribute Organisation organisation,
+            @RequestParam(value = "logoFile", required = false) MultipartFile logoFile) throws IOException {
+
+        // Handle logo upload
+        if (logoFile != null && !logoFile.isEmpty()) {
+            String filename = UUID.randomUUID() + "_" + logoFile.getOriginalFilename();
+            Path uploadPath = Paths.get("uploads/logos/");
+            Files.createDirectories(uploadPath);
+            Files.copy(logoFile.getInputStream(), uploadPath.resolve(filename));
+            organisation.setLogo("/uploads/logos/" + filename);
+        }
+
         var user = userService.findEntityByEmail(principal.getUsername());
         organisationService.createOrganisation(user, organisation);
         return "redirect:/organisations";
