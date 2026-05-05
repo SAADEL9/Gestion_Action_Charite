@@ -63,7 +63,9 @@ public class OrganisationServiceImpl implements OrganisationService {
         existing.setAdresseLegal(organisation.getAdresseLegal());
         existing.setNumeroFiscal(organisation.getNumeroFiscal());
         existing.setContactPrincipal(organisation.getContactPrincipal());
-        existing.setLogo(organisation.getLogo());
+        if (organisation.getLogo() != null && !organisation.getLogo().isBlank()) {
+            existing.setLogo(organisation.getLogo());
+        }
         existing.setDescription(organisation.getDescription());
 
         return organisationRepository.save(existing);

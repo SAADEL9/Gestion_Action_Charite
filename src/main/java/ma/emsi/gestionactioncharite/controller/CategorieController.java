@@ -3,6 +3,7 @@ package ma.emsi.gestionactioncharite.controller;
 import ma.emsi.gestionactioncharite.entity.Categorie;
 import ma.emsi.gestionactioncharite.service.CategorieService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -19,31 +20,37 @@ public class CategorieController {
         model.addAttribute("categories", categorieService.findAll());
         return "categorie/list";
     }
+
     @GetMapping("/create")
+    @PreAuthorize("hasRole('ADMIN')")
     public String showCreateForm(Model model) {
         model.addAttribute("categorie", new Categorie());
         return "categorie/form";
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('ADMIN')")
     public String create(@ModelAttribute Categorie categorie) {
         categorieService.save(categorie);
         return "redirect:/categories";
     }
 
     @GetMapping("/edit/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String showEditForm(@PathVariable Long id, Model model) {
         categorieService.findById(id).ifPresent(c -> model.addAttribute("categorie", c));
         return "categorie/form";
     }
 
     @PostMapping("/edit/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String update(@PathVariable Long id, @ModelAttribute Categorie categorie) {
         categorieService.update(id, categorie);
         return "redirect:/categories";
     }
 
     @GetMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String delete(@PathVariable Long id) {
         categorieService.delete(id);
         return "redirect:/categories";

@@ -67,6 +67,7 @@ public class ActionChariteController {
     }
 
     @GetMapping("/edit/{id}")
+    @PreAuthorize("hasAnyRole('ORG_ADMIN', 'ADMIN')")
     public String showEditForm(@PathVariable Long id, Model model) {
         actionChariteService.findById(id).ifPresent(a -> model.addAttribute("action", a));
         model.addAttribute("organisations", organisationService.findAll());
@@ -75,24 +76,28 @@ public class ActionChariteController {
     }
 
     @PostMapping("/edit/{id}")
+    @PreAuthorize("hasAnyRole('ORG_ADMIN', 'ADMIN')")
     public String update(@PathVariable Long id, @ModelAttribute ActionCharite action) {
         actionChariteService.update(id, action);
         return "redirect:/actions";
     }
 
     @GetMapping("/publier/{id}")
+    @PreAuthorize("hasAnyRole('ORG_ADMIN', 'ADMIN')")
     public String publier(@PathVariable Long id) {
         actionChariteService.publier(id);
         return "redirect:/actions";
     }
 
     @GetMapping("/archiver/{id}")
+    @PreAuthorize("hasAnyRole('ORG_ADMIN', 'ADMIN')")
     public String archiver(@PathVariable Long id) {
         actionChariteService.archiver(id);
         return "redirect:/actions";
     }
 
     @GetMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('ORG_ADMIN', 'ADMIN')")
     public String delete(@PathVariable Long id) {
         actionChariteService.delete(id);
         return "redirect:/actions";

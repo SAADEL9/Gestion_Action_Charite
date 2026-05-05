@@ -19,39 +19,38 @@
 
         <div class="row g-4">
             <div class="col-md-4 col-lg-3" th:each="organisation : ${organisations}">
-
                 <div class="card h-100 shadow-sm organisation-card"
                      th:onclick="|window.location.href='@{/organisations/{id}(id=${organisation.id})}'|"
                      style="cursor: pointer;">
 
-                    <!-- LOGO -->
-                    <img th:src="@{${organisation.logo}}"
+                    <img th:src="${#strings.isEmpty(organisation.logo) ? 'https://placehold.co/600x360?text=Organisation' : organisation.logo}"
                          class="card-img-top"
-                         alt="Logo"
+                         th:alt="${'Logo de ' + organisation.nom}"
                          style="height: 180px; object-fit: cover;">
 
                     <div class="card-body d-flex flex-column">
-
-                        <!-- NAME -->
                         <h5 class="card-title fw-bold" th:text="${organisation.nom}"></h5>
 
-                        <!-- DESCRIPTION -->
                         <p class="card-text text-muted"
                            th:text="${#strings.abbreviate(organisation.description, 80)}"></p>
 
-                        <!-- STATUS -->
                         <div class="mt-auto">
-                    <span th:if="${organisation.status.name() == 'APPROVED'}"
-                          class="badge bg-success">Approuvée</span>
-
+                            <span th:if="${organisation.status.name() == 'APPROVED'}"
+                                  class="badge bg-success">Approuvée</span>
                             <span th:if="${organisation.status.name() == 'PENDING'}"
                                   class="badge bg-warning text-dark">En attente</span>
-
                             <span th:if="${organisation.status.name() == 'REJECTED'}"
                                   class="badge bg-danger">Rejetée</span>
+
+                            <div class="mt-3">
+                                <a th:href="@{/organisations/{id}(id=${organisation.id})}"
+                                   class="btn btn-sm btn-outline-primary"
+                                   onclick="event.stopPropagation();">
+                                    Voir les détails
+                                </a>
+                            </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

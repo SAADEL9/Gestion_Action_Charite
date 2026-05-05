@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Catégories</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+    <div th:replace="~{layout/navbar :: navbar}"></div>
+
+    <main class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="page-title mb-0">Liste des Catégories</h1>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/categories/create}" class="btn btn-primary">Nouvelle catégorie</a>
+        </div>
+
+        <div th:if="${!categories.isEmpty()}" class="row g-4">
+            <div class="col-md-6 col-lg-4" th:each="categorie : ${categories}">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                            <h5 class="card-title mb-0" th:text="${categorie.nom}"></h5>
+                            <span class="badge bg-light text-dark" th:text="${categorie.actions != null ? categorie.actions.size() : 0} + ' action(s)'"></span>
+                        </div>
+
+                        <p class="card-text text-muted flex-grow-1"
+                           th:text="${#strings.isEmpty(categorie.description) ? 'Aucune description.' : categorie.description}"></p>
+
+                        <div sec:authorize="hasRole('ADMIN')" class="d-flex gap-2 mt-3">
+                            <a th:href="@{/categories/edit/{id}(id=${categorie.id})}" class="btn btn-sm btn-outline-primary">Modifier</a>
+                            <a th:href="@{/categories/delete/{id}(id=${categorie.id})}"
+                               class="btn btn-sm btn-outline-danger"
+                               onclick="return confirm('Supprimer cette catégorie ?');">Supprimer</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${categories.isEmpty()}" class="text-center py-5">
+            <div class="card p-5">
+                <h3>Aucune catégorie trouvée</h3>
+                <p class="text-muted">Ajoutez des catégories pour mieux organiser les actions.</p>
+                <a sec:authorize="hasRole('ADMIN')" th:href="@{/categories/create}" class="btn btn-primary mt-3">Créer une catégorie</a>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

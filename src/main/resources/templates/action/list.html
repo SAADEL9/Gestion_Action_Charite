@@ -48,12 +48,12 @@
                         <div class="mb-3">
                             <small class="text-muted">
                                 Progression:
-                                <span th:text="${#numbers.formatDecimal(progression[action.id], 1, 'POINT', 0, 'COMMA')} + '%'"></span>
+                                <span th:text="${progression[action.id] != null ? #numbers.formatDecimal(progression[action.id], 1, 0) : '0'} + '%'"></span>
                             </small>
                             <div class="progress">
                                 <div class="progress-bar" role="progressbar"
                                      th:style="'width: ' + ${progression[action.id]} + '%'"
-                                     th:text="${#numbers.formatDecimal(progression[action.id], 1, 'POINT', 0, 'COMMA')} + '%'"></div>
+                                     th:text="${progression[action.id] != null ? #numbers.formatDecimal(progression[action.id], 1, 0) : '0'} + '%'"></div>
                             </div>
                         </div>
 
@@ -61,8 +61,8 @@
                         <div class="mb-2">
                             <small class="text-muted">
                                 <i class="bi bi-calendar"></i>
-                                Du <span th:text="${#dates.format(action.dateDebut, 'dd/MM/yyyy')}"></span>
-                                au <span th:text="${#dates.format(action.dateFin, 'dd/MM/yyyy')}"></span>
+                                Du <span th:text="${action.dateDebut != null ? #temporals.format(action.dateDebut, 'dd/MM/yyyy') : ''}"></span>
+                                au <span th:text="${action.dateFin != null ? #temporals.format(action.dateFin, 'dd/MM/yyyy') : ''}"></span>
                             </small>
                         </div>
                         <div class="mb-2">
@@ -86,9 +86,9 @@
                         <div class="d-flex gap-2 flex-wrap">
                             <a th:href="@{/actions/{id}(id=${action.id})}" class="btn btn-sm btn-outline-primary">Voir</a>
                             <a sec:authorize="hasAnyRole('ORG_ADMIN', 'ADMIN')" th:href="@{/actions/edit/{id}(id=${action.id})}" class="btn btn-sm btn-outline-secondary">Modifier</a>
-                            <a th:if="${action.status.toString() == 'BROUILLON'}"
+                            <a sec:authorize="hasAnyRole('ORG_ADMIN', 'ADMIN')" th:if="${action.status.toString() == 'BROUILLON'}"
                                th:href="@{/actions/publier/{id}(id=${action.id})}" class="btn btn-sm btn-success">Publier</a>
-                            <a th:if="${action.status.toString() == 'PUBLIEE' || action.status.toString() == 'EN_COURS'}"
+                            <a sec:authorize="hasAnyRole('ORG_ADMIN', 'ADMIN')" th:if="${action.status.toString() == 'PUBLIEE' || action.status.toString() == 'EN_COURS'}"
                                th:href="@{/actions/archiver/{id}(id=${action.id})}" class="btn btn-sm btn-warning">Archiver</a>
                         </div>
                     </div>

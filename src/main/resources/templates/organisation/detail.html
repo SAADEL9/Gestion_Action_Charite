@@ -25,10 +25,14 @@
         <div th:if="${organisation != null}" class="row g-4">
             <div class="col-lg-8">
                 <div class="card">
+                    <img th:src="${#strings.isEmpty(organisation.logo) ? 'https://placehold.co/1200x480?text=Organisation' : organisation.logo}"
+                         class="card-img-top"
+                         th:alt="${'Logo de ' + organisation.nom}"
+                         style="max-height: 320px; object-fit: cover;">
                     <div class="card-body">
                         <h3 class="mb-3" th:text="${organisation.nom}"></h3>
 
-                        <p class="text-muted mb-4" th:text="${organisation.description}"></p>
+                        <p class="text-muted mb-4" th:text="${#strings.isEmpty(organisation.description) ? 'Aucune description.' : organisation.description}"></p>
 
                         <div class="row g-3">
                             <div class="col-md-6">
@@ -46,12 +50,12 @@
                             <div class="col-md-6">
                                 <div class="text-muted">Statut</div>
                                 <div>
-                                    <span class="badge bg-info text-dark" th:text="${organisation.status}"></span>
+                                    <span class="badge bg-info text-dark" th:text="${organisation.status != null ? organisation.status : 'NON DEFINI'}"></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="text-muted">Date de cr&eacute;ation</div>
-                                <div class="fw-semibold" th:text="${organisation.dateCreation != null ? #dates.format(organisation.dateCreation, 'dd/MM/yyyy') : ''}"></div>
+                                <div class="fw-semibold" th:text="${organisation.dateCreation != null ? #temporals.format(organisation.dateCreation, 'dd/MM/yyyy') : ''}"></div>
                             </div>
                         </div>
 
@@ -60,19 +64,19 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <div class="text-muted">Adresse l&eacute;gale</div>
-                                <div class="fw-semibold" th:text="${organisation.adresseLegal}"></div>
+                                <div class="fw-semibold" th:text="${#strings.isEmpty(organisation.adresseLegal) ? '-' : organisation.adresseLegal}"></div>
                             </div>
                             <div class="col-md-6">
                                 <div class="text-muted">Num&eacute;ro fiscal</div>
-                                <div class="fw-semibold" th:text="${organisation.numeroFiscal}"></div>
+                                <div class="fw-semibold" th:text="${#strings.isEmpty(organisation.numeroFiscal) ? '-' : organisation.numeroFiscal}"></div>
                             </div>
                             <div class="col-md-6">
                                 <div class="text-muted">Contact principal</div>
-                                <div class="fw-semibold" th:text="${organisation.contactPrincipal}"></div>
+                                <div class="fw-semibold" th:text="${#strings.isEmpty(organisation.contactPrincipal) ? '-' : organisation.contactPrincipal}"></div>
                             </div>
                             <div class="col-md-6">
                                 <div class="text-muted">Logo</div>
-                                <div class="fw-semibold text-break" th:text="${organisation.logo}"></div>
+                                <div class="fw-semibold text-break" th:text="${#strings.isEmpty(organisation.logo) ? 'Aucun logo' : organisation.logo}"></div>
                             </div>
                         </div>
                     </div>

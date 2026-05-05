@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 @Controller
@@ -33,7 +34,7 @@ public class OrganisationController {
 
     @GetMapping("/{id}")
     public String findById(@PathVariable Long id, Model model) {
-        organisationService.findById(id).ifPresent(o -> model.addAttribute("organisation", o));
+        model.addAttribute("organisation", organisationService.findById(id).orElse(null));
         return "organisation/detail";
     }
 
@@ -52,13 +53,8 @@ public class OrganisationController {
             @ModelAttribute Organisation organisation,
             @RequestParam(value = "logoFile", required = false) MultipartFile logoFile) throws IOException {
 
-        // Handle logo upload
         if (logoFile != null && !logoFile.isEmpty()) {
-            String filename = UUID.randomUUID() + "_" + logoFile.getOriginalFilename();
-            Path uploadPath = Paths.get("uploads/logos/");
-            Files.createDirectories(uploadPath);
-            Files.copy(logoFile.getInputStream(), uploadPath.resolve(filename));
-            organisation.setLogo("/uploads/logos/" + filename);
+            organisation.setLogo(storeLogo(logoFile));
         }
 
         var user = userService.findEntityByEmail(principal.getUsername());
@@ -75,7 +71,12 @@ public class OrganisationController {
 
     @PostMapping("/edit/{id}")
     @PreAuthorize("hasAnyRole('ORG_ADMIN', 'ADMIN')")
-    public String update(@PathVariable Long id, @ModelAttribute Organisation organisation) {
+    public String update(@PathVariable Long id,
+                         @ModelAttribute Organisation organisation,
+                         @RequestParam(value = "logoFile", required = false) MultipartFile logoFile) throws IOException {
+        if (logoFile != null && !logoFile.isEmpty()) {
+            organisation.setLogo(storeLogo(logoFile));
+        }
         organisationService.update(id, organisation);
         return "redirect:/organisations";
     }
@@ -99,5 +100,13 @@ public class OrganisationController {
     public String delete(@PathVariable Long id) {
         organisationService.delete(id);
         return "redirect:/organisations";
+    }
+
+    private String storeLogo(MultipartFile logoFile) throws IOException {
+        String filename = UUID.randomUUID() + "_" + logoFile.getOriginalFilename();
+        Path uploadPath = Paths.get("uploads", "logos");
+        Files.createDirectories(uploadPath);
+        Files.copy(logoFile.getInputStream(), uploadPath.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
+        return "/uploads/logos/" + filename;
     }
 }

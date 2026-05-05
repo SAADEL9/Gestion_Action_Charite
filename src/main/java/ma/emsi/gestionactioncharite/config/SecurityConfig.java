@@ -21,9 +21,11 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/register", "/css/**", "/js/**", "/images/**", "/uploads/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/organisations/create", "/organisations/edit/**")
-                        .hasAnyAuthority("ORG_ADMIN", "ADMIN")
+                        .hasAnyRole("ORG_ADMIN", "ADMIN")
+                        .requestMatchers("/actions/create", "/actions/edit/**", "/actions/publier/**", "/actions/archiver/**", "/actions/delete/**")
+                        .hasAnyRole("ORG_ADMIN", "ADMIN")
 
-                        .requestMatchers("/", "/organisations", "/organisations/*").permitAll()
+                        .requestMatchers("/", "/organisations", "/organisations/*", "/actions", "/actions/*").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
