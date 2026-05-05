@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,7 +14,7 @@
     <main class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="page-title mb-0">Liste des Organisations</h1>
-            <a th:href="@{/organisations/create}" class="btn btn-primary">+ Nouvelle Organisation</a>
+            <a sec:authorize="hasAnyRole('ORG_ADMIN', 'ADMIN')" th:href="@{/organisations/create}" class="btn btn-primary">Nouvelle Organisation</a>
         </div>
 
         <div class="card">
@@ -41,16 +41,17 @@
                             <td th:text="${organisation.telephone}"></td>
                             <td th:text="${organisation.adresse}"></td>
                             <td>
-                                <span th:if="${organisation.valide}" class="badge bg-success">Valid&eacute;e</span>
-                                <span th:unless="${organisation.valide}" class="badge bg-warning text-dark">En attente</span>
+                                <span th:if="${organisation.status != null and organisation.status.name() == 'APPROVED'}" class="badge bg-success">Approuv&eacute;e</span>
+                                <span th:if="${organisation.status != null and organisation.status.name() == 'PENDING'}" class="badge bg-warning text-dark">En attente</span>
+                                <span th:if="${organisation.status != null and organisation.status.name() == 'REJECTED'}" class="badge bg-danger">Rejet&eacute;e</span>
                             </td>
                             <td class="text-end">
                                 <div class="d-inline-flex gap-2 flex-wrap justify-content-end">
                                     <a th:href="@{/organisations/{id}(id=${organisation.id})}" class="btn btn-sm btn-outline-primary">Voir</a>
-                                    <a th:href="@{/organisations/edit/{id}(id=${organisation.id})}" class="btn btn-sm btn-outline-secondary">Modifier</a>
-                                    <a th:if="${not organisation.valide}" th:href="@{/organisations/valider/{id}(id=${organisation.id})}" class="btn btn-sm btn-success">Valider</a>
-                                    <a th:if="${not organisation.valide}" th:href="@{/organisations/rejeter/{id}(id=${organisation.id})}" class="btn btn-sm btn-danger">Rejeter</a>
-                                    <a th:href="@{/organisations/delete/{id}(id=${organisation.id})}" class="btn btn-sm btn-outline-danger"
+                                    <a sec:authorize="hasAnyRole('ORG_ADMIN', 'ADMIN')" th:href="@{/organisations/edit/{id}(id=${organisation.id})}" class="btn btn-sm btn-outline-secondary">Modifier</a>
+                                    <a sec:authorize="hasRole('ADMIN')" th:if="${organisation.status != null and organisation.status.name() == 'PENDING'}" th:href="@{/organisations/valider/{id}(id=${organisation.id})}" class="btn btn-sm btn-success">Approuver</a>
+                                    <a sec:authorize="hasRole('ADMIN')" th:if="${organisation.status != null and organisation.status.name() == 'PENDING'}" th:href="@{/organisations/rejeter/{id}(id=${organisation.id})}" class="btn btn-sm btn-danger">Rejeter</a>
+                                    <a sec:authorize="hasRole('ADMIN')" th:href="@{/organisations/delete/{id}(id=${organisation.id})}" class="btn btn-sm btn-outline-danger"
                                        onclick="return confirm('Etes-vous sur ?')">Supprimer</a>
                                 </div>
                             </td>
@@ -63,7 +64,7 @@
         <div th:if="${organisations.isEmpty()}" class="text-center py-5">
             <h3>Aucune organisation trouv&eacute;e</h3>
             <p class="text-muted">Commencez par cr&eacute;er votre premi&egrave;re organisation.</p>
-            <a th:href="@{/organisations/create}" class="btn btn-primary">Cr&eacute;er une organisation</a>
+            <a sec:authorize="hasAnyRole('ORG_ADMIN', 'ADMIN')" th:href="@{/organisations/create}" class="btn btn-primary">Cr&eacute;er une organisation</a>
         </div>
     </main>
 

@@ -15,6 +15,8 @@ public interface UserService {
     void deactivate(Long id);
     void activate(Long id);
     void changeRole(Long id, Role role);
+    void requestOrganisationAccess(Long id);
+    void approveOrganisationAccess(Long id);
     User findEntityByEmail(String email);
     User save(User user);
     boolean existsByEmail(String email);

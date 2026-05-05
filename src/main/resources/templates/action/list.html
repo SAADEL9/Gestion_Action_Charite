@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +15,7 @@
     <main class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="page-title mb-0">Liste des Actions de Charit&eacute;</h1>
-            <a th:href="@{/actions/create}" class="btn btn-primary">+ Nouvelle Action</a>
+            <a sec:authorize="hasAnyRole('ORG_ADMIN', 'ADMIN')" th:href="@{/actions/create}" class="btn btn-primary">Nouvelle Action</a>
         </div>
 
         <!-- Filters -->
@@ -85,7 +85,7 @@
                         <!-- Action Buttons -->
                         <div class="d-flex gap-2 flex-wrap">
                             <a th:href="@{/actions/{id}(id=${action.id})}" class="btn btn-sm btn-outline-primary">Voir</a>
-                            <a th:href="@{/actions/edit/{id}(id=${action.id})}" class="btn btn-sm btn-outline-secondary">Modifier</a>
+                            <a sec:authorize="hasAnyRole('ORG_ADMIN', 'ADMIN')" th:href="@{/actions/edit/{id}(id=${action.id})}" class="btn btn-sm btn-outline-secondary">Modifier</a>
                             <a th:if="${action.status.toString() == 'BROUILLON'}"
                                th:href="@{/actions/publier/{id}(id=${action.id})}" class="btn btn-sm btn-success">Publier</a>
                             <a th:if="${action.status.toString() == 'PUBLIEE' || action.status.toString() == 'EN_COURS'}"
@@ -101,7 +101,7 @@
             <div class="card p-5">
                 <h3>Aucune action trouv&eacute;e</h3>
                 <p class="text-muted">Commencez par cr&eacute;er votre premi&egrave;re action de charit&eacute;.</p>
-                <a th:href="@{/actions/create}" class="btn btn-primary mt-3">Cr&eacute;er une action</a>
+                <a sec:authorize="hasAnyRole('ORG_ADMIN', 'ADMIN')" th:href="@{/actions/create}" class="btn btn-primary mt-3">Cr&eacute;er une action</a>
             </div>
         </div>
     </main>

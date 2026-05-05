@@ -2,6 +2,7 @@ package ma.emsi.gestionactioncharite.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -34,8 +35,12 @@ public class User {
     @Builder.Default
     @Column(name = "is_actif")
     private boolean actif = true;
+    @Builder.Default
+    @Column(name = "organisation_request_pending")
+    private boolean organisationRequestPending = false;
     @Enumerated(EnumType.STRING)
-    private Role role;
+    @Builder.Default
+    private Role role = Role.USER;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @Builder.Default
@@ -49,8 +54,8 @@ public class User {
     @Builder.Default
     private List<Notification> notifications = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "organisation_id")
-    private Organisation organisation;
+    @OneToMany(mappedBy = "admin")
+    @Builder.Default
+    @JsonIgnore
+    private List<Organisation> organisations = new ArrayList<>();
 }
-

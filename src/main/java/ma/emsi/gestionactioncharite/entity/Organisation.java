@@ -36,9 +36,6 @@ public class Organisation {
     
     @Enumerated(EnumType.STRING)
     private StatusOrganisation status;
-    
-    @Builder.Default
-    private boolean valide = false;
 
     @ManyToOne
     @JoinColumn(name = "admin_id")
@@ -47,6 +44,16 @@ public class Organisation {
     @OneToMany(mappedBy = "organisation", cascade = CascadeType.ALL)
     @Builder.Default
     private List<ActionCharite> actions = new ArrayList<>();
+
+    @PrePersist
+    public void prePersist() {
+        if (dateCreation == null) {
+            dateCreation = LocalDate.now();
+        }
+        if (status == null) {
+            status = StatusOrganisation.PENDING;
+        }
+    }
 }
 
 

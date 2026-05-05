@@ -19,6 +19,7 @@
                         <h1 class="page-title h3 mb-3">Inscription</h1>
 
                         <form th:action="@{/register}" th:object="${user}" method="post" class="needs-validation" novalidate>
+                            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">

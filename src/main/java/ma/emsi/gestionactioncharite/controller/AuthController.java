@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder; // ← interface not BCrypt directly
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/login")
     public String loginPage() {
@@ -24,7 +24,7 @@ public class AuthController {
 
     @GetMapping("/register")
     public String registerPage(Model model) {
-        model.addAttribute("user", new UserRequestDTO()); // ← DTO not entity
+        model.addAttribute("user", new UserRequestDTO());
         return "auth/register";
     }
 

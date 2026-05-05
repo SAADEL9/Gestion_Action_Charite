@@ -18,6 +18,7 @@ public class UserResponseDTO {
     private String adresse;
     private String photoProfil;
     private LocalDate dateInscription;
+    private boolean organisationRequestPending;
     private Role role;
     private boolean actif;
 }

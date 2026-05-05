@@ -2,6 +2,8 @@ package ma.emsi.gestionactioncharite.service;
 
 import ma.emsi.gestionactioncharite.entity.ActionCharite;
 import ma.emsi.gestionactioncharite.entity.StatutAction;
+import ma.emsi.gestionactioncharite.entity.StatusOrganisation;
+import ma.emsi.gestionactioncharite.repository.OrganisationRepository;
 import ma.emsi.gestionactioncharite.repository.ActionChariteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,9 +15,22 @@ import java.util.Optional;
 public class ActionChariteServiceImpl implements ActionChariteService {
 
     private final ActionChariteRepository actionChariteRepository;
+    private final OrganisationRepository organisationRepository;
 
     @Override
     public ActionCharite save(ActionCharite action) {
+        if (action.getOrganisation() == null || action.getOrganisation().getId() == null) {
+            throw new IllegalArgumentException("Une organisation est requise pour créer une action");
+        }
+
+        var organisation = organisationRepository.findById(action.getOrganisation().getId())
+                .orElseThrow(() -> new RuntimeException("Organisation non trouvée : " + action.getOrganisation().getId()));
+
+        if (organisation.getStatus() != StatusOrganisation.APPROVED) {
+            throw new IllegalStateException("Création d'actions interdite: organisation non approuvée");
+        }
+
+        action.setOrganisation(organisation);
         return actionChariteRepository.save(action);
     }
 

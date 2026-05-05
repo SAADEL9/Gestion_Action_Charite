@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +16,7 @@
 
         <form th:action="${user != null and user.id != null ? '/users/edit/' + user.id : '/users/create'}"
               th:object="${user}" method="post" class="needs-validation" novalidate>
+            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
             <div class="row g-4">
                 <div class="col-lg-8">
@@ -54,8 +55,8 @@
                                 <label class="form-label" for="role">Role</label>
                                 <select id="role" class="form-select" th:field="*{role}">
                                     <option value="USER">USER</option>
+                                    <option value="ORG_ADMIN">ORG_ADMIN</option>
                                     <option value="ADMIN">ADMIN</option>
-                                    <option value="SUPER_ADMIN">SUPER_ADMIN</option>
                                 </select>
                             </div>
                         </div>

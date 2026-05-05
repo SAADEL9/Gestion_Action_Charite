@@ -1,10 +1,12 @@
 package ma.emsi.gestionactioncharite.controller;
 import ma.emsi.gestionactioncharite.entity.ActionCharite;
 import ma.emsi.gestionactioncharite.entity.StatutAction;
+import ma.emsi.gestionactioncharite.entity.StatusOrganisation;
 import ma.emsi.gestionactioncharite.service.ActionChariteService;
 import ma.emsi.gestionactioncharite.service.OrganisationService;
 import ma.emsi.gestionactioncharite.service.CategorieService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -46,14 +48,19 @@ public class ActionChariteController {
     }
 
     @GetMapping("/create")
+    @PreAuthorize("hasAnyRole('ORG_ADMIN', 'ADMIN')")
     public String showCreateForm(Model model) {
         model.addAttribute("action", new ActionCharite());
-        model.addAttribute("organisations", organisationService.findAll());
+        var approvedOrgs = organisationService.findAll().stream()
+                .filter(o -> o != null && o.getStatus() == StatusOrganisation.APPROVED)
+                .toList();
+        model.addAttribute("organisations", approvedOrgs);
         model.addAttribute("categories", categorieService.findAll());
         return "action/form";
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasAnyRole('ORG_ADMIN', 'ADMIN')")
     public String create(@ModelAttribute ActionCharite action) {
         actionChariteService.save(action);
         return "redirect:/actions";
