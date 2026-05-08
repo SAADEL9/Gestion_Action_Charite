@@ -1,9 +1,9 @@
 package ma.emsi.gestionactioncharite.controller;
 
 import ma.emsi.gestionactioncharite.entity.ActionCharite;
-import ma.emsi.gestionactioncharite.entity.Don;
-import ma.emsi.gestionactioncharite.entity.Participation;
-import ma.emsi.gestionactioncharite.entity.Organisation;
+import ma.emsi.gestionactioncharite.entity.StatutAction;
+import ma.emsi.gestionactioncharite.entity.StatutDon;
+import ma.emsi.gestionactioncharite.entity.StatusOrganisation;
 import ma.emsi.gestionactioncharite.service.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,23 +42,31 @@ public class HomeController {
             }
         }
 
-        // Get statistics
-        List<ActionCharite> allActions = actionChariteService.findAll();
-        List<Don> allDons = donService.findAll();
-        List<Participation> allParticipations = participationService.findAll();
-        List<Organisation> allOrganisations = organisationService.findAll();
+        // Only public-facing data: published/active actions, approved orgs, confirmed donations
+        List<ActionCharite> publicActions = actionChariteService.findAll().stream()
+                .filter(a -> a.getStatus() == StatutAction.PUBLIEE || a.getStatus() == StatutAction.EN_COURS)
+                .toList();
 
-        // Get recent actions (last 6)
-        List<ActionCharite> recentActions = allActions.stream()
+        List<ActionCharite> recentActions = publicActions.stream()
+                .filter(a -> a.getDateCreation() != null)
                 .sorted((a1, a2) -> a2.getDateCreation().compareTo(a1.getDateCreation()))
                 .limit(6)
                 .toList();
 
-        // Add model attributes
-        model.addAttribute("totalActions", allActions.size());
-        model.addAttribute("totalDons", allDons.size());
-        model.addAttribute("totalParticipants", allParticipations.size());
-        model.addAttribute("totalOrganisations", allOrganisations.size());
+        long confirmedDons = donService.findAll().stream()
+                .filter(d -> d.getStatus() == StatutDon.CONFIRME)
+                .count();
+
+        long approvedOrgs = organisationService.findAll().stream()
+                .filter(o -> o.getStatus() == StatusOrganisation.APPROVED)
+                .count();
+
+        long totalParticipants = participationService.findAll().size();
+
+        model.addAttribute("totalActions", publicActions.size());
+        model.addAttribute("totalDons", confirmedDons);
+        model.addAttribute("totalParticipants", totalParticipants);
+        model.addAttribute("totalOrganisations", approvedOrgs);
         model.addAttribute("recentActions", recentActions);
 
         return "index";

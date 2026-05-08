@@ -42,12 +42,28 @@
                             <span th:if="${organisation.status.name() == 'REJECTED'}"
                                   class="badge bg-danger">Rejetée</span>
 
-                            <div class="mt-3">
+                            <div class="mt-3 d-flex flex-wrap gap-2">
                                 <a th:href="@{/organisations/{id}(id=${organisation.id})}"
                                    class="btn btn-sm btn-outline-primary"
                                    onclick="event.stopPropagation();">
                                     Voir les détails
                                 </a>
+
+                                <!-- Boutons admin : approuver / rejeter (PENDING uniquement) -->
+                                <th:block sec:authorize="hasRole('ADMIN')"
+                                          th:if="${organisation.status.name() == 'PENDING'}">
+                                    <a th:href="@{/organisations/valider/{id}(id=${organisation.id})}"
+                                       class="btn btn-sm btn-success"
+                                       onclick="event.stopPropagation();">
+                                        ✓ Approuver
+                                    </a>
+                                    <a th:href="@{/organisations/rejeter/{id}(id=${organisation.id})}"
+                                       class="btn btn-sm btn-danger"
+                                       onclick="event.stopPropagation();"
+                                       th:onclick="|event.stopPropagation(); return confirm('Rejeter cette organisation ?')|">
+                                        ✗ Rejeter
+                                    </a>
+                                </th:block>
                             </div>
                         </div>
                     </div>

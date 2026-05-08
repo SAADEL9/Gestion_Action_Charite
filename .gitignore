@@ -33,3 +33,7 @@ build/
 .vscode/
 .claude/
 .m2/
+
+# Sensitive configuration (credentials, API keys)
+src/main/resources/application.properties
+uploads/

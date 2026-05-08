@@ -85,11 +85,23 @@ public class OrganisationServiceImpl implements OrganisationService {
     }
 
     @Override
-    public Organisation rejeter(Long id) {
+    public void rejeter(Long id) {
         Organisation org = organisationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Organisation non trouvée : " + id));
-        org.setStatus(StatusOrganisation.REJECTED);
-        return organisationRepository.save(org);
+        User admin = org.getAdmin();
+        organisationRepository.deleteById(id);
+        if (admin != null && admin.getRole() == Role.ORG_ADMIN) {
+            boolean hasOtherOrg = organisationRepository.findFirstByAdminId(admin.getId()).isPresent();
+            if (!hasOtherOrg) {
+                admin.setRole(Role.USER);
+                userRepository.save(admin);
+            }
+        }
+    }
+
+    @Override
+    public List<Organisation> findByStatus(StatusOrganisation status) {
+        return organisationRepository.findByStatus(status);
     }
 
     @Override

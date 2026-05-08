@@ -49,7 +49,8 @@ public class OrganisationApiController {
 
     @PostMapping("/{id}/reject")
     @PreAuthorize("hasRole('ADMIN')")
-    public Organisation reject(@PathVariable Long id) {
-        return organisationService.rejeter(id);
+    public ResponseEntity<Void> reject(@PathVariable Long id) {
+        organisationService.rejeter(id);
+        return ResponseEntity.noContent().build();
     }
 }

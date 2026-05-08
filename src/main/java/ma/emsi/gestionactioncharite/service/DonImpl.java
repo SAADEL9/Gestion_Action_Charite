@@ -1,7 +1,10 @@
 package ma.emsi.gestionactioncharite.service;
 
+import ma.emsi.gestionactioncharite.entity.ActionCharite;
 import ma.emsi.gestionactioncharite.entity.Don;
+import ma.emsi.gestionactioncharite.entity.MethodePaiement;
 import ma.emsi.gestionactioncharite.entity.StatutDon;
+import ma.emsi.gestionactioncharite.repository.ActionChariteRepository;
 import ma.emsi.gestionactioncharite.repository.Donrepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,13 +19,26 @@ import java.util.Optional;
 public class DonImpl implements DonService {
 
     private final Donrepository donRepository;
+    private final ActionChariteRepository actionChariteRepository;
 
     @Override
     @Transactional
     public Don save(Don don) {
         don.setDateDon(LocalDate.now());
         don.setStatus(StatutDon.EN_ATTENTE);
-        return donRepository.save(don);
+        Don saved = donRepository.save(don);
+
+        ActionCharite action = saved.getActionCharite();
+        if (action != null && action.getId() != null) {
+            ActionCharite managed = actionChariteRepository.findById(action.getId())
+                    .orElse(null);
+            if (managed != null) {
+                double current = managed.getSommeActuelle() != null ? managed.getSommeActuelle() : 0.0;
+                managed.setSommeActuelle(current + saved.getMontant());
+                actionChariteRepository.save(managed);
+            }
+        }
+        return saved;
     }
 
     @Override
@@ -47,11 +63,34 @@ public class DonImpl implements DonService {
 
     @Override
     @Transactional
+    public Don saveEnAttente(Don don) {
+        don.setDateDon(LocalDate.now());
+        don.setStatus(StatutDon.EN_ATTENTE);
+        return donRepository.save(don);
+    }
+
+    @Override
+    @Transactional
     public Don confirmer(Long id) {
         Don don = donRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Don non trouvé : " + id));
         don.setStatus(StatutDon.CONFIRME);
-        return donRepository.save(don);
+        Don saved = donRepository.save(don);
+
+        // Stripe et PayPal : sommeActuelle n'a pas été mise à jour au save initial
+        if (saved.getMethodePaiement() == MethodePaiement.STRIPE
+                || saved.getMethodePaiement() == MethodePaiement.PAYPAL) {
+            ActionCharite action = saved.getActionCharite();
+            if (action != null) {
+                ActionCharite managed = actionChariteRepository.findById(action.getId()).orElse(null);
+                if (managed != null) {
+                    double current = managed.getSommeActuelle() != null ? managed.getSommeActuelle() : 0.0;
+                    managed.setSommeActuelle(current + saved.getMontant());
+                    actionChariteRepository.save(managed);
+                }
+            }
+        }
+        return saved;
     }
 
     @Override

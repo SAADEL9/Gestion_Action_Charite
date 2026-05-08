@@ -1,7 +1,9 @@
 package ma.emsi.gestionactioncharite.controller;
 
 import lombok.RequiredArgsConstructor;
+import ma.emsi.gestionactioncharite.entity.StatusOrganisation;
 import ma.emsi.gestionactioncharite.service.AdminDashboardService;
+import ma.emsi.gestionactioncharite.service.OrganisationService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,10 +19,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AdminDashboardController {
 
     private final AdminDashboardService adminDashboardService;
+    private final OrganisationService organisationService;
 
     @GetMapping
     public String dashboard(@AuthenticationPrincipal UserDetails principal, Model model) {
         model.addAttribute("dashboard", adminDashboardService.getDashboardData(principal.getUsername()));
+        model.addAttribute("pendingOrgs", organisationService.findByStatus(StatusOrganisation.PENDING));
         return "admin/dashboard";
     }
 }

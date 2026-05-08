@@ -85,11 +85,13 @@
                         <!-- Action Buttons -->
                         <div class="d-flex gap-2 flex-wrap">
                             <a th:href="@{/actions/{id}(id=${action.id})}" class="btn btn-sm btn-outline-primary">Voir</a>
-                            <a sec:authorize="hasAnyRole('ORG_ADMIN', 'ADMIN')" th:href="@{/actions/edit/{id}(id=${action.id})}" class="btn btn-sm btn-outline-secondary">Modifier</a>
-                            <a sec:authorize="hasAnyRole('ORG_ADMIN', 'ADMIN')" th:if="${action.status.toString() == 'BROUILLON'}"
-                               th:href="@{/actions/publier/{id}(id=${action.id})}" class="btn btn-sm btn-success">Publier</a>
-                            <a sec:authorize="hasAnyRole('ORG_ADMIN', 'ADMIN')" th:if="${action.status.toString() == 'PUBLIEE' || action.status.toString() == 'EN_COURS'}"
-                               th:href="@{/actions/archiver/{id}(id=${action.id})}" class="btn btn-sm btn-warning">Archiver</a>
+                            <th:block th:if="${isAdmin or (userOrgId != null and action.organisation != null and userOrgId == action.organisation.id)}">
+                                <a th:href="@{/actions/edit/{id}(id=${action.id})}" class="btn btn-sm btn-outline-secondary">Modifier</a>
+                                <a th:if="${action.status.toString() == 'BROUILLON'}"
+                                   th:href="@{/actions/publier/{id}(id=${action.id})}" class="btn btn-sm btn-success">Publier</a>
+                                <a th:if="${action.status.toString() == 'PUBLIEE' || action.status.toString() == 'EN_COURS'}"
+                                   th:href="@{/actions/archiver/{id}(id=${action.id})}" class="btn btn-sm btn-warning">Archiver</a>
+                            </th:block>
                         </div>
                     </div>
                 </div>

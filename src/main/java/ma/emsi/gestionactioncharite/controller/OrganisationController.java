@@ -83,16 +83,18 @@ public class OrganisationController {
 
     @GetMapping("/valider/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public String valider(@PathVariable Long id) {
+    public String valider(@PathVariable Long id,
+                          @RequestParam(required = false, defaultValue = "organisations") String from) {
         organisationService.valider(id);
-        return "redirect:/organisations";
+        return "admin".equals(from) ? "redirect:/admin/dashboard" : "redirect:/organisations";
     }
 
     @GetMapping("/rejeter/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public String rejeter(@PathVariable Long id) {
+    public String rejeter(@PathVariable Long id,
+                          @RequestParam(required = false, defaultValue = "organisations") String from) {
         organisationService.rejeter(id);
-        return "redirect:/organisations";
+        return "admin".equals(from) ? "redirect:/admin/dashboard" : "redirect:/organisations";
     }
 
     @GetMapping("/delete/{id}")

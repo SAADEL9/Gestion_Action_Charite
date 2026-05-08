@@ -8,6 +8,8 @@ import java.util.Optional;
 public interface DonService {
     Don save(Don don);
 
+    Don saveEnAttente(Don don);
+
     Optional<Don> findById(Long id);
 
     List<Don> findAll();

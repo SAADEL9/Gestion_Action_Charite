@@ -1,5 +1,6 @@
 package ma.emsi.gestionactioncharite.service;
 import ma.emsi.gestionactioncharite.entity.Organisation;
+import ma.emsi.gestionactioncharite.entity.StatusOrganisation;
 import ma.emsi.gestionactioncharite.entity.User;
 import java.util.List;
 import java.util.Optional;
@@ -9,9 +10,11 @@ public interface OrganisationService {
     Organisation createOrganisation(User user, Organisation organisation);
     Optional<Organisation> findById(Long id);
     List<Organisation> findAll();
+
+    List<Organisation> findByStatus(StatusOrganisation status);
     Optional<Organisation> findFirstByAdminId(Long adminId);
     Organisation update(Long id, Organisation organisation);
     Organisation valider(Long id);
-    Organisation rejeter(Long id);
+    void rejeter(Long id);
     void delete(Long id);
 }

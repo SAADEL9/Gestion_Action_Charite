@@ -8,6 +8,20 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/main.css}">
+    <meta name="stripe-public-key" th:content="${stripePublicKey}">
+    <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}">
+    <meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : 'X-CSRF-TOKEN'}">
+    <style>
+        #card-element {
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 0.375rem;
+            background: white;
+            min-height: 42px;
+        }
+        #card-element.StripeElement--focus { border-color: #86b7fe; box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25); }
+        #card-element.StripeElement--invalid { border-color: #dc3545; }
+    </style>
 </head>
 <body>
     <div th:replace="~{layout/navbar :: navbar}"></div>
@@ -17,7 +31,7 @@
             <h1 class="page-title mb-0">D&eacute;tail action</h1>
             <div class="d-flex gap-2">
                 <a th:href="@{/actions}" class="btn btn-outline-secondary">Retour</a>
-                <a sec:authorize="hasAnyRole('ORG_ADMIN', 'ADMIN')" th:if="${action != null}" th:href="@{/actions/edit/{id}(id=${action.id})}" class="btn btn-primary">Modifier</a>
+                <a th:if="${action != null and canManage}" th:href="@{/actions/edit/{id}(id=${action.id})}" class="btn btn-primary">Modifier</a>
             </div>
         </div>
 
@@ -92,11 +106,183 @@
             </div>
 
             <div class="col-lg-4">
-                <div class="card">
+                <!-- Participation -->
+                <div class="card mb-3">
                     <div class="card-header bg-transparent">
-                        <h5 class="card-title mb-0">Actions</h5>
+                        <h5 class="card-title mb-0">Participation</h5>
                     </div>
-                    <div sec:authorize="hasAnyRole('ORG_ADMIN', 'ADMIN')" class="card-body d-grid gap-2">
+                    <div class="card-body">
+                        <p class="text-muted mb-3">
+                            <i class="bi bi-people"></i>
+                            <span th:text="${nbParticipants}">0</span> participant(s) inscrit(s)
+                        </p>
+
+                        <!-- Objectif atteint – inscriptions fermées -->
+                        <div th:if="${objectifAtteint}" class="alert alert-info mb-0">
+                            <i class="bi bi-trophy-fill"></i> Objectif atteint – inscriptions fermées.
+                        </div>
+
+                        <!-- Utilisateur non connecté -->
+                        <div sec:authorize="!isAuthenticated()" th:unless="${objectifAtteint}">
+                            <a th:href="@{/login}" class="btn btn-outline-success w-100">
+                                Connectez-vous pour participer
+                            </a>
+                        </div>
+
+                        <!-- Déjà inscrit -->
+                        <div sec:authorize="isAuthenticated()" th:if="${dejaInscrit and not objectifAtteint}">
+                            <div class="alert alert-success mb-0 text-center">
+                                <i class="bi bi-check-circle"></i> Vous êtes inscrit(e) à cette action
+                            </div>
+                        </div>
+
+                        <!-- Bouton inscription -->
+                        <div sec:authorize="isAuthenticated()" th:unless="${dejaInscrit or objectifAtteint}">
+                            <form th:action="@{/actions/{id}/participer(id=${action.id})}" method="post">
+                                <input type="hidden" th:if="${_csrf != null}"
+                                       th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="bi bi-person-plus"></i> Participer à cette action
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Carte Stripe ───────────────────────────────── -->
+                <div class="card mb-3">
+                    <div class="card-header bg-transparent">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-credit-card"></i> Payer par carte (Stripe)
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-2">
+                            <i class="bi bi-heart"></i>
+                            <span th:text="${nbDonsStripe}">0</span> don(s) par carte
+                        </p>
+
+                        <div th:if="${paymentSuccess}" class="alert alert-success mb-3">
+                            <i class="bi bi-check-circle-fill"></i> Paiement reçu et confirmé ! Merci pour votre don.
+                        </div>
+                        <div th:if="${donError}" class="alert alert-danger mb-3">
+                            <i class="bi bi-exclamation-triangle"></i> Le montant dépasse ce qui reste à collecter.
+                        </div>
+                        <div th:if="${objectifAtteint}" class="alert alert-info mb-0">
+                            <i class="bi bi-trophy-fill"></i> Objectif atteint !
+                        </div>
+
+                        <!-- Non connecté -->
+                        <div sec:authorize="!isAuthenticated()">
+                            <a th:href="@{/login}" class="btn btn-outline-primary w-100">
+                                Connectez-vous pour payer
+                            </a>
+                        </div>
+
+                        <!-- Déjà payé via Stripe -->
+                        <div sec:authorize="isAuthenticated()" th:if="${dejaPayeStripe}">
+                            <div class="alert alert-success mb-0 text-center">
+                                <i class="bi bi-check-circle"></i> Vous avez déjà contribué via carte
+                            </div>
+                        </div>
+
+                        <!-- Formulaire Stripe -->
+                        <div sec:authorize="isAuthenticated()"
+                             th:if="${not dejaPayeStripe and not objectifAtteint}">
+                            <form id="stripeForm" th:data-action-id="${action.id}">
+                                <input type="hidden" th:if="${_csrf != null}"
+                                       th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Montant (MAD)</label>
+                                    <input type="number" id="stripeMontant" class="form-control"
+                                           placeholder="Ex : 100" min="1" step="0.01"
+                                           th:max="${resteACollecte}" required>
+                                    <div class="form-text" th:if="${resteACollecte != null and resteACollecte > 0}">
+                                        Maximum : <span th:text="${#numbers.formatDecimal(resteACollecte, 1, 2)}"></span> MAD
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Carte bancaire</label>
+                                    <div id="card-element"></div>
+                                    <div id="card-errors" class="text-danger mt-1 small"></div>
+                                </div>
+                                <button type="submit" id="stripeSubmitBtn" class="btn btn-primary w-100">
+                                    <i class="bi bi-credit-card"></i> Payer par carte
+                                </button>
+                                <div id="stripeSpinner" class="text-center mt-2 d-none">
+                                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                                    <span class="ms-2 text-muted small">Traitement en cours…</span>
+                                </div>
+                            </form>
+                            <div id="stripeError" class="alert alert-danger mt-2 d-none"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Carte PayPal ───────────────────────────────── -->
+                <div class="card mb-3">
+                    <div class="card-header bg-transparent">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-paypal"></i> Payer par PayPal
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-2">
+                            <i class="bi bi-heart"></i>
+                            <span th:text="${nbDonsPaypal}">0</span> don(s) PayPal
+                        </p>
+
+                        <div th:if="${paypalError}" class="alert alert-danger mb-3">
+                            <i class="bi bi-exclamation-triangle"></i> Le paiement PayPal a échoué. Réessayez.
+                        </div>
+                        <div th:if="${objectifAtteint}" class="alert alert-info mb-0">
+                            <i class="bi bi-trophy-fill"></i> Objectif atteint !
+                        </div>
+
+                        <!-- Non connecté -->
+                        <div sec:authorize="!isAuthenticated()">
+                            <a th:href="@{/login}" class="btn btn-outline-warning w-100">
+                                Connectez-vous pour payer
+                            </a>
+                        </div>
+
+                        <!-- Déjà payé via PayPal -->
+                        <div sec:authorize="isAuthenticated()" th:if="${dejaPayePaypal}">
+                            <div class="alert alert-success mb-0 text-center">
+                                <i class="bi bi-check-circle"></i> Vous avez déjà contribué via PayPal
+                            </div>
+                        </div>
+
+                        <!-- Formulaire PayPal -->
+                        <div sec:authorize="isAuthenticated()"
+                             th:if="${not dejaPayePaypal and not objectifAtteint}">
+                            <form th:action="@{/actions/{id}/paypal/create-order(id=${action.id})}"
+                                  method="post">
+                                <input type="hidden" th:if="${_csrf != null}"
+                                       th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Montant (MAD)</label>
+                                    <input type="number" name="montant" class="form-control"
+                                           placeholder="Ex : 100" min="1" step="0.01"
+                                           th:max="${resteACollecte}" required>
+                                    <div class="form-text" th:if="${resteACollecte != null and resteACollecte > 0}">
+                                        Maximum : <span th:text="${#numbers.formatDecimal(resteACollecte, 1, 2)}"></span> MAD
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-warning w-100">
+                                    <i class="bi bi-paypal"></i> Payer avec PayPal
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions admin/org -->
+                <div class="card" th:if="${canManage}">
+                    <div class="card-header bg-transparent">
+                        <h5 class="card-title mb-0">Gestion</h5>
+                    </div>
+                    <div class="card-body d-grid gap-2">
                         <a th:href="@{/actions/edit/{id}(id=${action.id})}" class="btn btn-outline-primary">Modifier</a>
                         <a th:href="@{/actions/delete/{id}(id=${action.id})}" class="btn btn-outline-danger"
                            onclick="return confirm('Etes-vous sur ?')">Supprimer</a>
@@ -107,5 +293,79 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+    (function () {
+        const stripeForm  = document.getElementById('stripeForm');
+        if (!stripeForm) return; // formulaire Stripe absent (non connecté ou déjà payé)
+
+        const actionId  = stripeForm.dataset.actionId;
+        const submitBtn = document.getElementById('stripeSubmitBtn');
+        const spinner   = document.getElementById('stripeSpinner');
+        const errorDiv  = document.getElementById('stripeError');
+
+        // ── Init Stripe ───────────────────────────────────────────────
+        const pkMeta = document.querySelector('meta[name="stripe-public-key"]');
+        if (!pkMeta || !pkMeta.content || typeof Stripe === 'undefined') return;
+
+        const stripe      = Stripe(pkMeta.content);
+        const cardElement = stripe.elements().create('card', {
+            style: {
+                base:    { fontSize: '16px', color: '#424770', '::placeholder': { color: '#aab7c4' } },
+                invalid: { color: '#dc3545' }
+            }
+        });
+        cardElement.mount('#card-element');
+        cardElement.on('change', function (ev) {
+            document.getElementById('card-errors').textContent = ev.error ? ev.error.message : '';
+        });
+
+        // ── Soumission Stripe ─────────────────────────────────────────
+        stripeForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const montant = document.getElementById('stripeMontant').value;
+            const csrf    = document.querySelector('meta[name="_csrf"]').content;
+            const csrfHdr = document.querySelector('meta[name="_csrf_header"]').content;
+
+            submitBtn.disabled = true;
+            spinner.classList.remove('d-none');
+            errorDiv.classList.add('d-none');
+
+            try {
+                // 1. Créer le PaymentIntent
+                const intentRes  = await fetch(
+                    `/actions/${actionId}/stripe/create-intent?montant=${montant}`,
+                    { method: 'POST', headers: { [csrfHdr]: csrf } }
+                );
+                const intentData = await intentRes.json();
+                if (intentData.error) throw new Error(intentData.error);
+
+                // 2. Saisie carte via Stripe.js
+                const { error: stripeError } = await stripe.confirmCardPayment(
+                    intentData.clientSecret,
+                    { payment_method: { card: cardElement } }
+                );
+                if (stripeError) throw new Error(stripeError.message);
+
+                // 3. Confirmer côté serveur
+                const confirmRes  = await fetch(
+                    `/actions/${actionId}/stripe/confirm/${intentData.donId}`,
+                    { method: 'POST', headers: { [csrfHdr]: csrf } }
+                );
+                const confirmData = await confirmRes.json();
+                if (confirmData.error) throw new Error(confirmData.error);
+
+                window.location.href = `/actions/${actionId}?don=payment-success`;
+
+            } catch (err) {
+                errorDiv.textContent = err.message;
+                errorDiv.classList.remove('d-none');
+                submitBtn.disabled = false;
+                spinner.classList.add('d-none');
+            }
+        });
+    })();
+    </script>
 </body>
 </html>
