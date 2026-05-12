@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<body>
+<aside th:fragment="sidebar(activeKey)" class="app-sidebar">
+    <div class="sidebar-top">
+        <a class="brand-mark" th:href="@{/}">
+            <img th:src="@{/images/logo-charite.png}" alt="Charite">
+            <span>Charite</span>
+        </a>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a th:href="@{/design/dashboard}" class="sidebar-link" th:classappend="${activeKey == 'dashboard'} ? ' active'">
+            <i class="bi bi-house-door"></i>
+            <span>Tableau de bord</span>
+        </a>
+        <a th:href="@{/design/donation}" class="sidebar-link" th:classappend="${activeKey == 'donations'} ? ' active'">
+            <i class="bi bi-wallet2"></i>
+            <span>Mes dons</span>
+        </a>
+        <a href="#" class="sidebar-link">
+            <i class="bi bi-calendar-check"></i>
+            <span>Mes participations</span>
+        </a>
+        <a href="#" class="sidebar-link">
+            <i class="bi bi-heart"></i>
+            <span>Mes favoris</span>
+        </a>
+        <a href="#" class="sidebar-link">
+            <i class="bi bi-bell"></i>
+            <span>Notifications</span>
+            <span class="sidebar-badge">3</span>
+        </a>
+        <a th:href="@{/design/profile}" class="sidebar-link" th:classappend="${activeKey == 'profile'} ? ' active'">
+            <i class="bi bi-person"></i>
+            <span>Mon profil</span>
+        </a>
+        <a href="#" class="sidebar-link">
+            <i class="bi bi-gear"></i>
+            <span>Parametres</span>
+        </a>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="sidebar-link sidebar-link-button">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Deconnexion</span>
+            </button>
+        </form>
+    </nav>
+
+    <div class="sidebar-cta">
+        <div class="mini-cta-card">
+            <div class="mini-cta-icon"><i class="bi bi-pen"></i></div>
+            <div class="mini-cta-title">Faites un don</div>
+            <p>Chaque contribution compte.</p>
+            <a th:href="@{/design/donation}" class="btn btn-success-pill w-100">Faire un don</a>
+        </div>
+    </div>
+</aside>
+</body>
+</html>

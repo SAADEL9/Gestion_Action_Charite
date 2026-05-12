@@ -71,6 +71,9 @@ public class OrganisationServiceImpl implements OrganisationService {
         if (organisation.getLogo() != null && !organisation.getLogo().isBlank()) {
             existing.setLogo(organisation.getLogo());
         }
+        if (organisation.getCoverImage() != null && !organisation.getCoverImage().isBlank()) {
+            existing.setCoverImage(organisation.getCoverImage());
+        }
         existing.setDescription(organisation.getDescription());
 
         return organisationRepository.save(existing);

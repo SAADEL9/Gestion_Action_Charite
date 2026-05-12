@@ -18,6 +18,13 @@ public class UserController {
 
     private final UserService userService;
 
+    @GetMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    public String me(@AuthenticationPrincipal UserDetails principal) {
+        var user = userService.findEntityByEmail(principal.getUsername());
+        return "redirect:/users/" + user.getId();
+    }
+
     // ─── SUPER_ADMIN: list all users ───────────────────────────────
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")

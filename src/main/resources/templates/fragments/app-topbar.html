@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="topbar(userName)" class="app-topbar">
+    <div class="d-flex align-items-center gap-3">
+        <button class="btn btn-mobile-nav d-xl-none" type="button" data-sidebar-toggle>
+            <i class="bi bi-list"></i>
+        </button>
+        <a class="brand-mark d-xl-none" th:href="@{/}">
+            <img th:src="@{/images/logo-charite.png}" alt="Charite">
+            <span>Charite</span>
+        </a>
+    </div>
+    <div class="d-flex align-items-center gap-3 ms-auto">
+        <div class="dropdown">
+            <button class="btn btn-lang dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">FR</button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#">FR</a></li>
+                <li><a class="dropdown-item" href="#">EN</a></li>
+            </ul>
+        </div>
+        <button class="icon-button" type="button" aria-label="Notifications">
+            <i class="bi bi-bell"></i>
+        </button>
+        <div class="user-chip">
+            <div class="user-avatar">A</div>
+            <span th:text="${userName}">Ahmed</span>
+            <i class="bi bi-chevron-down small"></i>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -50,6 +50,11 @@ public class ActionChariteServiceImpl implements ActionChariteService {
     }
 
     @Override
+    public List<ActionCharite> findByOrganisationId(Long organisationId) {
+        return actionChariteRepository.findByOrganisationId(organisationId);
+    }
+
+    @Override
     public ActionCharite update(Long id, ActionCharite action) {
         ActionCharite existing = actionChariteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Action non trouvée : " + id));

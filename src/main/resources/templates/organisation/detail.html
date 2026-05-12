@@ -1,103 +1,507 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D&eacute;tail organisation</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/main.css}">
-</head>
-<body>
-    <div th:replace="~{layout/navbar :: navbar}"></div>
+    <th:block th:replace="~{fragments/head :: head('Détail organisation')}"></th:block>
+    <style>
+        :root {
+            --green-primary: #2d8c4e;
+            --green-light: #e8f5ee;
+            --green-mid: #4caf72;
+            --text-dark: #1a1a2e;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --bg: #f7f8fa;
+        }
 
-    <main class="container py-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="page-title mb-0">D&eacute;tail organisation</h1>
-            <div class="d-flex gap-2">
-                <a th:href="@{/organisations}" class="btn btn-outline-secondary">Retour</a>
-                <a sec:authorize="hasAnyRole('ORG_ADMIN', 'ADMIN')" th:if="${organisation != null}" th:href="@{/organisations/edit/{id}(id=${organisation.id})}" class="btn btn-primary">Modifier</a>
+        * { box-sizing: border-box; }
+
+        /* ── Prevent page styles from leaking into navbar ── */
+        nav img, header img, .navbar img {
+            max-height: unset !important;
+            object-fit: unset !important;
+            width: unset !important;
+            height: unset !important;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        /* ── Cover + Profile ── */
+        .org-cover-wrap {
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            background: #c8ddd0;
+            line-height: 0;
+        }
+
+        .org-cover-wrap img.org-cover {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .org-header-wrapper {
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .org-header-inner {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .org-profile-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 18px;
+            margin-top: -40px;
+            padding-bottom: 16px;
+        }
+
+        .org-logo-wrap {
+            flex-shrink: 0;
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            background: #fff;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+            overflow: hidden;
+        }
+
+        .org-logo-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .org-name-block {
+            flex: 1;
+            padding-bottom: 4px;
+        }
+
+        .org-name-block h1 {
+            font-size: 1.45rem;
+            font-weight: 700;
+            margin: 0 0 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge-approuvee {
+            font-size: 0.72rem;
+            font-weight: 600;
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+            border-radius: 20px;
+            padding: 2px 10px;
+            letter-spacing: 0.02em;
+        }
+
+        .org-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .org-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .org-meta i { color: var(--green-primary); font-size: 0.9rem; }
+
+        .org-description {
+            font-size: 0.84rem;
+            color: var(--text-muted);
+            margin: 10px 0 16px 0;
+            max-width: 600px;
+            line-height: 1.5;
+        }
+
+        /* ── Stats ── */
+        .org-stats {
+            display: flex;
+            gap: 0;
+            border-top: 1px solid var(--border);
+            padding: 14px 0 4px 0;
+        }
+
+        .stat-item {
+            flex: 1;
+            text-align: center;
+            padding: 4px 8px;
+            border-right: 1px solid var(--border);
+        }
+
+        .stat-item:last-child { border-right: none; }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.73rem;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* ── Tabs ── */
+        .org-tabs-bar {
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .org-tabs-inner {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            gap: 0;
+        }
+
+        .org-tab {
+            padding: 13px 18px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all .2s;
+            text-decoration: none;
+        }
+
+        .org-tab.active {
+            color: var(--green-primary);
+            border-bottom-color: var(--green-primary);
+            font-weight: 600;
+        }
+
+        .org-tab:hover { color: var(--green-primary); }
+
+        /* ── Main content ── */
+        .org-content {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
+        /* ── Actions list ── */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .voir-toutes {
+            font-size: 0.8rem;
+            color: var(--green-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .voir-toutes:hover { text-decoration: underline; }
+
+        /* ── Action Card ── */
+        .action-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            margin-bottom: 12px;
+            transition: box-shadow .2s;
+        }
+
+        .action-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
+
+        .action-thumb {
+            width: 72px;
+            height: 72px;
+            border-radius: 10px;
+            object-fit: cover;
+            flex-shrink: 0;
+            background: #e0ece5;
+        }
+
+        .action-body { flex: 1; min-width: 0; }
+
+        .action-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+            line-height: 1.3;
+        }
+
+        .progress-wrap { display: flex; align-items: center; gap: 10px; }
+
+        .progress-bar-track {
+            flex: 1;
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--green-primary);
+            border-radius: 99px;
+        }
+
+        .progress-pct {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--green-primary);
+            white-space: nowrap;
+        }
+
+        .action-amount {
+            text-align: right;
+            flex-shrink: 0;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .action-amount .collected {
+            display: block;
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 0.88rem;
+        }
+
+        /* ── Admin actions card ── */
+        .admin-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .admin-card h6 {
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .admin-card .btn { font-size: 0.83rem; border-radius: 8px; }
+    </style>
+</head>
+<body class="public-page">
+<div th:replace="~{fragments/public-navbar :: navbar}"></div>
+
+<div th:if="${param.error == 'unauthorized'}" class="container mt-3">
+    <div class="alert alert-danger shadow-sm border-0">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> Vous n'êtes pas autorisé à modifier cette organisation.
+    </div>
+</div>
+
+<!-- ── Cover image ── -->
+<div th:if="${organisation != null}">
+    <div class="org-cover-wrap">
+        <img th:src="${#strings.isEmpty(organisation.coverImage) ? 'https://placehold.co/1200x220/c8ddd0/4caf72?text=' : organisation.coverImage}"
+             class="org-cover"
+             th:alt="${organisation.nom}">
+    </div>
+
+    <!-- ── Header block ── -->
+    <div class="org-header-wrapper">
+        <div class="org-header-inner">
+
+            <div class="org-profile-row">
+                <!-- Logo circle -->
+                <div class="org-logo-wrap">
+                    <img th:src="${#strings.isEmpty(organisation.logo) ? 'https://placehold.co/84x84/e8f5ee/2d8c4e?text=O' : organisation.logo}"
+                         th:alt="${organisation.nom}">
+                </div>
+
+                <!-- Name + meta -->
+                <div class="org-name-block">
+                    <h1>
+                        <span th:text="${organisation.nom}"></span>
+                        <span class="badge-approuvee" th:if="${organisation.status != null}" th:text="${organisation.status}"></span>
+                    </h1>
+                    <div class="org-meta">
+                        <span th:if="${!#strings.isEmpty(organisation.adresse)}">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            <span th:text="${organisation.adresse}"></span>
+                        </span>
+                        <span th:if="${!#strings.isEmpty(organisation.email)}">
+                            <i class="bi bi-envelope-fill"></i>
+                            <span th:text="${organisation.email}"></span>
+                        </span>
+                        <span th:if="${!#strings.isEmpty(organisation.telephone)}">
+                            <i class="bi bi-telephone-fill"></i>
+                            <span th:text="${organisation.telephone}"></span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Edit button (top-right) -->
+                <div th:if="${canEdit}">
+                    <a th:href="@{/organisations/edit/{id}(id=${organisation.id})}"
+                       class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-pencil"></i> Modifier
+                    </a>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <p class="org-description"
+               th:text="${#strings.isEmpty(organisation.description) ? 'Aucune description.' : organisation.description}">
+            </p>
+
+            <!-- Stats row (only shown if data exists) -->
+            <div class="org-stats" th:if="${organisation.dateCreation != null or not #strings.isEmpty(organisation.email)}">
+                <div class="stat-item" th:if="${organisation.dateCreation != null}">
+                    <div class="stat-value" th:text="${#temporals.format(organisation.dateCreation, 'dd/MM/yyyy')}"></div>
+                    <div class="stat-label">Date de création</div>
+                </div>
+                <div class="stat-item" th:if="${not #strings.isEmpty(organisation.status)}">
+                    <div class="stat-value">
+                        <span class="badge-approuvee" th:text="${organisation.status}"></span>
+                    </div>
+                    <div class="stat-label">Statut</div>
+                </div>
             </div>
         </div>
+    </div>
 
-        <div th:if="${organisation == null}" class="alert alert-warning">Organisation introuvable.</div>
+    <!-- ── Tabs ── -->
+    <div class="org-tabs-bar">
+        <div class="org-tabs-inner">
+            <a class="org-tab" th:href="@{/organisations/{id}(id=${organisation.id})}">À propos</a>
+            <a class="org-tab active" href="#">Nos actions</a>
+            <a class="org-tab" href="#">Rapports</a>
+            <a class="org-tab" href="#">Actualités</a>
+        </div>
+    </div>
 
-        <div th:if="${organisation != null}" class="row g-4">
+    <!-- ── Page body ── -->
+    <div class="org-content">
+        <div class="row g-4">
+
+            <!-- Left: actions list -->
             <div class="col-lg-8">
-                <div class="card">
-                    <img th:src="${#strings.isEmpty(organisation.logo) ? 'https://placehold.co/1200x480?text=Organisation' : organisation.logo}"
-                         class="card-img-top"
-                         th:alt="${'Logo de ' + organisation.nom}"
-                         style="max-height: 320px; object-fit: cover;">
-                    <div class="card-body">
-                        <h3 class="mb-3" th:text="${organisation.nom}"></h3>
-
-                        <p class="text-muted mb-4" th:text="${#strings.isEmpty(organisation.description) ? 'Aucune description.' : organisation.description}"></p>
-
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="text-muted">Email</div>
-                                <div class="fw-semibold" th:text="${organisation.email}"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="text-muted">T&eacute;l&eacute;phone</div>
-                                <div class="fw-semibold" th:text="${organisation.telephone}"></div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="text-muted">Adresse</div>
-                                <div class="fw-semibold" th:text="${organisation.adresse}"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="text-muted">Statut</div>
-                                <div>
-                                    <span class="badge bg-info text-dark" th:text="${organisation.status != null ? organisation.status : 'NON DEFINI'}"></span>
+                <!-- Actions from DB -->
+                <div th:if="${actions != null and not #lists.isEmpty(actions)}">
+                    <div class="section-header">
+                        <span class="section-title">Nos actions</span>
+                    </div>
+                    <div class="action-card" th:each="action : ${actions}">
+                        <img th:src="${#strings.isEmpty(action.image) ? 'https://placehold.co/72x72/c8ddd0/2d8c4e?text=Action' : action.image}"
+                             class="action-thumb"
+                             th:alt="${action.titre}">
+                        <div class="action-body">
+                            <div class="action-title" th:text="${action.titre}"></div>
+                            <div class="progress-wrap" th:if="${action.objectifCollect != null and action.objectifCollect > 0}">
+                                <span class="progress-pct"
+                                      th:text="${#numbers.formatInteger(action.sommeActuelle != null ? (action.sommeActuelle * 100 / action.objectifCollect) : 0, 1) + '% financé'}">
+                                </span>
+                                <div class="progress-bar-track">
+                                    <div class="progress-bar-fill"
+                                         th:style="'width:' + (action.sommeActuelle != null ? (action.sommeActuelle * 100 / action.objectifCollect) : 0) + '%'">
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="text-muted">Date de cr&eacute;ation</div>
-                                <div class="fw-semibold" th:text="${organisation.dateCreation != null ? #temporals.format(organisation.dateCreation, 'dd/MM/yyyy') : ''}"></div>
-                            </div>
                         </div>
-
-                        <hr class="my-4">
-
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="text-muted">Adresse l&eacute;gale</div>
-                                <div class="fw-semibold" th:text="${#strings.isEmpty(organisation.adresseLegal) ? '-' : organisation.adresseLegal}"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="text-muted">Num&eacute;ro fiscal</div>
-                                <div class="fw-semibold" th:text="${#strings.isEmpty(organisation.numeroFiscal) ? '-' : organisation.numeroFiscal}"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="text-muted">Contact principal</div>
-                                <div class="fw-semibold" th:text="${#strings.isEmpty(organisation.contactPrincipal) ? '-' : organisation.contactPrincipal}"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="text-muted">Logo</div>
-                                <div class="fw-semibold text-break" th:text="${#strings.isEmpty(organisation.logo) ? 'Aucun logo' : organisation.logo}"></div>
-                            </div>
+                        <div class="action-amount" th:if="${action.objectifCollect != null}">
+                            <span class="collected" th:text="${(action.sommeActuelle != null ? action.sommeActuelle : 0) + ' MAD'}"></span>
+                            <span th:text="'/ ' + action.objectifCollect + ' MAD'"></span>
                         </div>
                     </div>
                 </div>
+                <!-- No actions -->
+                <div th:if="${actions == null or #lists.isEmpty(actions)}" class="text-muted small py-2">
+                    Aucune action pour le moment.
+                </div>
             </div>
 
+            <!-- Right: admin actions -->
             <div class="col-lg-4">
-                <div class="card">
-                    <div class="card-header bg-transparent">
-                        <h5 class="card-title mb-0">Actions</h5>
+                <div class="admin-card" th:if="${canEdit or #authorization.expression('hasRole(''ADMIN'')')}">
+                    <h6>Actions</h6>
+                    <div class="d-grid gap-2">
+                        <a th:if="${canEdit}" th:href="@{/organisations/edit/{id}(id=${organisation.id})}"
+                           class="btn btn-outline-primary">
+                            <i class="bi bi-pencil-square me-1"></i> Modifier
+                        </a>
+                        <a sec:authorize="hasRole('ADMIN')"
+                           th:href="@{/organisations/delete/{id}(id=${organisation.id})}"
+                           class="btn btn-outline-danger"
+                           onclick="return confirm('Êtes-vous sûr ?')">
+                            <i class="bi bi-trash me-1"></i> Supprimer
+                        </a>
                     </div>
-                    <div class="card-body d-grid gap-2">
-                        <a sec:authorize="hasAnyRole('ORG_ADMIN', 'ADMIN')" th:href="@{/organisations/edit/{id}(id=${organisation.id})}" class="btn btn-outline-primary">Modifier</a>
-                        <a sec:authorize="hasRole('ADMIN')" th:href="@{/organisations/delete/{id}(id=${organisation.id})}" class="btn btn-outline-danger"
-                           onclick="return confirm('Etes-vous sur ?')">Supprimer</a>
+                </div>
+
+                <!-- Details card -->
+                <div class="admin-card">
+                    <h6>Informations légales</h6>
+                    <div class="mb-2">
+                        <div class="small text-muted">Adresse légale</div>
+                        <div class="small fw-semibold" th:text="${#strings.isEmpty(organisation.adresseLegal) ? '-' : organisation.adresseLegal}">-</div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="small text-muted">Numéro fiscal</div>
+                        <div class="small fw-semibold" th:text="${#strings.isEmpty(organisation.numeroFiscal) ? '-' : organisation.numeroFiscal}">-</div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="small text-muted">Contact principal</div>
+                        <div class="small fw-semibold" th:text="${#strings.isEmpty(organisation.contactPrincipal) ? '-' : organisation.contactPrincipal}">-</div>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Date de création</div>
+                        <div class="small fw-semibold" th:text="${organisation.dateCreation != null ? #temporals.format(organisation.dateCreation, 'dd/MM/yyyy') : '-'}">-</div>
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        </div>
+    </div>
+</div>
+
+<!-- Not found -->
+<div th:if="${organisation == null}" class="container py-5">
+    <div class="alert alert-warning">Organisation introuvable.</div>
+    <a th:href="@{/organisations}" class="btn btn-outline-secondary">Retour</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

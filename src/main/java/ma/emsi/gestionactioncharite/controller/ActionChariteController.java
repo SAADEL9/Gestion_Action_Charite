@@ -184,19 +184,36 @@ public class ActionChariteController {
 
     @GetMapping("/create")
     @PreAuthorize("hasAnyRole('ORG_ADMIN', 'ADMIN')")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(Model model, @AuthenticationPrincipal UserDetails principal) {
         model.addAttribute("action", new ActionCharite());
-        var approvedOrgs = organisationService.findAll().stream()
+        boolean isAdmin = isAdmin(principal);
+        Long userOrgId = resolveUserOrgId(principal, isAdmin);
+        
+        var organisations = organisationService.findAll().stream()
                 .filter(o -> o != null && o.getStatus() == StatusOrganisation.APPROVED)
+                .filter(o -> isAdmin || (userOrgId != null && userOrgId.equals(o.getId())))
                 .toList();
-        model.addAttribute("organisations", approvedOrgs);
+                
+        model.addAttribute("organisations", organisations);
         model.addAttribute("categories", categorieService.findAll());
         return "action/form";
     }
 
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('ORG_ADMIN', 'ADMIN')")
-    public String create(@ModelAttribute ActionCharite action) {
+    public String create(@ModelAttribute ActionCharite action, @AuthenticationPrincipal UserDetails principal) {
+        if (action.getOrganisation() == null || action.getOrganisation().getId() == null) {
+            return "redirect:/actions/create?error=missing_org";
+        }
+        
+        boolean isAdmin = isAdmin(principal);
+        if (!isAdmin) {
+            Long userOrgId = resolveUserOrgId(principal, false);
+            if (userOrgId == null || !userOrgId.equals(action.getOrganisation().getId())) {
+                return "redirect:/actions?error=unauthorized";
+            }
+        }
+        
         actionChariteService.save(action);
         return "redirect:/actions";
     }

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<header th:fragment="navbar" class="site-header">
+    <style>
+        /* Isolate navbar logo from page-level img styles */
+        .navbar-brand img {
+            height: 36px !important;
+            width: auto !important;
+            max-height: 36px !important;
+            object-fit: unset !important;
+            display: inline !important;
+        }
+    </style>
+    <nav class="navbar navbar-expand-xl navbar-light">
+        <div class="container-xxl">
+            <a class="navbar-brand brand-mark" th:href="@{/}">
+                <img th:src="@{/images/logo-charite.png}" alt="Charite">
+                <span>Charite</span>
+            </a>
+
+            <button class="navbar-toggler shadow-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#publicNavbar" aria-controls="publicNavbar" aria-expanded="false" aria-label="Basculer la navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="publicNavbar">
+                <ul class="navbar-nav mx-auto align-items-xl-center gap-xl-3">
+                    <li class="nav-item"><a class="nav-link active" th:href="@{/}">Accueil</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/actions}">Explorer</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/organisations}">Associations</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/actions}">action</a></li>
+
+                </ul>
+
+                <div class="d-flex align-items-center gap-2 header-actions">
+                    <div class="dropdown">
+                        <button class="btn btn-lang dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">FR</button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#">FR</a></li>
+                            <li><a class="dropdown-item" href="#">EN</a></li>
+                        </ul>
+                    </div>
+                    <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn btn-ghost">Se connecter</a>
+                    <a sec:authorize="isAnonymous()" th:href="@{/register}" class="btn btn-success-pill">S'inscrire</a>
+                    
+                    <div sec:authorize="isAuthenticated()" class="dropdown">
+                        <button class="btn btn-soft dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle fs-5"></i>
+                            <span sec:authentication="principal.username">Utilisateur</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center gap-2 py-2" th:href="@{/users/me}">
+                                    <i class="bi bi-person"></i> Mon Profil
+                                </a>
+                            </li>
+                            <li sec:authorize="hasRole('ADMIN')">
+                                <a class="dropdown-item d-flex align-items-center gap-2 py-2" th:href="@{/admin/dashboard}">
+                                    <i class="bi bi-speedometer2"></i> Dashboard Admin
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="mb-0">
+                                    <button type="submit" class="dropdown-item d-flex align-items-center gap-2 py-2 text-danger">
+                                        <i class="bi bi-box-arrow-right"></i> Deconnexion
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+</body>
+</html>

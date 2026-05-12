@@ -25,7 +25,7 @@ public class SecurityConfig {
                         .requestMatchers("/actions/create", "/actions/edit/**", "/actions/publier/**", "/actions/archiver/**", "/actions/delete/**")
                         .hasAnyRole("ORG_ADMIN", "ADMIN")
 
-                        .requestMatchers("/", "/organisations", "/organisations/*", "/actions", "/actions/*").permitAll()
+                        .requestMatchers("/", "/organisations", "/organisations/*","/categories", "/categories/*", "/actions", "/actions/*").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

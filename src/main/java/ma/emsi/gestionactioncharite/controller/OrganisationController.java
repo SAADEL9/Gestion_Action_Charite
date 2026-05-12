@@ -2,6 +2,7 @@ package ma.emsi.gestionactioncharite.controller;
 import ma.emsi.gestionactioncharite.entity.Organisation;
 import ma.emsi.gestionactioncharite.service.OrganisationService;
 import ma.emsi.gestionactioncharite.service.UserService;
+import ma.emsi.gestionactioncharite.service.ActionChariteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -25,6 +26,7 @@ public class OrganisationController {
 
     private final OrganisationService organisationService;
     private final UserService userService;
+    private final ActionChariteService actionChariteService;
 
     @GetMapping
     public String findAll(Model model) {
@@ -33,8 +35,13 @@ public class OrganisationController {
     }
 
     @GetMapping("/{id}")
-    public String findById(@PathVariable Long id, Model model) {
-        model.addAttribute("organisation", organisationService.findById(id).orElse(null));
+    public String findById(@PathVariable Long id, @AuthenticationPrincipal UserDetails principal, Model model) {
+        var organisation = organisationService.findById(id).orElse(null);
+        model.addAttribute("organisation", organisation);
+        if (organisation != null) {
+            model.addAttribute("actions", actionChariteService.findByOrganisationId(id));
+            model.addAttribute("canEdit", checkOwnership(organisation, principal));
+        }
         return "organisation/detail";
     }
 
@@ -51,10 +58,14 @@ public class OrganisationController {
     public String create(
             @AuthenticationPrincipal UserDetails principal,
             @ModelAttribute Organisation organisation,
-            @RequestParam(value = "logoFile", required = false) MultipartFile logoFile) throws IOException {
+            @RequestParam(value = "logoFile", required = false) MultipartFile logoFile,
+            @RequestParam(value = "coverFile", required = false) MultipartFile coverFile) throws IOException {
 
         if (logoFile != null && !logoFile.isEmpty()) {
-            organisation.setLogo(storeLogo(logoFile));
+            organisation.setLogo(storeFile(logoFile, "logos"));
+        }
+        if (coverFile != null && !coverFile.isEmpty()) {
+            organisation.setCoverImage(storeFile(coverFile, "covers"));
         }
 
         var user = userService.findEntityByEmail(principal.getUsername());
@@ -64,21 +75,49 @@ public class OrganisationController {
 
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasAnyRole('ORG_ADMIN', 'ADMIN')")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        organisationService.findById(id).ifPresent(o -> model.addAttribute("organisation", o));
+    public String showEditForm(@PathVariable Long id, @AuthenticationPrincipal UserDetails principal, Model model) {
+        Organisation org = organisationService.findById(id).orElse(null);
+        if (org == null) return "redirect:/organisations";
+        
+        if (!checkOwnership(org, principal)) {
+            return "redirect:/organisations/" + id + "?error=unauthorized";
+        }
+        
+        model.addAttribute("organisation", org);
         return "organisation/form";
     }
 
     @PostMapping("/edit/{id}")
     @PreAuthorize("hasAnyRole('ORG_ADMIN', 'ADMIN')")
     public String update(@PathVariable Long id,
+                         @AuthenticationPrincipal UserDetails principal,
                          @ModelAttribute Organisation organisation,
-                         @RequestParam(value = "logoFile", required = false) MultipartFile logoFile) throws IOException {
+                         @RequestParam(value = "logoFile", required = false) MultipartFile logoFile,
+                         @RequestParam(value = "coverFile", required = false) MultipartFile coverFile) throws IOException {
+        
+        Organisation existing = organisationService.findById(id).orElse(null);
+        if (existing == null || !checkOwnership(existing, principal)) {
+            return "redirect:/organisations/" + id + "?error=unauthorized";
+        }
+
         if (logoFile != null && !logoFile.isEmpty()) {
-            organisation.setLogo(storeLogo(logoFile));
+            organisation.setLogo(storeFile(logoFile, "logos"));
+        }
+        if (coverFile != null && !coverFile.isEmpty()) {
+            organisation.setCoverImage(storeFile(coverFile, "covers"));
         }
         organisationService.update(id, organisation);
-        return "redirect:/organisations";
+        return "redirect:/organisations/" + id;
+    }
+
+    private boolean checkOwnership(Organisation org, UserDetails principal) {
+        if (principal == null) return false;
+        // Super admin can edit anything
+        if (principal.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return true;
+        }
+        // Check if user is the assigned admin of the org
+        return org.getAdmin() != null && org.getAdmin().getEmail().equals(principal.getUsername());
     }
 
     @GetMapping("/valider/{id}")
@@ -104,11 +143,11 @@ public class OrganisationController {
         return "redirect:/organisations";
     }
 
-    private String storeLogo(MultipartFile logoFile) throws IOException {
-        String filename = UUID.randomUUID() + "_" + logoFile.getOriginalFilename();
-        Path uploadPath = Paths.get("uploads", "logos");
+    private String storeFile(MultipartFile file, String subDir) throws IOException {
+        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        Path uploadPath = Paths.get("uploads", subDir);
         Files.createDirectories(uploadPath);
-        Files.copy(logoFile.getInputStream(), uploadPath.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
-        return "/uploads/logos/" + filename;
+        Files.copy(file.getInputStream(), uploadPath.resolve(filename), StandardCopyOption.REPLACE_EXISTING);
+        return "/uploads/" + subDir + "/" + filename;
     }
 }

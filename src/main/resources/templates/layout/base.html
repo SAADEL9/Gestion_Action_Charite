@@ -9,7 +9,7 @@
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
-    <div th:replace="~{layout/navbar :: navbar}"></div>
+    <div th:replace="~{fragments/public-navbar :: navbar}"></div>
 
     <main class="container mt-4">
         <div th:if="${message}" class="alert alert-info alert-dismissible fade show" role="alert">

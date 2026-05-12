@@ -28,6 +28,7 @@ public class Organisation {
     private String numeroFiscal;
     private String contactPrincipal;
     private String logo;
+    private String coverImage;
     
     @Column(length = 1000)
     private String description;

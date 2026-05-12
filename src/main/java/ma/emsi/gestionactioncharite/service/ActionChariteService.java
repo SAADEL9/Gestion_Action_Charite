@@ -11,6 +11,8 @@ public interface ActionChariteService {
 
     List<ActionCharite> findAll();
 
+    List<ActionCharite> findByOrganisationId(Long organisationId);
+
     ActionCharite update(Long id, ActionCharite action);
 
     ActionCharite publier(Long id);

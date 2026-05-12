@@ -1,329 +1,444 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D&eacute;tail action</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <th:block th:replace="~{fragments/head :: head('Détail action')}"></th:block>
+    <!-- Extra metadata for Stripe/CSRF -->
     <meta name="stripe-public-key" th:content="${stripePublicKey}">
     <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}">
     <meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : 'X-CSRF-TOKEN'}">
     <style>
-        #card-element {
-            padding: 10px 12px;
-            border: 1px solid #ced4da;
-            border-radius: 0.375rem;
-            background: white;
-            min-height: 42px;
+        :root {
+            --green-primary: #2d8c4e;
+            --green-light: #e8f5ee;
+            --green-mid: #4caf72;
+            --text-dark: #1a1a2e;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --bg: #f7f8fa;
         }
-        #card-element.StripeElement--focus { border-color: #86b7fe; box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25); }
-        #card-element.StripeElement--invalid { border-color: #dc3545; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-dark);
+        }
+
+        /* ── Hero Section ── */
+        .action-hero {
+            background: #fff;
+            padding: 40px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--green-light);
+            color: var(--green-primary);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .action-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .action-meta {
+            display: flex;
+            gap: 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+
+        .action-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-meta i {
+            color: var(--green-primary);
+        }
+
+        /* ── Sidebar Cards ── */
+        .sticky-sidebar {
+            position: sticky;
+            top: 20px;
+        }
+
+        .card-donation {
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .progress-container {
+            margin-bottom: 20px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .progress-label .amount {
+            font-size: 1.2rem;
+            color: var(--text-dark);
+        }
+
+        .progress-label .target {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .progress-bar-wrap {
+            height: 10px;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--green-primary);
+            border-radius: 10px;
+            transition: width 0.6s ease;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+
+        .stat-box {
+            text-align: center;
+        }
+
+        .stat-box .val {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .stat-box .lbl {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* ── Content ── */
+        .content-section {
+            background: #fff;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .content-section h4 {
+            font-weight: 700;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .content-section h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--green-primary);
+        }
+
+        .description {
+            line-height: 1.7;
+            color: #4b5563;
+        }
+
+        /* ── Payment & Participation ── */
+        .btn-pay {
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+
+        .btn-stripe { background: #6366f1; color: #fff; border: none; }
+        .btn-stripe:hover { background: #4f46e5; }
+
+        .btn-paypal { background: #ffc439; color: #000; border: none; }
+        .btn-paypal:hover { background: #f2ba2b; }
+
+        .btn-participate { background: var(--green-primary); color: #fff; border: none; }
+        .btn-participate:hover { background: var(--green-mid); color: #fff; }
+
+        .form-label-custom {
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        #card-element {
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: #fff;
+        }
     </style>
 </head>
-<body>
-    <div th:replace="~{layout/navbar :: navbar}"></div>
+<body class="public-page">
+<div th:replace="~{fragments/public-navbar :: navbar}"></div>
 
-    <main class="container py-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="page-title mb-0">D&eacute;tail action</h1>
-            <div class="d-flex gap-2">
-                <a th:href="@{/actions}" class="btn btn-outline-secondary">Retour</a>
-                <a th:if="${action != null and canManage}" th:href="@{/actions/edit/{id}(id=${action.id})}" class="btn btn-primary">Modifier</a>
+<!-- ── Hero ── -->
+<div class="action-hero" th:if="${action != null}">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="category-badge" th:text="${action.categorie != null ? action.categorie.nom : 'Action humanitaire'}"></div>
+                <h1 class="action-title" th:text="${action.titre}"></h1>
+                <div class="action-meta">
+                    <span><i class="bi bi-geo-alt"></i> <span th:text="${action.lieu}"></span></span>
+                    <span><i class="bi bi-calendar-event"></i> 
+                        <span th:text="${action.dateDebut != null ? #temporals.format(action.dateDebut, 'dd MMM yyyy') : ''}"></span>
+                    </span>
+                    <span><i class="bi bi-building"></i> <span th:text="${action.organisation != null ? action.organisation.nom : 'Organisation'}"></span></span>
+                    <span th:if="${action.status != null}">
+                        <i class="bi bi-info-circle"></i>
+                        <span th:text="${action.status}"></span>
+                    </span>
+                </div>
+            </div>
+            <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                <div class="d-flex gap-2 justify-content-lg-end">
+                    <a th:href="@{/actions}" class="btn btn-outline-secondary px-4">Retour</a>
+                    <a th:if="${canManage}" th:href="@{/actions/edit/{id}(id=${action.id})}" class="btn btn-primary px-4">Modifier</a>
+                </div>
             </div>
         </div>
+    </div>
+</div>
 
-        <div th:if="${action == null}" class="alert alert-warning">Action introuvable.</div>
+<div class="container py-2" th:if="${action == null}">
+    <div class="alert alert-warning">Action introuvable.</div>
+    <a th:href="@{/actions}" class="btn btn-primary">Voir toutes les actions</a>
+</div>
 
-        <div th:if="${action != null}" class="row g-4">
-            <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex align-items-start justify-content-between gap-3">
-                            <div>
-                                <h3 class="mb-1" th:text="${action.titre}"></h3>
-                                <div class="text-muted">
-                                    <i class="bi bi-geo-alt"></i> <span th:text="${action.lieu}"></span>
-                                </div>
+<main class="container mb-5" th:if="${action != null}">
+    <div class="row g-4">
+        <!-- Content -->
+        <div class="col-lg-8">
+            <div class="content-section">
+                <h4>Description de l'action</h4>
+                <div class="description" th:text="${action.description}"></div>
+            </div>
+
+            <div class="content-section">
+                <h4>Informations détaillées</h4>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="d-flex gap-3">
+                            <div class="icon-circle bg-light p-2 rounded text-primary">
+                                <i class="bi bi-calendar-check fs-4"></i>
                             </div>
                             <div>
-                                <span class="badge"
-                                      th:classappend="'badge-status-' + ${action.status.toString().toLowerCase()}"
-                                      th:text="${action.status}"></span>
+                                <div class="text-muted small">Dates de l'action</div>
+                                <div class="fw-bold">
+                                    Du <span th:text="${action.dateDebut != null ? #temporals.format(action.dateDebut, 'dd/MM/yyyy') : ''}"></span>
+                                    au <span th:text="${action.dateFin != null ? #temporals.format(action.dateFin, 'dd/MM/yyyy') : ''}"></span>
+                                </div>
                             </div>
                         </div>
-
-                        <hr class="my-4">
-
-                        <p class="mb-4" th:text="${action.description}"></p>
-
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="text-muted">Dates</div>
-                                <div class="fw-semibold">
-                                    <span th:text="${action.dateDebut != null ? #temporals.format(action.dateDebut, 'dd/MM/yyyy') : ''}"></span>
-                                    -
-                                    <span th:text="${action.dateFin != null ? #temporals.format(action.dateFin, 'dd/MM/yyyy') : ''}"></span>
-                                </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex gap-3">
+                            <div class="icon-circle bg-light p-2 rounded text-primary">
+                                <i class="bi bi-people fs-4"></i>
                             </div>
-                            <div class="col-md-6">
-                                <div class="text-muted">Organisation</div>
-                                <div class="fw-semibold" th:text="${action.organisation != null ? action.organisation.nom : ''}"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="text-muted">Cat&eacute;gorie</div>
-                                <div class="fw-semibold" th:text="${action.categorie != null ? action.categorie.nom : ''}"></div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="text-muted">Objectif</div>
-                                <div class="fw-semibold">
-                                    <span th:text="${action.objectifCollect != null ? #numbers.formatDecimal(action.objectifCollect, 1, 2) : '0.00'}"></span> MAD
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="text-muted">Somme actuelle</div>
-                                <div class="fw-semibold">
-                                    <span th:text="${action.sommeActuelle != null ? #numbers.formatDecimal(action.sommeActuelle, 1, 2) : '0.00'}"></span> MAD
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="text-muted">Progression</div>
-                                <div class="fw-semibold" th:text="${progression != null ? #numbers.formatDecimal(progression, 1, 0) : '0'} + '%'"></div>
-                            </div>
-                        </div>
-
-                        <div class="mt-3">
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar"
-                                     th:style="'width: ' + ${progression} + '%'"
-                                     th:text="${progression != null ? #numbers.formatDecimal(progression, 1, 0) : '0'} + '%'"></div>
+                            <div>
+                                <div class="text-muted small">Organisation</div>
+                                <div class="fw-bold" th:text="${action.organisation != null ? action.organisation.nom : ''}"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="col-lg-4">
-                <!-- Participation -->
-                <div class="card mb-3">
-                    <div class="card-header bg-transparent">
-                        <h5 class="card-title mb-0">Participation</h5>
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="sticky-sidebar">
+                <!-- Donation Card -->
+                <div class="card-donation">
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span class="amount" th:text="${(action.sommeActuelle != null ? action.sommeActuelle : 0) + ' MAD'}"></span>
+                            <span class="target" th:text="'sur ' + (action.objectifCollect != null ? action.objectifCollect : 0) + ' MAD'"></span>
+                        </div>
+                        <div class="progress-bar-wrap">
+                            <div class="progress-bar-fill" th:style="'width: ' + ${progression} + '%'"></div>
+                        </div>
+                        <div class="text-end mt-1 small text-muted fw-bold">
+                            <span th:text="${progression != null ? #numbers.formatDecimal(progression, 1, 0) : '0'} + '%'"></span> complété
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <p class="text-muted mb-3">
-                            <i class="bi bi-people"></i>
-                            <span th:text="${nbParticipants}">0</span> participant(s) inscrit(s)
-                        </p>
 
-                        <!-- Objectif atteint – inscriptions fermées -->
-                        <div th:if="${objectifAtteint}" class="alert alert-info mb-0">
-                            <i class="bi bi-trophy-fill"></i> Objectif atteint – inscriptions fermées.
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <span class="val" th:text="${nbParticipants}">0</span>
+                            <span class="lbl">Participants</span>
                         </div>
+                        <div class="stat-box">
+                            <span class="val" th:text="${nbDonsStripe + nbDonsPaypal}">0</span>
+                            <span class="lbl">Dons reçus</span>
+                        </div>
+                    </div>
 
-                        <!-- Utilisateur non connecté -->
+                    <!-- Status Alerts -->
+                    <div th:if="${paymentSuccess}" class="alert alert-success small py-2 mb-3">
+                        <i class="bi bi-check-circle-fill me-1"></i> Merci pour votre don !
+                    </div>
+                    <div th:if="${donError}" class="alert alert-danger small py-2 mb-3">
+                        <i class="bi bi-exclamation-triangle me-1"></i> Montant invalide.
+                    </div>
+                    <div th:if="${objectifAtteint}" class="alert alert-info small py-2 mb-3">
+                        <i class="bi bi-trophy-fill me-1"></i> Objectif atteint !
+                    </div>
+
+                    <!-- Participation Section -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3">Participer</h6>
                         <div sec:authorize="!isAuthenticated()" th:unless="${objectifAtteint}">
-                            <a th:href="@{/login}" class="btn btn-outline-success w-100">
-                                Connectez-vous pour participer
-                            </a>
+                            <a th:href="@{/login}" class="btn btn-participate w-100">Connectez-vous</a>
                         </div>
-
-                        <!-- Déjà inscrit -->
                         <div sec:authorize="isAuthenticated()" th:if="${dejaInscrit and not objectifAtteint}">
-                            <div class="alert alert-success mb-0 text-center">
-                                <i class="bi bi-check-circle"></i> Vous êtes inscrit(e) à cette action
+                            <div class="alert alert-success small py-2 mb-0 text-center">
+                                <i class="bi bi-check-circle"></i> Déjà inscrit
                             </div>
                         </div>
-
-                        <!-- Bouton inscription -->
                         <div sec:authorize="isAuthenticated()" th:unless="${dejaInscrit or objectifAtteint}">
                             <form th:action="@{/actions/{id}/participer(id=${action.id})}" method="post">
-                                <input type="hidden" th:if="${_csrf != null}"
-                                       th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                <button type="submit" class="btn btn-success w-100">
-                                    <i class="bi bi-person-plus"></i> Participer à cette action
-                                </button>
+                                <button type="submit" class="btn btn-participate w-100">Participer</button>
                             </form>
                         </div>
                     </div>
-                </div>
 
-                <!-- ── Carte Stripe ───────────────────────────────── -->
-                <div class="card mb-3">
-                    <div class="card-header bg-transparent">
-                        <h5 class="card-title mb-0">
-                            <i class="bi bi-credit-card"></i> Payer par carte (Stripe)
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="text-muted mb-2">
-                            <i class="bi bi-heart"></i>
-                            <span th:text="${nbDonsStripe}">0</span> don(s) par carte
-                        </p>
-
-                        <div th:if="${paymentSuccess}" class="alert alert-success mb-3">
-                            <i class="bi bi-check-circle-fill"></i> Paiement reçu et confirmé ! Merci pour votre don.
-                        </div>
-                        <div th:if="${donError}" class="alert alert-danger mb-3">
-                            <i class="bi bi-exclamation-triangle"></i> Le montant dépasse ce qui reste à collecter.
-                        </div>
-                        <div th:if="${objectifAtteint}" class="alert alert-info mb-0">
-                            <i class="bi bi-trophy-fill"></i> Objectif atteint !
-                        </div>
-
-                        <!-- Non connecté -->
+                    <!-- Payment Section -->
+                    <div th:unless="${objectifAtteint}">
+                        <h6 class="fw-bold mb-3">Faire un don</h6>
                         <div sec:authorize="!isAuthenticated()">
-                            <a th:href="@{/login}" class="btn btn-outline-primary w-100">
-                                Connectez-vous pour payer
-                            </a>
+                            <a th:href="@{/login}" class="btn btn-outline-primary w-100">Connectez-vous</a>
                         </div>
+                        
+                        <div sec:authorize="isAuthenticated()">
+                            <!-- Stripe Form -->
+                            <div th:if="${not dejaPayeStripe}">
+                                <form id="stripeForm" th:data-action-id="${action.id}" class="mb-3">
+                                    <div class="mb-3">
+                                        <label class="form-label-custom">Montant MAD</label>
+                                        <input type="number" id="stripeMontant" class="form-control" placeholder="Montant" min="1" step="1" th:max="${resteACollecte}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label-custom">Carte bancaire</label>
+                                        <div id="card-element"></div>
+                                        <div id="card-errors" class="text-danger mt-1 small"></div>
+                                    </div>
+                                    <button type="submit" id="stripeSubmitBtn" class="btn btn-pay btn-stripe w-100 mb-2">
+                                        <i class="bi bi-credit-card"></i> Payer par Carte
+                                    </button>
+                                    <div id="stripeSpinner" class="text-center d-none">
+                                        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                                    </div>
+                                    <div id="stripeError" class="alert alert-danger mt-2 d-none small"></div>
+                                </form>
+                            </div>
+                            <div th:if="${dejaPayeStripe}" class="alert alert-success small py-2 mb-3">
+                                <i class="bi bi-check-circle"></i> Don par carte effectué
+                            </div>
 
-                        <!-- Déjà payé via Stripe -->
-                        <div sec:authorize="isAuthenticated()" th:if="${dejaPayeStripe}">
-                            <div class="alert alert-success mb-0 text-center">
-                                <i class="bi bi-check-circle"></i> Vous avez déjà contribué via carte
+                            <!-- PayPal Form -->
+                            <div th:if="${not dejaPayePaypal}">
+                                <form th:action="@{/actions/{id}/paypal/create-order(id=${action.id})}" method="post">
+                                    <div class="mb-3" th:if="${dejaPayeStripe}">
+                                        <label class="form-label-custom">Montant MAD</label>
+                                        <input type="number" name="montant" class="form-control" placeholder="Montant" min="1" step="1" th:max="${resteACollecte}" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-pay btn-paypal w-100">
+                                        <i class="bi bi-paypal"></i> Payer avec PayPal
+                                    </button>
+                                </form>
+                            </div>
+                            <div th:if="${dejaPayePaypal}" class="alert alert-success small py-2 mt-2">
+                                <i class="bi bi-check-circle"></i> Don PayPal effectué
                             </div>
                         </div>
-
-                        <!-- Formulaire Stripe -->
-                        <div sec:authorize="isAuthenticated()"
-                             th:if="${not dejaPayeStripe and not objectifAtteint}">
-                            <form id="stripeForm" th:data-action-id="${action.id}">
-                                <input type="hidden" th:if="${_csrf != null}"
-                                       th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold">Montant (MAD)</label>
-                                    <input type="number" id="stripeMontant" class="form-control"
-                                           placeholder="Ex : 100" min="1" step="0.01"
-                                           th:max="${resteACollecte}" required>
-                                    <div class="form-text" th:if="${resteACollecte != null and resteACollecte > 0}">
-                                        Maximum : <span th:text="${#numbers.formatDecimal(resteACollecte, 1, 2)}"></span> MAD
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold">Carte bancaire</label>
-                                    <div id="card-element"></div>
-                                    <div id="card-errors" class="text-danger mt-1 small"></div>
-                                </div>
-                                <button type="submit" id="stripeSubmitBtn" class="btn btn-primary w-100">
-                                    <i class="bi bi-credit-card"></i> Payer par carte
-                                </button>
-                                <div id="stripeSpinner" class="text-center mt-2 d-none">
-                                    <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
-                                    <span class="ms-2 text-muted small">Traitement en cours…</span>
-                                </div>
-                            </form>
-                            <div id="stripeError" class="alert alert-danger mt-2 d-none"></div>
-                        </div>
                     </div>
                 </div>
 
-                <!-- ── Carte PayPal ───────────────────────────────── -->
-                <div class="card mb-3">
-                    <div class="card-header bg-transparent">
-                        <h5 class="card-title mb-0">
-                            <i class="bi bi-paypal"></i> Payer par PayPal
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="text-muted mb-2">
-                            <i class="bi bi-heart"></i>
-                            <span th:text="${nbDonsPaypal}">0</span> don(s) PayPal
-                        </p>
-
-                        <div th:if="${paypalError}" class="alert alert-danger mb-3">
-                            <i class="bi bi-exclamation-triangle"></i> Le paiement PayPal a échoué. Réessayez.
-                        </div>
-                        <div th:if="${objectifAtteint}" class="alert alert-info mb-0">
-                            <i class="bi bi-trophy-fill"></i> Objectif atteint !
-                        </div>
-
-                        <!-- Non connecté -->
-                        <div sec:authorize="!isAuthenticated()">
-                            <a th:href="@{/login}" class="btn btn-outline-warning w-100">
-                                Connectez-vous pour payer
-                            </a>
-                        </div>
-
-                        <!-- Déjà payé via PayPal -->
-                        <div sec:authorize="isAuthenticated()" th:if="${dejaPayePaypal}">
-                            <div class="alert alert-success mb-0 text-center">
-                                <i class="bi bi-check-circle"></i> Vous avez déjà contribué via PayPal
-                            </div>
-                        </div>
-
-                        <!-- Formulaire PayPal -->
-                        <div sec:authorize="isAuthenticated()"
-                             th:if="${not dejaPayePaypal and not objectifAtteint}">
-                            <form th:action="@{/actions/{id}/paypal/create-order(id=${action.id})}"
-                                  method="post">
-                                <input type="hidden" th:if="${_csrf != null}"
-                                       th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold">Montant (MAD)</label>
-                                    <input type="number" name="montant" class="form-control"
-                                           placeholder="Ex : 100" min="1" step="0.01"
-                                           th:max="${resteACollecte}" required>
-                                    <div class="form-text" th:if="${resteACollecte != null and resteACollecte > 0}">
-                                        Maximum : <span th:text="${#numbers.formatDecimal(resteACollecte, 1, 2)}"></span> MAD
-                                    </div>
-                                </div>
-                                <button type="submit" class="btn btn-warning w-100">
-                                    <i class="bi bi-paypal"></i> Payer avec PayPal
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Actions admin/org -->
-                <div class="card" th:if="${canManage}">
-                    <div class="card-header bg-transparent">
-                        <h5 class="card-title mb-0">Gestion</h5>
-                    </div>
-                    <div class="card-body d-grid gap-2">
-                        <a th:href="@{/actions/edit/{id}(id=${action.id})}" class="btn btn-outline-primary">Modifier</a>
-                        <a th:href="@{/actions/delete/{id}(id=${action.id})}" class="btn btn-outline-danger"
-                           onclick="return confirm('Etes-vous sur ?')">Supprimer</a>
+                <!-- Admin Gestion -->
+                <div class="card-donation py-3" th:if="${canManage}">
+                    <h6 class="fw-bold mb-3">Gestion de l'action</h6>
+                    <div class="d-grid gap-2">
+                        <a th:href="@{/actions/edit/{id}(id=${action.id})}" class="btn btn-outline-primary btn-sm">Modifier</a>
+                        <a th:href="@{/actions/delete/{id}(id=${action.id})}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Supprimer définitivement ?')">Supprimer</a>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
+</main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://js.stripe.com/v3/"></script>
-    <script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<script>
     (function () {
         const stripeForm  = document.getElementById('stripeForm');
-        if (!stripeForm) return; // formulaire Stripe absent (non connecté ou déjà payé)
+        if (!stripeForm) return;
 
         const actionId  = stripeForm.dataset.actionId;
         const submitBtn = document.getElementById('stripeSubmitBtn');
         const spinner   = document.getElementById('stripeSpinner');
         const errorDiv  = document.getElementById('stripeError');
 
-        // ── Init Stripe ───────────────────────────────────────────────
         const pkMeta = document.querySelector('meta[name="stripe-public-key"]');
         if (!pkMeta || !pkMeta.content || typeof Stripe === 'undefined') return;
 
         const stripe      = Stripe(pkMeta.content);
         const cardElement = stripe.elements().create('card', {
             style: {
-                base:    { fontSize: '16px', color: '#424770', '::placeholder': { color: '#aab7c4' } },
+                base:    { fontSize: '16px', color: '#1a1a2e', '::placeholder': { color: '#6b7280' } },
                 invalid: { color: '#dc3545' }
             }
         });
         cardElement.mount('#card-element');
-        cardElement.on('change', function (ev) {
+        cardElement.on('change', (ev) => {
             document.getElementById('card-errors').textContent = ev.error ? ev.error.message : '';
         });
 
-        // ── Soumission Stripe ─────────────────────────────────────────
-        stripeForm.addEventListener('submit', async function (e) {
+        stripeForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const montant = document.getElementById('stripeMontant').value;
             const csrf    = document.querySelector('meta[name="_csrf"]').content;
             const csrfHdr = document.querySelector('meta[name="_csrf_header"]').content;
@@ -333,31 +448,18 @@
             errorDiv.classList.add('d-none');
 
             try {
-                // 1. Créer le PaymentIntent
-                const intentRes  = await fetch(
-                    `/actions/${actionId}/stripe/create-intent?montant=${montant}`,
-                    { method: 'POST', headers: { [csrfHdr]: csrf } }
-                );
+                const intentRes  = await fetch(`/actions/${actionId}/stripe/create-intent?montant=${montant}`, { method: 'POST', headers: { [csrfHdr]: csrf } });
                 const intentData = await intentRes.json();
                 if (intentData.error) throw new Error(intentData.error);
 
-                // 2. Saisie carte via Stripe.js
-                const { error: stripeError } = await stripe.confirmCardPayment(
-                    intentData.clientSecret,
-                    { payment_method: { card: cardElement } }
-                );
+                const { error: stripeError } = await stripe.confirmCardPayment(intentData.clientSecret, { payment_method: { card: cardElement } });
                 if (stripeError) throw new Error(stripeError.message);
 
-                // 3. Confirmer côté serveur
-                const confirmRes  = await fetch(
-                    `/actions/${actionId}/stripe/confirm/${intentData.donId}`,
-                    { method: 'POST', headers: { [csrfHdr]: csrf } }
-                );
+                const confirmRes  = await fetch(`/actions/${actionId}/stripe/confirm/${intentData.donId}`, { method: 'POST', headers: { [csrfHdr]: csrf } });
                 const confirmData = await confirmRes.json();
                 if (confirmData.error) throw new Error(confirmData.error);
 
                 window.location.href = `/actions/${actionId}?don=payment-success`;
-
             } catch (err) {
                 errorDiv.textContent = err.message;
                 errorDiv.classList.remove('d-none');
@@ -366,6 +468,6 @@
             }
         });
     })();
-    </script>
+</script>
 </body>
 </html>
