@@ -13,7 +13,7 @@
         }
     </style>
     <nav class="navbar navbar-expand-xl navbar-light">
-        <div class="container-xxl">
+        <div class="container-xxl px-4 px-md-5">
             <a class="navbar-brand brand-mark" th:href="@{/}">
                 <img th:src="@{/images/logo-charite.png}" alt="Charite">
                 <span>Charite</span>
@@ -46,7 +46,7 @@
                     <div sec:authorize="isAuthenticated()" class="dropdown">
                         <button class="btn btn-soft dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
                             <i class="bi bi-person-circle fs-5"></i>
-                            <span sec:authentication="principal.username">Utilisateur</span>
+                            <span sec:authentication="principal.fullName">Utilisateur</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
                             <li>

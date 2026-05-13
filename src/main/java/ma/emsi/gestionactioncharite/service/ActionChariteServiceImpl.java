@@ -10,7 +10,9 @@ import ma.emsi.gestionactioncharite.repository.ActionChariteRepository;
 import ma.emsi.gestionactioncharite.repository.CategorieRepository;
 import ma.emsi.gestionactioncharite.repository.OrganisationRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -22,11 +24,22 @@ public class ActionChariteServiceImpl implements ActionChariteService {
     private final ActionChariteRepository actionChariteRepository;
     private final OrganisationRepository organisationRepository;
     private final CategorieRepository categorieRepository;
+    private final FileStorageService fileStorageService;
 
     @Override
-    public ActionCharite save(ActionCharite action) {
+    public ActionCharite save(ActionCharite action, MultipartFile imageFile) {
         action.setOrganisation(resolveApprovedOrganisation(action));
         action.setCategorie(resolveCategorie(action));
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                String imagePath = fileStorageService.store(imageFile, "actions");
+                action.setImagePrincipale(imagePath);
+            } catch (IOException e) {
+                throw new RuntimeException("Erreur lors de l'enregistrement de l'image : " + e.getMessage());
+            }
+        }
+
         if (action.getDateCreation() == null) {
             action.setDateCreation(LocalDate.now());
         }
@@ -55,7 +68,7 @@ public class ActionChariteServiceImpl implements ActionChariteService {
     }
 
     @Override
-    public ActionCharite update(Long id, ActionCharite action) {
+    public ActionCharite update(Long id, ActionCharite action, MultipartFile imageFile) {
         ActionCharite existing = actionChariteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Action non trouvée : " + id));
 
@@ -68,6 +81,19 @@ public class ActionChariteServiceImpl implements ActionChariteService {
         existing.setStatus(action.getStatus() != null ? action.getStatus() : existing.getStatus());
         existing.setOrganisation(resolveApprovedOrganisation(action));
         existing.setCategorie(resolveCategorie(action));
+
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                // Delete old image if exists
+                if (existing.getImagePrincipale() != null) {
+                    fileStorageService.delete(existing.getImagePrincipale());
+                }
+                String imagePath = fileStorageService.store(imageFile, "actions");
+                existing.setImagePrincipale(imagePath);
+            } catch (IOException e) {
+                throw new RuntimeException("Erreur lors de l'enregistrement de l'image : " + e.getMessage());
+            }
+        }
 
         if (existing.getDateCreation() == null) {
             existing.setDateCreation(LocalDate.now());

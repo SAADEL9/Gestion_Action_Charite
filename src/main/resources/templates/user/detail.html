@@ -123,7 +123,7 @@
 <body class="public-page">
 <div th:replace="~{fragments/public-navbar :: navbar}"></div>
 
-<!-- ── Header ── -->
+<!-- â”€â”€ Header â”€â”€ -->
 <div class="profile-header" th:if="${user != null}">
     <div class="container">
         <div class="d-flex align-items-center">
@@ -146,7 +146,7 @@
 
 <main class="container mb-5" th:if="${user != null}">
     <div th:if="${param.requested}" class="alert alert-success alert-dismissible fade show mb-4 rounded-3 border-0 shadow-sm">
-        <i class="bi bi-check-circle-fill me-2"></i> Votre demande pour devenir organisation a été envoyée avec succès !
+        <i class="bi bi-check-circle-fill me-2"></i> Votre demande pour devenir organisation a Ã©tÃ© envoyÃ©e avec succÃ¨s !
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
@@ -173,14 +173,14 @@
                         </div>
                         <div class="col-md-6">
                             <div class="info-item">
-                                <div class="info-label">Numéro de téléphone</div>
-                                <div class="info-value" th:text="${#strings.isEmpty(user.telephone) ? 'Non renseigné' : user.telephone}"></div>
+                                <div class="info-label">NumÃ©ro de tÃ©lÃ©phone</div>
+                                <div class="info-value" th:text="${#strings.isEmpty(user.telephone) ? 'Non renseignÃ©' : user.telephone}"></div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="info-item">
                                 <div class="info-label">Adresse physique</div>
-                                <div class="info-value" th:text="${#strings.isEmpty(user.adresse) ? 'Non renseignée' : user.adresse}"></div>
+                                <div class="info-value" th:text="${#strings.isEmpty(user.adresse) ? 'Non renseignÃ©e' : user.adresse}"></div>
                             </div>
                         </div>
                     </div>
@@ -193,7 +193,7 @@
                     <i class="bi bi-heart-fill me-2 text-danger"></i>Mes actions solidaires
                 </div>
                 <div class="card-body text-center py-5">
-                    <div class="text-muted mb-3">Vous n'avez pas encore participé à des actions.</div>
+                    <div class="text-muted mb-3">Vous n'avez pas encore participÃ© Ã  des actions.</div>
                     <a th:href="@{/actions}" class="btn btn-outline-success rounded-pill">Explorer les actions</a>
                 </div>
             </div>
@@ -203,8 +203,8 @@
         <div class="col-lg-4">
             <!-- Apply for organisation -->
             <div class="card card-profile apply-card p-4" th:if="${user.role.name() == 'USER'}">
-                <h4 class="fw-bold mb-3">Créez votre organisation</h4>
-                <p class="small opacity-75 mb-4">Vous représentez une association ? Demandez un accès gestionnaire pour publier vos propres actions de charité.</p>
+                <h4 class="fw-bold mb-3">CrÃ©ez votre organisation</h4>
+                <p class="small opacity-75 mb-4">Vous reprÃ©sentez une association ? Demandez un accÃ¨s gestionnaire pour publier vos propres actions de charitÃ©.</p>
                 
                 <div th:if="${user.organisationRequestPending}" class="bg-white bg-opacity-10 rounded-3 p-3 text-center">
                     <div class="fw-bold"><i class="bi bi-hourglass-split me-2"></i>Demande en attente</div>
@@ -222,19 +222,24 @@
             <!-- Manage organisation (if ORG_ADMIN) -->
             <div class="card card-profile p-4" th:if="${user.role.name() == 'ORG_ADMIN'}">
                 <h5 class="fw-bold mb-3"><i class="bi bi-building me-2"></i>Gestionnaire</h5>
-                <p class="text-muted small">Vous avez un accès gestionnaire. Vous pouvez créer et gérer les actions de votre organisation.</p>
+                <p class="text-muted small">Vous avez un accÃ¨s gestionnaire. Vous pouvez crÃ©er et gÃ©rer les actions de votre organisation.</p>
                 <a th:href="@{/actions/create}" class="btn btn-success w-100 mb-2">Publier une action</a>
                 <a th:href="@{/organisations}" class="btn btn-outline-secondary w-100">Voir les organisations</a>
             </div>
 
-            <!-- Account Security -->
-            <div class="card card-profile">
-                <div class="card-header">Sécurité</div>
+            <div class="card card-profile" sec:authorize="hasRole('ADMIN')">
+                <div class="card-header">SÃ©curitÃ©</div>
                 <div class="card-body">
                     <a th:href="@{/users/edit/{id}(id=${user.id})}" class="btn btn-outline-dark w-100 mb-2">Changer le mot de passe</a>
+                </div>
+            </div>
+
+            <!-- Logout always visible -->
+            <div class="card card-profile">
+                <div class="card-body">
                     <form th:action="@{/logout}" method="post">
                         <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                        <button type="submit" class="btn btn-outline-danger w-100">Déconnexion</button>
+                        <button type="submit" class="btn btn-outline-danger w-100">DÃ©connexion</button>
                     </form>
                 </div>
             </div>
@@ -244,7 +249,7 @@
 
 <div th:if="${user == null}" class="container py-5 text-center">
     <div class="alert alert-warning">Utilisateur introuvable.</div>
-    <a th:href="@{/}" class="btn btn-primary">Retour à l'accueil</a>
+    <a th:href="@{/}" class="btn btn-primary">Retour Ã  l'accueil</a>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

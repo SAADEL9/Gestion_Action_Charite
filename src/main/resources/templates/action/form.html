@@ -1,131 +1,174 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/head :: head(${action != null and action.id != null ? 'Modifier action' : 'Nouvelle action'})}"></head>
-<body class="public-page">
-<div th:replace="~{fragments/public-navbar :: navbar}"></div>
+<body class="bg-light">
+    <div th:replace="~{fragments/public-navbar :: navbar}"></div>
 
-    <main class="container py-4">
-        <h1 class="page-title mb-4" th:text="${action != null and action.id != null ? &quot;Modifier l'action&quot; : 'Nouvelle Action'}"></h1>
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-1">
+                                <li class="breadcrumb-item"><a th:href="@{/actions}" class="text-decoration-none">Actions</a></li>
+                                <li class="breadcrumb-item active" aria-current="page" th:text="${action.id != null ? 'Modifier' : 'Créer'}"></li>
+                            </ol>
+                        </nav>
+                        <h1 class="h3 fw-bold mb-0" th:text="${action.id != null ? 'Modifier l''action' : 'Nouvelle Action'}"></h1>
+                    </div>
+                    <a th:href="@{/actions}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i> Retour à la liste
+                    </a>
+                </div>
 
-        <form th:action="${action != null and action.id != null ? '/actions/edit/' + action.id : '/actions/create'}"
-              th:object="${action}" method="post" class="needs-validation" novalidate>
-            <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <form th:action="${action.id != null ? '/actions/edit/' + action.id : '/actions/create'}"
+                      th:object="${action}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
-            <div class="row g-4">
-                <div class="col-lg-8">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label for="titre" class="form-label">Titre *</label>
-                                <input type="text" class="form-control" id="titre" th:field="*{titre}" required>
-                                <div class="invalid-feedback">Veuillez fournir un titre.</div>
-                            </div>
+                    <div class="row g-4">
+                        <!-- Main Content -->
+                        <div class="col-lg-8">
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-white py-3">
+                                    <h5 class="card-title mb-0 fw-bold">Informations Générales</h5>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="mb-4">
+                                        <label for="titre" class="form-label fw-semibold">Titre de l'action *</label>
+                                        <input type="text" class="form-control form-control-lg bg-light border-0" id="titre" th:field="*{titre}" placeholder="Ex: Soutien aux orphelins de Casablanca" required>
+                                        <div class="invalid-feedback">Le titre est requis.</div>
+                                    </div>
 
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Description *</label>
-                                <textarea class="form-control" id="description" th:field="*{description}" rows="5" required></textarea>
-                                <div class="invalid-feedback">Veuillez fournir une description.</div>
-                            </div>
+                                    <div class="mb-4">
+                                        <label for="description" class="form-label fw-semibold">Description détaillée *</label>
+                                        <textarea class="form-control bg-light border-0" id="description" th:field="*{description}" rows="6" placeholder="Décrivez votre action en détail..." required></textarea>
+                                        <div class="invalid-feedback">La description est requise.</div>
+                                    </div>
 
-                            <div class="mb-3">
-                                <label for="lieu" class="form-label">Lieu *</label>
-                                <input type="text" class="form-control" id="lieu" th:field="*{lieu}" required>
-                                <div class="invalid-feedback">Veuillez fournir un lieu.</div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="dateDebut" class="form-label">Date de d&eacute;but *</label>
-                                        <input type="date" class="form-control" id="dateDebut" th:field="*{dateDebut}" required>
-                                        <div class="invalid-feedback">Veuillez fournir une date de d&eacute;but.</div>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="lieu" class="form-label fw-semibold">Lieu *</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light border-0"><i class="bi bi-geo-alt"></i></span>
+                                                <input type="text" class="form-control bg-light border-0" id="lieu" th:field="*{lieu}" placeholder="Ville, Quartier..." required>
+                                            </div>
+                                            <div class="invalid-feedback">Le lieu est requis.</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="categorie" class="form-label fw-semibold">Catégorie *</label>
+                                            <select class="form-select bg-light border-0" id="categorie" th:field="*{categorie.id}" required>
+                                                <option value="">Sélectionner une catégorie</option>
+                                                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.nom}"></option>
+                                            </select>
+                                            <div class="invalid-feedback">Veuillez choisir une catégorie.</div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="dateFin" class="form-label">Date de fin *</label>
-                                        <input type="date" class="form-control" id="dateFin" th:field="*{dateFin}" required>
-                                        <div class="invalid-feedback">Veuillez fournir une date de fin.</div>
+                            </div>
+
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-white py-3">
+                                    <h5 class="card-title mb-0 fw-bold">Planification & Objectifs</h5>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="row g-4 mb-4">
+                                        <div class="col-md-6">
+                                            <label for="dateDebut" class="form-label fw-semibold">Date de début *</label>
+                                            <input type="date" class="form-control bg-light border-0" id="dateDebut" th:field="*{dateDebut}" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="dateFin" class="form-label fw-semibold">Date de fin *</label>
+                                            <input type="date" class="form-control bg-light border-0" id="dateFin" th:field="*{dateFin}" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-0">
+                                        <label for="objectifCollect" class="form-label fw-semibold">Objectif financier (MAD) *</label>
+                                        <div class="input-group input-group-lg">
+                                            <span class="input-group-text bg-light border-0 fw-bold text-success">DH</span>
+                                            <input type="number" class="form-control bg-light border-0 fw-bold" id="objectifCollect" th:field="*{objectifCollect}" step="0.01" min="0" placeholder="0.00" required>
+                                        </div>
+                                        <div class="form-text mt-2 text-muted">Indiquez le montant total que vous souhaitez collecter pour cette action.</div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="objectifCollect" class="form-label">Objectif de collecte (MAD) *</label>
-                                        <input type="number" class="form-control" id="objectifCollect" th:field="*{objectifCollect}" step="0.01" min="0" required>
-                                        <div class="invalid-feedback">Veuillez fournir un montant objectif.</div>
-                                    </div>
+                        <!-- Sidebar -->
+                        <div class="col-lg-4">
+                            <!-- Image Card -->
+                            <div class="card border-0 shadow-sm mb-4 overflow-hidden">
+                                <div class="card-header bg-white py-3">
+                                    <h5 class="card-title mb-0 fw-bold">Image Principale</h5>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="card-body p-4 text-center">
                                     <div class="mb-3">
-                                        <label for="categorie" class="form-label">Cat&eacute;gorie *</label>
-                                        <select class="form-select" id="categorie" th:field="*{categorie.id}" required>
-                                            <option value="">S&eacute;lectionner une cat&eacute;gorie</option>
-                                            <option th:each="categorie : ${categories}"
-                                                    th:value="${categorie.id}"
-                                                    th:text="${categorie.nom}"></option>
+                                        <div id="imagePreviewContainer" class="rounded-3 bg-light d-flex align-items-center justify-content-center border-dashed mb-3" style="height: 200px; border: 2px dashed #dee2e6;">
+                                            <img id="imagePreview" th:src="${action.imagePrincipale != null ? action.imagePrincipale : '/images/placeholder-action.svg'}" class="img-fluid rounded-3 h-100 w-100 object-fit-cover" th:classappend="${action.imagePrincipale == null ? 'd-none' : ''}">
+                                            <div id="previewPlaceholder" th:classappend="${action.imagePrincipale != null ? 'd-none' : ''}">
+                                                <i class="bi bi-image text-muted display-4"></i>
+                                                <p class="text-muted small mt-2">Cliquez pour choisir une image</p>
+                                            </div>
+                                        </div>
+                                        <input class="form-control d-none" type="file" id="imageFile" name="imageFile" accept="image/*">
+                                        <button type="button" class="btn btn-outline-primary btn-sm w-100" onclick="document.getElementById('imageFile').click()">
+                                            <i class="bi bi-upload me-2"></i> Choisir une image
+                                        </button>
+                                    </div>
+                                    <p class="small text-muted mb-0">Recommandé: 1200x800px. JPG, PNG ou WebP.</p>
+                                </div>
+                            </div>
+
+                            <!-- Settings Card -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-white py-3">
+                                    <h5 class="card-title mb-0 fw-bold">Configuration</h5>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="mb-4">
+                                        <label for="organisation" class="form-label fw-semibold">Organisation *</label>
+                                        <select class="form-select bg-light border-0" id="organisation" th:field="*{organisation.id}" required>
+                                            <option value="">Choisir une organisation</option>
+                                            <option th:each="org : ${organisations}" th:value="${org.id}" th:text="${org.nom}"></option>
                                         </select>
-                                        <div class="invalid-feedback">Veuillez s&eacute;lectionner une cat&eacute;gorie.</div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="status" class="form-label fw-semibold">Statut Initial</label>
+                                        <select class="form-select bg-light border-0" id="status" th:field="*{status}">
+                                            <option value="BROUILLON">Brouillon (Non visible)</option>
+                                            <option value="PUBLIEE">Publiée (En ligne)</option>
+                                            <option value="EN_COURS">En cours</option>
+                                            <option value="TERMINEE">Terminée</option>
+                                            <option value="ARCHIVEE">Archivée</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="d-grid gap-2 pt-2">
+                                        <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                                            <i class="bi bi-check-circle me-2"></i> Enregistrer
+                                        </button>
+                                        <a th:href="@{/actions}" class="btn btn-light btn-lg text-muted border-0">Annuler</a>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="mb-3">
-                                <label for="organisation" class="form-label">Organisation *</label>
-                                <select class="form-select" id="organisation" th:field="*{organisation.id}" required>
-                                    <option value="">S&eacute;lectionner une organisation</option>
-                                    <option th:each="org : ${organisations}"
-                                            th:value="${org.id}"
-                                            th:text="${org.nom}"></option>
-                                </select>
-                                <div class="invalid-feedback">Veuillez s&eacute;lectionner une organisation.</div>
+                            
+                            <!-- Gallery Preview (Coming Soon Placeholder) -->
+                            <div class="card border-0 shadow-sm bg-gradient-light border-start border-primary border-4" th:if="${action.id != null}">
+                                <div class="card-body">
+                                    <h6 class="fw-bold mb-2">Galerie d'images</h6>
+                                    <p class="small text-muted mb-0">Vous pourrez ajouter plusieurs photos à la galerie après l'enregistrement initial.</p>
+                                </div>
                             </div>
-
-                            <div class="mb-3">
-                                <label for="status" class="form-label">Statut</label>
-                                <select class="form-select" id="status" th:field="*{status}">
-                                    <option value="BROUILLON">Brouillon</option>
-                                    <option value="PUBLIEE">Publi&eacute;e</option>
-                                    <option value="EN_COURS">En cours</option>
-                                    <option value="TERMINEE">Termin&eacute;e</option>
-                                    <option value="ARCHIVEE">Archiv&eacute;e</option>
-                                </select>
-                            </div>
-
                         </div>
                     </div>
-                </div>
-
-                <div class="col-lg-4">
-                    <div class="card">
-                        <div class="card-header bg-transparent">
-                            <h5 class="card-title mb-0">R&eacute;sum&eacute;</h5>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text mb-0">
-                                <strong>Titre:</strong> <span th:text="*{titre}"></span><br>
-                                <strong>Lieu:</strong> <span th:text="*{lieu}"></span><br>
-                                <strong>Dates:</strong>
-                                <span th:text="*{dateDebut != null ? #temporals.format(dateDebut, 'dd/MM/yyyy') : ''}"></span>
-                                -
-                                <span th:text="*{dateFin != null ? #temporals.format(dateFin, 'dd/MM/yyyy') : ''}"></span><br>
-                                <strong>Objectif:</strong>
-                                <span th:text="*{objectifCollect != null ? #numbers.formatDecimal(objectifCollect, 1, 2) : '0.00'}"></span> MAD<br>
-                                <strong>Statut:</strong> <span th:text="*{status}"></span>
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="mt-3 d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">Enregistrer</button>
-                        <a th:href="@{/actions}" class="btn btn-outline-secondary">Annuler</a>
-                    </div>
-                </div>
+                </form>
             </div>
-        </form>
+        </div>
     </main>
+
+    <div th:replace="~{fragments/public-footer :: footer}"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -144,31 +187,65 @@
             })
         })()
 
-        // Date validation
-        document.getElementById('dateDebut').addEventListener('change', function() {
-            var dateDebut = new Date(this.value);
-            var dateFinInput = document.getElementById('dateFin');
-            var dateFin = new Date(dateFinInput.value);
-
-            if (dateFinInput.value && dateFin <= dateDebut) {
-                dateFinInput.value = '';
-                dateFinInput.setCustomValidity('La date de fin doit etre apres la date de debut');
-            } else {
-                dateFinInput.setCustomValidity('');
+        // Image preview logic
+        document.getElementById('imageFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const preview = document.getElementById('imagePreview');
+                    const placeholder = document.getElementById('previewPlaceholder');
+                    
+                    preview.src = event.target.result;
+                    preview.classList.remove('d-none');
+                    placeholder.classList.add('d-none');
+                }
+                reader.readAsDataURL(file);
             }
         });
 
-        document.getElementById('dateFin').addEventListener('change', function() {
-            var dateFin = new Date(this.value);
-            var dateDebutInput = document.getElementById('dateDebut');
-            var dateDebut = new Date(dateDebutInput.value);
+        // Date validation
+        const dateDebut = document.getElementById('dateDebut');
+        const dateFin = document.getElementById('dateFin');
 
-            if (dateDebutInput.value && dateDebut >= dateFin) {
-                this.setCustomValidity('La date de fin doit etre apres la date de debut');
-            } else {
-                this.setCustomValidity('');
+        dateDebut.addEventListener('change', function() {
+            if (dateFin.value && dateFin.value < this.value) {
+                dateFin.value = this.value;
             }
+            dateFin.min = this.value;
+        });
+
+        dateFin.addEventListener('change', function() {
+            if (dateDebut.value && dateDebut.value > this.value) {
+                dateDebut.value = this.value;
+            }
+            dateDebut.max = this.value;
         });
     </script>
+    
+    <style>
+        .object-fit-cover {
+            object-fit: cover;
+        }
+        .border-dashed {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .border-dashed:hover {
+            border-color: #0d6efd !important;
+            background-color: #f8f9fa !important;
+        }
+        .form-control:focus, .form-select:focus {
+            box-shadow: none;
+            background-color: #fff !important;
+            border: 1px solid #0d6efd !important;
+        }
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: "\F138";
+            font-family: "bootstrap-icons";
+            font-size: 0.7rem;
+            color: #adb5bd;
+        }
+    </style>
 </body>
 </html>

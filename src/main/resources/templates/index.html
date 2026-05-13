@@ -139,33 +139,23 @@
         <div class="row g-4 align-items-stretch" th:if="${featuredOrganisation != null}">
             <div class="col-lg-7">
                 <div class="campaign-gallery card-surface h-100">
-                    <img th:src="${featuredOrganisation.logo}" alt="Organisation en vedette" class="detail-cover organisation-preview-cover">
-                    <div class="thumb-strip">
-                        <img th:src="@{/images/project-school.svg}" alt="Miniature 1">
-                        <img th:src="@{/images/project-medical.svg}" alt="Miniature 2">
-                        <img th:src="@{/images/project-beach.svg}" alt="Miniature 3">
-                        <img th:src="@{/images/project-family.svg}" alt="Miniature 4">
-                        <div class="thumb-more">+5</div>
-                    </div>
-                    <div class="campaign-tabs">
-                        <span class="active">A propos</span>
-                        <span>Actions</span>
-                        <span>Informations</span>
-                        <span>Contact</span>
-                    </div>
-                    <div class="row g-4">
-                        <div class="col-md-7">
-                            <h3 th:text="${featuredOrganisation.name}">Association</h3>
-                            <p class="mb-0" th:text="${featuredOrganisation.description}">Description organisation.</p>
-                        </div>
-                        <div class="col-md-5">
-                            <h3>Details de l'organisation</h3>
-                            <ul class="detail-list">
-                                <li><span>Ville</span><strong th:text="${featuredOrganisation.city}">Casablanca</strong></li>
-                                <li><span>Statut</span><strong>APPROVED</strong></li>
-                                <li><span>Actions publiques</span><strong th:text="${featuredOrganisation.actionsCount}">0</strong></li>
-                                <li><span>Fiche complete</span><strong><a th:href="@{/organisations/{id}(id=${featuredOrganisation.id})}">Voir l'organisation</a></strong></li>
-                            </ul>
+                    <img th:src="${featuredOrganisation.coverImage}" alt="Organisation en vedette" class="detail-cover organisation-preview-cover">
+                    
+                    <div class="p-4">
+                        <div class="row g-4">
+                            <div class="col-md-7">
+                                <h3 th:text="${featuredOrganisation.name}" class="fw-bold">Association</h3>
+                                <p class="text-muted mb-0" th:text="${featuredOrganisation.description}">Description organisation.</p>
+                            </div>
+                            <div class="col-md-5">
+                                <h3 class="h6 fw-bold text-uppercase tracking-wider text-muted mb-3">Détails</h3>
+                                <ul class="detail-list">
+                                    <li><span>Ville</span><strong th:text="${featuredOrganisation.city}">Casablanca</strong></li>
+                                    <li><span>Statut</span><strong class="text-success">APPROUVÉE</strong></li>
+                                    <li><span>Actions publiques</span><strong th:text="${featuredOrganisation.actionsCount}">0</strong></li>
+                                    <li><span>Fiche complète</span><strong><a th:href="@{/organisations/{id}(id=${featuredOrganisation.id})}">Consulter</a></strong></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>

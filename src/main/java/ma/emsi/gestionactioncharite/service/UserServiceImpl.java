@@ -52,12 +52,36 @@ public class UserServiceImpl implements UserService {
         if (dto.getTelephone() != null) user.setTelephone(dto.getTelephone());
         if (dto.getAdresse() != null) user.setAdresse(dto.getAdresse());
         if (dto.getPhotoProfil() != null) user.setPhotoProfil(dto.getPhotoProfil());
+        if (dto.getRole() != null) user.setRole(dto.getRole());
+        if (dto.getActif() != null) user.setActif(dto.getActif());
 
         if (dto.getMotDePasse() != null && !dto.getMotDePasse().isBlank()) {
             user.setMotDePasse(passwordEncoder.encode(dto.getMotDePasse()));
         }
 
         return toDTO(userRepository.save(user));
+    }
+
+    @Override
+    public UserResponseDTO create(UserRequestDTO dto) {
+        User user = User.builder()
+                .nom(dto.getNom())
+                .prenom(dto.getPrenom())
+                .email(dto.getEmail())
+                .motDePasse(passwordEncoder.encode(dto.getMotDePasse()))
+                .telephone(dto.getTelephone())
+                .adresse(dto.getAdresse())
+                .photoProfil(dto.getPhotoProfil())
+                .role(dto.getRole() != null ? dto.getRole() : Role.USER)
+                .actif(dto.getActif() != null ? dto.getActif() : true)
+                .dateInscription(java.time.LocalDate.now())
+                .build();
+        return toDTO(userRepository.save(user));
+    }
+
+    @Override
+    public void delete(Long id) {
+        userRepository.deleteById(id);
     }
 
     @Override

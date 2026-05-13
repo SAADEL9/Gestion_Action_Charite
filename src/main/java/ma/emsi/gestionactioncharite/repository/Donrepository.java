@@ -29,4 +29,9 @@ public interface Donrepository extends JpaRepository<Don, Long> {
             """)
     Double sumMontantByOrganisationIdAndStatus(@Param("organisationId") Long organisationId,
                                                @Param("status") StatutDon status);
+
+    @Query("select coalesce(sum(d.montant), 0) from Don d where d.status = :status")
+    Double sumAllMontantByStatus(@Param("status") StatutDon status);
+
+    long countByStatus(StatutDon status);
 }

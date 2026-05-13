@@ -12,6 +12,8 @@ public interface UserService {
     UserResponseDTO findByEmail(String email);
     List<UserResponseDTO> findAll();
     UserResponseDTO update(Long id, UserRequestDTO dto);
+    UserResponseDTO create(UserRequestDTO dto);
+    void delete(Long id);
     void deactivate(Long id);
     void activate(Long id);
     void changeRole(Long id, Role role);

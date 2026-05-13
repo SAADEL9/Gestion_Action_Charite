@@ -56,6 +56,21 @@ public class UserController {
         return "redirect:/users";
     }
 
+    // ─── Create user ──────────────────────────────────────────────
+    @GetMapping("/create")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String showCreateForm(Model model) {
+        model.addAttribute("user", new UserRequestDTO());
+        return "user/form";
+    }
+
+    @PostMapping("/create")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String create(@ModelAttribute UserRequestDTO dto) {
+        userService.create(dto);
+        return "redirect:/users";
+    }
+
     // ─── Show edit form ─────────────────────────────────────────────
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
@@ -70,6 +85,13 @@ public class UserController {
     public String update(@PathVariable Long id, @ModelAttribute UserRequestDTO dto) {
         userService.update(id, dto);
         return "redirect:/users/" + id;
+    }
+
+    @GetMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String delete(@PathVariable Long id) {
+        userService.delete(id);
+        return "redirect:/users";
     }
 
     // ─── SUPER_ADMIN: deactivate user ──────────────────────────────

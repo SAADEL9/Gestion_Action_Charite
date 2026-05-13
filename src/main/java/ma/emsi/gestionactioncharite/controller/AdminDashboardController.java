@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/admin/dashboard")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAnyRole('ADMIN', 'ORG_ADMIN')")
 public class AdminDashboardController {
 
     private final AdminDashboardService adminDashboardService;
@@ -24,7 +24,15 @@ public class AdminDashboardController {
     @GetMapping
     public String dashboard(@AuthenticationPrincipal UserDetails principal, Model model) {
         model.addAttribute("dashboard", adminDashboardService.getDashboardData(principal.getUsername()));
-        model.addAttribute("pendingOrgs", organisationService.findByStatus(StatusOrganisation.PENDING));
+        
+        boolean isSuperAdmin = principal.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        
+        if (isSuperAdmin) {
+            model.addAttribute("pendingOrgs", organisationService.findByStatus(StatusOrganisation.PENDING));
+        }
+        
+        model.addAttribute("isSuperAdmin", isSuperAdmin);
         return "admin/dashboard";
     }
 }

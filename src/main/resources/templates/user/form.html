@@ -38,13 +38,33 @@
                                 <div class="invalid-feedback">Veuillez fournir un email.</div>
                             </div>
 
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="telephone">TÃ©lÃ©phone</label>
+                                        <input id="telephone" class="form-control" type="text" th:field="*{telephone}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label" for="photoProfil">URL Photo de Profil</label>
+                                        <input id="photoProfil" class="form-control" type="text" th:field="*{photoProfil}">
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="mb-3">
+                                <label class="form-label" for="adresse">Adresse</label>
+                                <textarea id="adresse" class="form-control" rows="2" th:field="*{adresse}"></textarea>
+                            </div>
+
+                            <div class="mb-3" sec:authorize="hasRole('ADMIN')">
                                 <label class="form-label" for="motDePasse">Mot de passe</label>
-                                <input id="motDePasse" class="form-control" type="password" th:field="*{motDePasse}">
+                                <input id="motDePasse" class="form-control" type="password" name="motDePasse">
                                 <div class="form-text">Laissez vide si vous ne souhaitez pas le changer.</div>
                             </div>
 
-                            <div class="mb-0">
+                            <div class="mb-0" sec:authorize="hasRole('ADMIN')">
                                 <label class="form-label" for="role">Role</label>
                                 <select id="role" class="form-select" th:field="*{role}">
                                     <option value="USER">USER</option>
@@ -71,6 +91,7 @@
                                 <strong>Nom:</strong> <span th:text="*{nom}"></span><br>
                                 <strong>Prenom:</strong> <span th:text="*{prenom}"></span><br>
                                 <strong>Email:</strong> <span th:text="*{email}"></span><br>
+                                <strong>TÃ©lÃ©phone:</strong> <span th:text="*{telephone}"></span><br>
                                 <strong>Role:</strong> <span th:text="*{role}"></span>
                             </p>
                         </div>

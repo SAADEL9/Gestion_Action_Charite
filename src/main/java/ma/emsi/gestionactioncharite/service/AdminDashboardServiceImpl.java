@@ -2,16 +2,13 @@ package ma.emsi.gestionactioncharite.service;
 
 import lombok.RequiredArgsConstructor;
 import ma.emsi.gestionactioncharite.dto.AdminDashboardView;
-import ma.emsi.gestionactioncharite.entity.ActionCharite;
-import ma.emsi.gestionactioncharite.entity.Don;
-import ma.emsi.gestionactioncharite.entity.Organisation;
-import ma.emsi.gestionactioncharite.entity.StatutDon;
-import ma.emsi.gestionactioncharite.entity.User;
+import ma.emsi.gestionactioncharite.entity.*;
 import ma.emsi.gestionactioncharite.repository.ActionChariteRepository;
 import ma.emsi.gestionactioncharite.repository.Donrepository;
 import ma.emsi.gestionactioncharite.repository.Participationrepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -30,6 +27,11 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
     @Override
     public AdminDashboardView getDashboardData(String adminEmail) {
         User admin = userService.findEntityByEmail(adminEmail);
+        
+        if (admin.getRole() == Role.ADMIN) {
+            return getGlobalDashboardData(admin);
+        }
+        
         Organisation organisation = organisationService.findFirstByAdminId(admin.getId())
                 .orElse(null);
 
@@ -77,6 +79,49 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
                 .organisationName(defaultText(organisation.getNom(), "Organisation"))
                 .organisationLogo(organisation.getLogo())
                 .organisationStatus(organisation.getStatus() != null ? organisation.getStatus().name() : "UNKNOWN")
+                .totalActions(totalActions)
+                .totalDonationsAmount(totalDonationsAmount)
+                .totalParticipants(totalParticipants)
+                .pendingDonations(pendingDonations)
+                .recentActions(recentActions)
+                .recentDonations(recentDonations)
+                .build();
+    }
+
+    private AdminDashboardView getGlobalDashboardData(User admin) {
+        long totalActions = actionChariteRepository.count();
+        double totalDonationsAmount = safeDouble(donrepository.sumAllMontantByStatus(StatutDon.CONFIRME));
+        long totalParticipants = participationrepository.count();
+        long pendingDonations = donrepository.countByStatus(StatutDon.EN_ATTENTE);
+
+        List<AdminDashboardView.ActionSummary> recentActions = actionChariteRepository.findAll().stream()
+                .sorted((a1, a2) -> {
+                    int dateCmp = (a2.getDateCreation() != null ? a2.getDateCreation() : LocalDate.MIN)
+                            .compareTo(a1.getDateCreation() != null ? a1.getDateCreation() : LocalDate.MIN);
+                    if (dateCmp != 0) return dateCmp;
+                    return a2.getId().compareTo(a1.getId());
+                })
+                .limit(5)
+                .map(this::toActionSummary)
+                .toList();
+
+        List<AdminDashboardView.DonationSummary> recentDonations = donrepository.findAll().stream()
+                .sorted((d1, d2) -> {
+                    int dateCmp = (d2.getDateDon() != null ? d2.getDateDon() : LocalDate.MIN)
+                            .compareTo(d1.getDateDon() != null ? d1.getDateDon() : LocalDate.MIN);
+                    if (dateCmp != 0) return dateCmp;
+                    return d2.getId().compareTo(d1.getId());
+                })
+                .limit(5)
+                .map(this::toDonationSummary)
+                .toList();
+
+        return AdminDashboardView.builder()
+                .adminFullName(buildAdminName(admin))
+                .organisationId(null)
+                .organisationName("Plateforme Globale")
+                .organisationLogo(null)
+                .organisationStatus("ADMIN")
                 .totalActions(totalActions)
                 .totalDonationsAmount(totalDonationsAmount)
                 .totalParticipants(totalParticipants)

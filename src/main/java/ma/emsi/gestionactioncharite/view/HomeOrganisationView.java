@@ -5,6 +5,7 @@ public record HomeOrganisationView(
         String name,
         String description,
         String logo,
+        String coverImage,
         String city,
         long actionsCount
 ) {

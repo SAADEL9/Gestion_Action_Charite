@@ -49,10 +49,10 @@ public class HomeController {
     @GetMapping("/")
     public String home(Model model, Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
-            boolean isAdmin = authentication.getAuthorities().stream()
+            boolean hasAdminAccess = authentication.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
-                    .anyMatch("ROLE_ADMIN"::equals);
-            if (isAdmin) {
+                    .anyMatch(role -> role.equals("ROLE_ADMIN") || role.equals("ROLE_ORG_ADMIN"));
+            if (hasAdminAccess) {
                 return "redirect:/admin/dashboard";
             }
         }
@@ -156,6 +156,7 @@ public class HomeController {
                 organisation.getNom(),
                 Optional.ofNullable(organisation.getDescription()).filter(description -> !description.isBlank()).orElse("Association engagee pour des actions solidaires a impact concret."),
                 Optional.ofNullable(organisation.getLogo()).filter(logo -> !logo.isBlank()).orElse("/images/logo-charite.svg"),
+                Optional.ofNullable(organisation.getCoverImage()).filter(cover -> !cover.isBlank()).orElse("/images/organisation-cover.svg"),
                 extractCity(organisation),
                 countVisibleActions(organisation)
         );
@@ -183,6 +184,10 @@ public class HomeController {
     }
 
     private String resolveActionImage(ActionCharite action) {
+        if (action.getImagePrincipale() != null && !action.getImagePrincipale().isBlank()) {
+            return action.getImagePrincipale();
+        }
+        
         String category = Optional.ofNullable(action.getCategorie()).map(Categorie::getNom).orElse("").toLowerCase(Locale.ROOT);
         if (category.contains("educ")) return "/images/project-school.svg";
         if (category.contains("sant")) return "/images/project-medical.svg";

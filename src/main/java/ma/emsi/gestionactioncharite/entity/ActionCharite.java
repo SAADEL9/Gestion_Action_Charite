@@ -36,6 +36,12 @@ public class ActionCharite {
     @Enumerated(EnumType.STRING)
     private StatutAction status;
 
+    private String imagePrincipale;
+
+    @OneToMany(mappedBy = "actionCharite", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ActionImage> images = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "organisation_id")
     private Organisation organisation;

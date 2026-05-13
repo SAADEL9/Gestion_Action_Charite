@@ -10,55 +10,41 @@
             <a sec:authorize="hasAnyRole('ORG_ADMIN', 'ADMIN')" th:href="@{/organisations/create}" class="btn btn-primary">Nouvelle Organisation</a>
         </div>
 
-        <div class="row g-4">
-            <div class="col-md-4 col-lg-3" th:each="organisation : ${organisations}">
-                <div class="card h-100 shadow-sm organisation-card"
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            <div class="col" th:each="organisation : ${organisations}">
+                <div class="card h-100 border-0 shadow-sm organisation-card position-relative"
                      th:onclick="|window.location.href='@{/organisations/{id}(id=${organisation.id})}'|"
-                     style="cursor: pointer;">
+                     style="cursor: pointer; border-radius: 18px; overflow: hidden; transition: transform 0.2s ease;">
 
-                    <img th:src="${#strings.isEmpty(organisation.logo) ? 'https://placehold.co/600x360?text=Organisation' : organisation.logo}"
-                         class="card-img-top"
-                         th:alt="${'Logo de ' + organisation.nom}"
-                         style="height: 180px; object-fit: cover;">
-
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold" th:text="${organisation.nom}"></h5>
-
-                        <p class="card-text text-muted"
-                           th:text="${#strings.abbreviate(organisation.description, 80)}"></p>
-
-                        <div class="mt-auto">
-                            <span th:if="${organisation.status.name() == 'APPROVED'}"
-                                  class="badge bg-success">Approuvée</span>
-                            <span th:if="${organisation.status.name() == 'PENDING'}"
-                                  class="badge bg-warning text-dark">En attente</span>
-                            <span th:if="${organisation.status.name() == 'REJECTED'}"
-                                  class="badge bg-danger">Rejetée</span>
-
-                            <div class="mt-3 d-flex flex-wrap gap-2">
-                                <a th:href="@{/organisations/{id}(id=${organisation.id})}"
-                                   class="btn btn-sm btn-outline-primary"
-                                   onclick="event.stopPropagation();">
-                                    Voir les détails
-                                </a>
-
-                                <!-- Boutons admin : approuver / rejeter (PENDING uniquement) -->
-                                <th:block sec:authorize="hasRole('ADMIN')"
-                                          th:if="${organisation.status.name() == 'PENDING'}">
-                                    <a th:href="@{/organisations/valider/{id}(id=${organisation.id})}"
-                                       class="btn btn-sm btn-success"
-                                       onclick="event.stopPropagation();">
-                                        ✓ Approuver
-                                    </a>
-                                    <a th:href="@{/organisations/rejeter/{id}(id=${organisation.id})}"
-                                       class="btn btn-sm btn-danger"
-                                       onclick="event.stopPropagation();"
-                                       th:onclick="|event.stopPropagation(); return confirm('Rejeter cette organisation ?')|">
-                                        ✗ Rejeter
-                                    </a>
-                                </th:block>
-                            </div>
+                    <div class="position-relative">
+                        <img th:src="${#strings.isEmpty(organisation.logo) ? 'https://placehold.co/600x360?text=Logo' : organisation.logo}"
+                             class="card-img-top"
+                             th:alt="${organisation.nom}"
+                             style="height: 140px; object-fit: cover;">
+                        
+                        <div class="position-absolute bottom-0 start-0 m-2">
+                            <span th:if="${organisation.status.name() == 'APPROVED'}" class="badge bg-success shadow-sm">ApprouvÃ©e</span>
+                            <span th:if="${organisation.status.name() == 'PENDING'}" class="badge bg-warning text-dark shadow-sm">En attente</span>
+                            <span th:if="${organisation.status.name() == 'REJECTED'}" class="badge bg-danger shadow-sm">RejetÃ©e</span>
                         </div>
+                    </div>
+
+                    <div class="card-body p-3 d-flex flex-column">
+                        <h6 class="card-title fw-bold mb-2 text-truncate" th:text="${organisation.nom}"></h6>
+                        <p class="card-text text-muted small mb-0" 
+                           th:text="${#strings.abbreviate(organisation.description, 60)}"></p>
+
+                        <!-- Admin controls overlay or separate section -->
+                        <th:block sec:authorize="hasRole('ADMIN')" th:if="${organisation.status.name() == 'PENDING'}">
+                            <div class="mt-3 pt-3 border-top d-flex gap-2">
+                                <a th:href="@{/organisations/valider/{id}(id=${organisation.id})}"
+                                   class="btn btn-xs btn-success flex-grow-1 py-1" style="font-size: 0.75rem;"
+                                   onclick="event.stopPropagation();">Approuver</a>
+                                <a th:href="@{/organisations/rejeter/{id}(id=${organisation.id})}"
+                                   class="btn btn-xs btn-outline-danger flex-grow-1 py-1" style="font-size: 0.75rem;"
+                                   onclick="event.stopPropagation(); return confirm('Rejeter ?')">Rejeter</a>
+                            </div>
+                        </th:block>
                     </div>
                 </div>
             </div>

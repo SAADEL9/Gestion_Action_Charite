@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -201,7 +202,9 @@ public class ActionChariteController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('ORG_ADMIN', 'ADMIN')")
-    public String create(@ModelAttribute ActionCharite action, @AuthenticationPrincipal UserDetails principal) {
+    public String create(@ModelAttribute ActionCharite action, 
+                         @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+                         @AuthenticationPrincipal UserDetails principal) {
         if (action.getOrganisation() == null || action.getOrganisation().getId() == null) {
             return "redirect:/actions/create?error=missing_org";
         }
@@ -214,7 +217,7 @@ public class ActionChariteController {
             }
         }
         
-        actionChariteService.save(action);
+        actionChariteService.save(action, imageFile);
         return "redirect:/actions";
     }
 
@@ -233,11 +236,13 @@ public class ActionChariteController {
 
     @PostMapping("/edit/{id}")
     @PreAuthorize("hasAnyRole('ORG_ADMIN', 'ADMIN')")
-    public String update(@PathVariable Long id, @ModelAttribute ActionCharite action,
+    public String update(@PathVariable Long id, 
+                         @ModelAttribute ActionCharite action,
+                         @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
                          @AuthenticationPrincipal UserDetails principal) {
         var existing = actionChariteService.findById(id).orElse(null);
         if (existing == null || !canManageAction(existing, principal)) return "redirect:/actions";
-        actionChariteService.update(id, action);
+        actionChariteService.update(id, action, imageFile);
         return "redirect:/actions";
     }
 
