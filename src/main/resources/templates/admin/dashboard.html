@@ -4,379 +4,205 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --admin-bg: #f4f7fb;
-            --admin-surface: #ffffff;
-            --admin-sidebar: #12324a;
-            --admin-primary: #0f766e;
-            --admin-primary-soft: #d7f3ef;
-            --admin-text: #112031;
-            --admin-muted: #6b7a90;
-            --admin-border: #dbe3ef;
-        }
-
-        body {
-            background: linear-gradient(180deg, #eef4fb 0%, #f8fafc 100%);
-            color: var(--admin-text);
-            font-family: "Manrope", sans-serif;
-        }
-
-        .dashboard-shell {
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            background:
-                radial-gradient(circle at top, rgba(255, 255, 255, 0.1), transparent 32%),
-                linear-gradient(180deg, var(--admin-sidebar) 0%, #0b2132 100%);
-            min-height: 100vh;
-        }
-
-        .brand-mark {
-            width: 44px;
-            height: 44px;
-            border-radius: 14px;
-            background: rgba(255, 255, 255, 0.12);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.15rem;
-        }
-
-        .sidebar-link {
-            color: rgba(255, 255, 255, 0.82);
-            border: 1px solid transparent;
-            border-radius: 14px;
-            padding: 0.85rem 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            text-decoration: none;
-            transition: 0.2s ease;
-        }
-
-        .sidebar-link:hover,
-        .sidebar-link.active {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .content-area {
-            padding: 2rem;
-        }
-
-        .topbar,
-        .panel-card,
-        .stats-card {
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(219, 227, 239, 0.9);
-            border-radius: 24px;
-            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.06);
-        }
-
-        .topbar {
-            padding: 1rem 1.25rem;
-        }
-
-        .welcome-card {
-            background: linear-gradient(135deg, #0f766e 0%, #164e63 100%);
-            color: #fff;
-            border: 0;
-        }
-
-        .organisation-logo {
-            width: 72px;
-            height: 72px;
-            border-radius: 20px;
-            object-fit: cover;
-            background: rgba(255, 255, 255, 0.16);
-            padding: 0.35rem;
-        }
-
-        .stats-card {
-            padding: 1.25rem;
-        }
-
-        .stats-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 16px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--admin-primary-soft);
-            color: var(--admin-primary);
-            font-size: 1.2rem;
-        }
-
-        .panel-card {
-            padding: 1.5rem;
-        }
-
-        .panel-title {
-            font-size: 1.05rem;
-            font-weight: 800;
-        }
-
-        .table thead th {
-            color: var(--admin-muted);
-            font-size: 0.8rem;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            border-bottom-width: 1px;
-        }
-
-        .badge-soft {
-            border-radius: 999px;
-            padding: 0.5rem 0.8rem;
-            font-weight: 700;
-        }
-
-        .badge-approved,
-        .badge-confirme,
-        .badge-terminee {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .badge-pending,
-        .badge-en_attente,
-        .badge-brouillon {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .badge-rejected,
-        .badge-echoue,
-        .badge-archivee,
-        .badge-rembourse {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .badge-publiee,
-        .badge-en_cours {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-
-        .table td {
-            vertical-align: middle;
-        }
-
-        .quick-action {
-            min-width: 220px;
-        }
-
-        @media (max-width: 991.98px) {
-            .sidebar {
-                min-height: auto;
-            }
-
-            .content-area {
-                padding: 1.25rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
-<div class="container-fluid dashboard-shell">
-    <div class="row g-0">
-        <aside class="col-lg-3 col-xl-2 sidebar p-4">
-            <div class="d-flex align-items-center gap-3 mb-4">
-                <div class="brand-mark text-white">
-                    <i class="bi bi-shield-check"></i>
-                </div>
-                <div>
-                    <div class="text-white fw-bold">Admin Space</div>
-                    <div class="text-white-50 small">Gestion centralisee</div>
-                </div>
-            </div>
+<body class="admin-dashboard-page">
+<div class="dashboard-shell">
+    <div class="admin-dashboard-grid">
+        <aside class="admin-sidebar">
+            <a class="brand-mark" th:href="@{/}">
+                <img th:src="@{/images/logo-charite.png}" alt="Charite">
+                <span class="brand-meta">
+                    <strong>Charite Admin</strong>
+                </span>
+            </a>
 
-            <nav class="d-grid gap-2">
-                <a th:href="@{/admin/dashboard}" class="sidebar-link active">
+            <nav class="admin-sidebar-nav">
+                <a th:href="@{/admin/dashboard}" class="admin-sidebar-link active">
                     <i class="bi bi-grid"></i>
                     <span>Tableau de bord</span>
                 </a>
-                
-                <div class="sidebar-divider my-2 text-white-50 small text-uppercase fw-bold opacity-50 px-3" style="font-size: 0.65rem;">Gestion</div>
-                
-                <a th:if="${isSuperAdmin}" th:href="@{/users}" class="sidebar-link">
+
+                <div class="admin-sidebar-section">Gestion</div>
+
+                <a th:if="${isSuperAdmin}" th:href="@{/users}" class="admin-sidebar-link">
                     <i class="bi bi-people"></i>
                     <span>Utilisateurs</span>
                 </a>
-                
-                <a th:if="${isSuperAdmin}" th:href="@{/organisations}" class="sidebar-link">
+
+                <a th:if="${isSuperAdmin}" th:href="@{/organisations}" class="admin-sidebar-link">
                     <i class="bi bi-building"></i>
                     <span>Organisations</span>
                 </a>
 
-                <a th:if="${isSuperAdmin}" th:href="@{/categories}" class="sidebar-link">
+                <a th:if="${isSuperAdmin}" th:href="@{/categories}" class="admin-sidebar-link">
                     <i class="bi bi-tags"></i>
-                    <span>Catégories</span>
+                    <span>Categories</span>
                 </a>
 
-                <a th:href="@{/actions}" class="sidebar-link">
+                <a th:href="@{/actions}" class="admin-sidebar-link">
                     <i class="bi bi-megaphone"></i>
                     <span>Actions</span>
                 </a>
-                
-                <div class="sidebar-divider my-2 text-white-50 small text-uppercase fw-bold opacity-50 px-3" style="font-size: 0.65rem;">Paramètres</div>
 
-                <a th:href="@{/users/me}" class="sidebar-link">
+                <div class="admin-sidebar-section">Parametres</div>
+
+                <a th:href="@{/users/me}" class="admin-sidebar-link">
                     <i class="bi bi-person-circle"></i>
-                    <span>Mon Profil</span>
+                    <span>Mon profil</span>
                 </a>
 
-                <a th:if="${dashboard != null and dashboard.organisationId != null}" th:href="@{/organisations/edit/{id}(id=${dashboard.organisationId})}" class="sidebar-link">
+                <a th:if="${dashboard != null and dashboard.organisationId != null}" th:href="@{/organisations/edit/{id}(id=${dashboard.organisationId})}" class="admin-sidebar-link">
                     <i class="bi bi-sliders"></i>
-                    <span>Ma Structure</span>
+                    <span>Ma structure</span>
                 </a>
-                
+
                 <form th:action="@{/logout}" method="post">
-                    <button type="submit" class="sidebar-link sidebar-link-button">
+                    <button type="submit" class="admin-sidebar-link admin-sidebar-button">
                         <i class="bi bi-box-arrow-left"></i>
-                        <span>Déconnexion</span>
+                        <span>Deconnexion</span>
                     </button>
                 </form>
             </nav>
         </aside>
 
-        <main class="col-lg-9 col-xl-10 content-area">
-            <div class="topbar d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <main class="admin-main">
+            <div class="admin-topbar">
                 <div>
-                    <div class="text-muted small" th:text="${isSuperAdmin ? 'Super Administration' : 'Administration Organisation'}">Administration</div>
-                    <h1 class="h3 mb-0" th:text="${isSuperAdmin ? 'Dashboard Global' : 'Dashboard Organisation'}">Dashboard</h1>
+                    <span class="admin-dashboard-eyebrow" th:text="${isSuperAdmin ? 'Super administration' : 'Administration organisation'}">Administration</span>
+                    <h1 th:text="${isSuperAdmin ? 'Dashboard global' : 'Dashboard organisation'}">Dashboard</h1>
+                    <p class="mb-0">Une interface plus propre, plus lisible et raccord avec la palette du site.</p>
                 </div>
 
-                <div class="d-flex align-items-center gap-3">
-                    <div class="text-end">
-                        <div class="fw-bold" th:text="${dashboard != null ? dashboard.adminFullName : 'Admin'}"></div>
-                        <div class="text-muted small" th:text="${isSuperAdmin ? 'Super Administrateur' : 'Gestionnaire d''organisation'}">Administrateur connecte</div>
+                <div class="admin-user-chip">
+                    <div class="admin-user-avatar" th:text="${dashboard != null and dashboard.adminFullName != null and !#strings.isEmpty(dashboard.adminFullName) ? #strings.substring(dashboard.adminFullName, 0, 1) : 'A'}">A</div>
+                    <div>
+                        <strong th:text="${dashboard != null ? dashboard.adminFullName : 'Admin'}">Admin</strong>
+                        <span th:text="${isSuperAdmin ? 'Super administrateur' : 'Gestionnaire d''organisation'}">Administrateur connecte</span>
                     </div>
                 </div>
             </div>
 
-            <section class="panel-card welcome-card mb-4">
-                <div class="row align-items-center g-4">
-                    <div class="col-lg-8">
-                        <div class="d-flex align-items-center gap-3 mb-3">
-                            <img class="organisation-logo"
-                                 th:src="${dashboard != null and !#strings.isEmpty(dashboard.organisationLogo) ? dashboard.organisationLogo : 'https://placehold.co/144x144/164e63/ffffff?text=' + (dashboard != null ? #strings.substring(dashboard.organisationName,0,1) : 'O')}"
+            <section class="admin-hero">
+                <div class="admin-hero-grid">
+                    <div class="admin-hero-content admin-hero-copy">
+                        <div class="admin-hero-org">
+                            <img class="admin-organisation-logo"
+                                 th:src="${dashboard != null and !#strings.isEmpty(dashboard.organisationLogo) ? dashboard.organisationLogo : 'https://placehold.co/144x144/149044/ffffff?text=' + (dashboard != null and dashboard.organisationName != null and !#strings.isEmpty(dashboard.organisationName) ? #strings.substring(dashboard.organisationName,0,1) : 'O')}"
                                  alt="Organisation logo">
                             <div>
-                                <div class="text-white-50 small">Vue Actuelle</div>
-                                <h2 class="h3 mb-2" th:text="${dashboard != null ? dashboard.organisationName : 'Organisation'}"></h2>
-                                <span class="badge badge-soft"
+                                <div class="admin-status-label small">Vue actuelle</div>
+                                <h2 th:text="${dashboard != null and dashboard.organisationName != null ? dashboard.organisationName : 'Organisation'}">Organisation</h2>
+                                <span class="admin-status-badge"
                                       th:classappend="${dashboard != null and dashboard.organisationStatus != null ? ' badge-' + #strings.toLowerCase(dashboard.organisationStatus) : ' badge-pending'}"
                                       th:text="${dashboard != null and dashboard.organisationStatus != null ? dashboard.organisationStatus : 'UNKNOWN'}">UNKNOWN</span>
                             </div>
                         </div>
-                        <p class="mb-0 text-white-50" th:text="${isSuperAdmin ? 'Suivi global de toutes les activités de la plateforme.' : 'Gestion complète de votre organisation et de son impact.'}">Vue d’ensemble de votre organisation, de ses actions recentes et de l’activite des dons.</p>
+                        <p class="mb-0" th:text="${isSuperAdmin ? 'Suivi global de toutes les activites de la plateforme.' : 'Gestion complete de votre organisation, de ses actions et de son impact.'}">Vue d'ensemble de votre organisation, de ses actions recentes et de l'activite des dons.</p>
                     </div>
-                    <div class="col-lg-4">
-                        <div class="d-flex flex-wrap gap-3 justify-content-lg-end">
-                            <a th:if="${dashboard != null and dashboard.organisationId != null}" th:href="@{/actions/create}"
-                               class="btn btn-light quick-action">
-                                <i class="bi bi-plus-circle me-2"></i>Nouvelle action
-                            </a>
-                            <a th:if="${dashboard != null and dashboard.organisationId == null and !isSuperAdmin}" th:href="@{/organisations/create}"
-                               class="btn btn-light quick-action">
-                                <i class="bi bi-building-add me-2"></i>Créer une organisation
-                            </a>
-                        </div>
+
+                    <div class="admin-hero-actions">
+                        <a th:if="${dashboard != null and dashboard.organisationId != null}" th:href="@{/actions/create}" class="btn btn-light">
+                            <i class="bi bi-plus-circle me-2"></i>Nouvelle action
+                        </a>
+                        <a th:if="${dashboard != null and dashboard.organisationId == null and !isSuperAdmin}" th:href="@{/organisations/create}" class="btn btn-light">
+                            <i class="bi bi-building-add me-2"></i>Creer une organisation
+                        </a>
                     </div>
                 </div>
             </section>
 
-            <div th:if="${dashboard != null and dashboard.organisationId == null and !isSuperAdmin}" class="alert alert-warning border-0 shadow-sm mb-4">
-                <i class="bi bi-exclamation-triangle me-2"></i> Vous n'avez pas encore d'organisation approuvée. <a th:href="@{/organisations/create}" class="alert-link">Créez-en une ici</a> pour commencer à publier des actions.
+            <div th:if="${dashboard != null and dashboard.organisationId == null and !isSuperAdmin}" class="admin-alert">
+                <i class="bi bi-exclamation-triangle me-2 text-warning"></i>Vous n'avez pas encore d'organisation approuvee.
+                <a th:href="@{/organisations/create}" class="fw-bold">Creez-en une ici</a> pour commencer a publier des actions.
             </div>
 
-            <section class="row g-4 mb-4" id="stats-section">
-                <div class="col-sm-6 col-xl-3">
-                    <div class="stats-card h-100">
-                        <div class="d-flex justify-content-between align-items-start mb-4">
-                            <div>
-                                <div class="text-muted small" th:text="${isSuperAdmin ? 'Total Actions Système' : 'Mes Actions'}">Total actions</div>
-                                <div class="display-6 fw-bold" th:text="${dashboard != null ? dashboard.totalActions : 0}">0</div>
-                            </div>
-                            <span class="stats-icon"><i class="bi bi-kanban"></i></span>
+            <section class="admin-stat-grid" id="stats-section">
+                <div class="admin-stat-card">
+                    <div class="admin-stat-head">
+                        <div>
+                            <div class="admin-table-muted" th:text="${isSuperAdmin ? 'Total actions systeme' : 'Mes actions'}">Total actions</div>
+                            <div class="admin-stat-value" th:text="${dashboard != null ? dashboard.totalActions : 0}">0</div>
                         </div>
-                        <div class="text-muted small" th:text="${isSuperAdmin ? 'Actions publiées sur la plateforme.' : 'Actions rattachées à votre organisation.'}"></div>
+                        <span class="admin-stat-icon"><i class="bi bi-kanban"></i></span>
+                    </div>
+                    <div class="admin-stat-copy">
+                        <p th:text="${isSuperAdmin ? 'Actions publiees sur toute la plateforme.' : 'Actions rattachees a votre organisation.'}"></p>
                     </div>
                 </div>
-                <div class="col-sm-6 col-xl-3">
-                    <div class="stats-card h-100">
-                        <div class="d-flex justify-content-between align-items-start mb-4">
-                            <div>
-                                <div class="text-muted small" th:text="${isSuperAdmin ? 'Volume Dons Global' : 'Collecte Totale'}">Total donations</div>
-                                <div class="display-6 fw-bold"
-                                     th:text="${dashboard != null ? #numbers.formatDecimal(dashboard.totalDonationsAmount, 1, 0) + ' MAD' : '0 MAD'}">0 MAD</div>
-                            </div>
-                            <span class="stats-icon"><i class="bi bi-cash-stack"></i></span>
+
+                <div class="admin-stat-card">
+                    <div class="admin-stat-head">
+                        <div>
+                            <div class="admin-table-muted" th:text="${isSuperAdmin ? 'Volume de dons global' : 'Collecte totale'}">Total donations</div>
+                            <div class="admin-stat-value" th:text="${dashboard != null ? #numbers.formatDecimal(dashboard.totalDonationsAmount, 1, 0) + ' MAD' : '0 MAD'}">0 MAD</div>
                         </div>
-                        <div class="text-muted small" th:text="${isSuperAdmin ? 'Dons confirmés à travers le système.' : 'Montant total des dons reçus.'}"></div>
+                        <span class="admin-stat-icon"><i class="bi bi-cash-stack"></i></span>
+                    </div>
+                    <div class="admin-stat-copy">
+                        <p th:text="${isSuperAdmin ? 'Dons confirmes a travers le systeme.' : 'Montant total des dons recus.'}"></p>
                     </div>
                 </div>
-                <div class="col-sm-6 col-xl-3">
-                    <div class="stats-card h-100">
-                        <div class="d-flex justify-content-between align-items-start mb-4">
-                            <div>
-                                <div class="text-muted small" th:text="${isSuperAdmin ? 'Membres Communauté' : 'Mes Participants'}">Total participants</div>
-                                <div class="display-6 fw-bold" th:text="${dashboard != null ? dashboard.totalParticipants : 0}">0</div>
-                            </div>
-                            <span class="stats-icon"><i class="bi bi-people-fill"></i></span>
+
+                <div class="admin-stat-card">
+                    <div class="admin-stat-head">
+                        <div>
+                            <div class="admin-table-muted" th:text="${isSuperAdmin ? 'Membres de la communaute' : 'Mes participants'}">Total participants</div>
+                            <div class="admin-stat-value" th:text="${dashboard != null ? dashboard.totalParticipants : 0}">0</div>
                         </div>
-                        <div class="text-muted small" th:text="${isSuperAdmin ? 'Total des inscrits aux actions.' : 'Inscrits à vos actions solidaires.'}"></div>
+                        <span class="admin-stat-icon"><i class="bi bi-people-fill"></i></span>
+                    </div>
+                    <div class="admin-stat-copy">
+                        <p th:text="${isSuperAdmin ? 'Total des inscrits aux actions.' : 'Participants inscrits a vos actions solidaires.'}"></p>
                     </div>
                 </div>
-                <div class="col-sm-6 col-xl-3">
-                    <div class="stats-card h-100">
-                        <div class="d-flex justify-content-between align-items-start mb-4">
-                            <div>
-                                <div class="text-muted small">Dons en Attente</div>
-                                <div class="display-6 fw-bold text-warning" th:text="${dashboard != null ? dashboard.pendingDonations : 0}">0</div>
-                            </div>
-                            <span class="stats-icon"><i class="bi bi-hourglass-split"></i></span>
+
+                <div class="admin-stat-card">
+                    <div class="admin-stat-head">
+                        <div>
+                            <div class="admin-table-muted">Dons en attente</div>
+                            <div class="admin-stat-value text-warning" th:text="${dashboard != null ? dashboard.pendingDonations : 0}">0</div>
                         </div>
-                        <div class="text-muted small">Dons nécessitant une confirmation.</div>
+                        <span class="admin-stat-icon"><i class="bi bi-hourglass-split"></i></span>
+                    </div>
+                    <div class="admin-stat-copy">
+                        <p>Dons necessitant une confirmation.</p>
                     </div>
                 </div>
             </section>
 
-            <!-- ── Organisations en attente d'approbation (Admin Uniquement) ── -->
-            <section th:if="${isSuperAdmin}" class="row g-4 mb-4" id="pending-orgs-section">
-                <div class="col-12">
-                    <div class="panel-card">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h3 class="panel-title mb-0">
-                                <i class="bi bi-building me-2"></i>Organisations en attente
-                                <span th:if="${pendingOrgs != null and !pendingOrgs.isEmpty()}"
-                                      class="badge bg-warning text-dark ms-2"
-                                      th:text="${pendingOrgs.size()}">0</span>
-                            </h3>
+            <div class="admin-panels">
+                <section th:if="${isSuperAdmin}" id="pending-orgs-section">
+                    <div class="admin-panel">
+                        <div class="admin-panel-header">
+                            <div>
+                                <h3>
+                                    <i class="bi bi-building me-2"></i>Organisations en attente
+                                    <span th:if="${pendingOrgs != null and !pendingOrgs.isEmpty()}" class="admin-badge badge-pending ms-2" th:text="${pendingOrgs.size()}">0</span>
+                                </h3>
+                                <p>Validez rapidement les nouvelles structures avant leur publication.</p>
+                            </div>
                         </div>
 
-                        <div th:if="${pendingOrgs == null or pendingOrgs.isEmpty()}"
-                             class="text-center text-muted py-4">
-                            <i class="bi bi-check-circle fs-3 d-block mb-2"></i>
-                            Aucune organisation en attente.
+                        <div th:if="${pendingOrgs == null or pendingOrgs.isEmpty()}" class="admin-empty-state">
+                            <i class="bi bi-check-circle"></i>
+                            <h4 class="h6 mb-2">Aucune organisation en attente</h4>
+                            <p class="mb-0">Les nouvelles demandes validables apparaitront ici.</p>
                         </div>
 
-                        <div class="table-responsive" th:unless="${pendingOrgs == null or pendingOrgs.isEmpty()}">
-                            <table class="table align-middle mb-0">
+                        <div class="admin-table-wrap" th:unless="${pendingOrgs == null or pendingOrgs.isEmpty()}">
+                            <table class="admin-table">
                                 <thead>
                                 <tr>
                                     <th>Nom</th>
                                     <th>Email</th>
-                                    <th>Téléphone</th>
-                                    <th>Date création</th>
+                                    <th>Telephone</th>
+                                    <th>Date creation</th>
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
@@ -384,25 +210,19 @@
                                 <tr th:each="org : ${pendingOrgs}">
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <img th:src="${!#strings.isEmpty(org.logo) ? org.logo : 'https://placehold.co/40x40?text=ORG'}"
-                                                 width="40" height="40"
-                                                 style="border-radius:10px; object-fit:cover;"
-                                                 alt="logo">
-                                            <span class="fw-semibold" th:text="${org.nom}"></span>
+                                            <img th:src="${!#strings.isEmpty(org.logo) ? org.logo : 'https://placehold.co/40x40?text=ORG'}" class="admin-logo-chip" alt="logo">
+                                            <span class="admin-row-title" th:text="${org.nom}"></span>
                                         </div>
                                     </td>
                                     <td th:text="${org.email}"></td>
                                     <td th:text="${org.telephone}"></td>
                                     <td th:text="${org.dateCreation != null ? #temporals.format(org.dateCreation, 'dd/MM/yyyy') : '-'}"></td>
                                     <td>
-                                        <div class="d-flex gap-2">
-                                            <a th:href="@{/organisations/valider/{id}(id=${org.id}, from='admin')}"
-                                               class="btn btn-sm btn-success">
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <a th:href="@{/organisations/valider/{id}(id=${org.id}, from='admin')}" class="btn btn-sm btn-success-pill">
                                                 <i class="bi bi-check-lg"></i> Approuver
                                             </a>
-                                            <a th:href="@{/organisations/rejeter/{id}(id=${org.id}, from='admin')}"
-                                               class="btn btn-sm btn-danger"
-                                               onclick="return confirm('Rejeter cette organisation ?')">
+                                            <a th:href="@{/organisations/rejeter/{id}(id=${org.id}, from='admin')}" class="btn btn-sm btn-ghost" onclick="return confirm('Rejeter cette organisation ?')">
                                                 <i class="bi bi-x-lg"></i> Rejeter
                                             </a>
                                         </div>
@@ -412,53 +232,51 @@
                             </table>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <section class="row g-4">
-                <div class="col-12">
-                    <div class="panel-card">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h3 class="panel-title mb-0">Recent actions</h3>
-                            <a th:href="@{/actions}" class="btn btn-sm btn-outline-secondary">View all</a>
+                <section>
+                    <div class="admin-panel">
+                        <div class="admin-panel-header">
+                            <div>
+                                <h3>Actions recentes</h3>
+                                <p>Vue rapide sur les campagnes publiees et leur progression.</p>
+                            </div>
+                            <a th:href="@{/actions}" class="btn btn-sm btn-ghost">Voir tout</a>
                         </div>
 
-                        <div class="table-responsive">
-                            <table class="table align-middle mb-0">
+                        <div class="admin-table-wrap">
+                            <table class="admin-table">
                                 <thead>
                                 <tr>
-                                    <th>Title</th>
-                                    <th>Category</th>
+                                    <th>Titre</th>
+                                    <th>Categorie</th>
                                     <th>Date</th>
-                                    <th>Goal amount</th>
-                                    <th>Collected amount</th>
-                                    <th>Progress</th>
-                                    <th>Status</th>
+                                    <th>Objectif</th>
+                                    <th>Collecte</th>
+                                    <th>Progression</th>
+                                    <th>Statut</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:if="${dashboard == null or #lists.isEmpty(dashboard.recentActions)}">
-                                    <td colspan="7" class="text-center text-muted py-4">Aucune action recente disponible.</td>
+                                    <td colspan="7" class="text-center admin-table-muted py-4">Aucune action recente disponible.</td>
                                 </tr>
                                 <tr th:each="action : ${dashboard != null ? dashboard.recentActions : T(java.util.Collections).emptyList()}">
-                                    <td class="fw-semibold" th:text="${action != null ? action.title : '-'}">-</td>
+                                    <td class="admin-row-title" th:text="${action != null ? action.title : '-'}">-</td>
                                     <td th:text="${action != null ? action.category : '-'}">-</td>
                                     <td th:text="${action != null ? action.date : '-'}">-</td>
-                                    <td th:text="${action != null ? #numbers.formatDecimal(action.goalAmount, 1, 2) : '0.00'}">0.00</td>
-                                    <td th:text="${action != null ? #numbers.formatDecimal(action.collectedAmount, 1, 2) : '0.00'}">0.00</td>
+                                    <td th:text="${action != null ? #numbers.formatDecimal(action.goalAmount, 1, 2) + ' MAD' : '0.00 MAD'}">0.00 MAD</td>
+                                    <td th:text="${action != null ? #numbers.formatDecimal(action.collectedAmount, 1, 2) + ' MAD' : '0.00 MAD'}">0.00 MAD</td>
                                     <td style="min-width: 180px;">
                                         <div class="d-flex align-items-center gap-2">
-                                            <div class="progress flex-grow-1" style="height: 8px;">
-                                                <div class="progress-bar bg-success"
-                                                     role="progressbar"
-                                                     th:style="${action != null} ? 'width:' + #numbers.formatDecimal(action.progressPercentage, 1, 0) + '%' : 'width:0%'"></div>
+                                            <div class="admin-progress flex-grow-1">
+                                                <div class="progress-bar" role="progressbar" th:style="${action != null ? 'width:' + #numbers.formatDecimal(action.progressPercentage, 1, 0) + '%' : 'width:0%'}"></div>
                                             </div>
-                                            <small class="text-muted"
-                                                   th:text="${action != null ? #numbers.formatDecimal(action.progressPercentage, 1, 0) : '0'} + '%'">0%</small>
+                                            <small class="admin-table-muted" th:text="${action != null ? #numbers.formatDecimal(action.progressPercentage, 1, 0) : '0'} + '%'">0%</small>
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge badge-soft"
+                                        <span class="admin-badge"
                                               th:classappend="${action != null and action.status != null ? ' badge-' + #strings.toLowerCase(action.status) : ' badge-pending'}"
                                               th:text="${action != null and action.status != null ? action.status : 'UNKNOWN'}">UNKNOWN</span>
                                     </td>
@@ -467,37 +285,40 @@
                             </table>
                         </div>
                     </div>
-                </div>
+                </section>
 
-                <div class="col-12" id="donations-section">
-                    <div class="panel-card">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h3 class="panel-title mb-0">Recent donations</h3>
-                            <a th:href="@{/admin/dashboard#donations-section}" class="btn btn-sm btn-outline-secondary">View all</a>
+                <section id="donations-section">
+                    <div class="admin-panel">
+                        <div class="admin-panel-header">
+                            <div>
+                                <h3>Dons recents</h3>
+                                <p>Dernieres contributions et statut de traitement des paiements.</p>
+                            </div>
+                            <a th:href="@{/admin/dashboard#donations-section}" class="btn btn-sm btn-ghost">Actualiser</a>
                         </div>
 
-                        <div class="table-responsive">
-                            <table class="table align-middle mb-0">
+                        <div class="admin-table-wrap">
+                            <table class="admin-table">
                                 <thead>
                                 <tr>
-                                    <th>Donor name</th>
-                                    <th>Amount</th>
+                                    <th>Donateur</th>
+                                    <th>Montant</th>
                                     <th>Date</th>
-                                    <th>Payment method</th>
-                                    <th>Status</th>
+                                    <th>Paiement</th>
+                                    <th>Statut</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:if="${dashboard == null or #lists.isEmpty(dashboard.recentDonations)}">
-                                    <td colspan="5" class="text-center text-muted py-4">Aucun don recent disponible.</td>
+                                    <td colspan="5" class="text-center admin-table-muted py-4">Aucun don recent disponible.</td>
                                 </tr>
                                 <tr th:each="donation : ${dashboard != null ? dashboard.recentDonations : T(java.util.Collections).emptyList()}">
-                                    <td class="fw-semibold" th:text="${donation != null ? donation.donorName : '-'}">-</td>
-                                    <td th:text="${donation != null ? #numbers.formatDecimal(donation.amount, 1, 2) : '0.00'}">0.00</td>
+                                    <td class="admin-row-title" th:text="${donation != null ? donation.donorName : '-'}">-</td>
+                                    <td th:text="${donation != null ? #numbers.formatDecimal(donation.amount, 1, 2) + ' MAD' : '0.00 MAD'}">0.00 MAD</td>
                                     <td th:text="${donation != null ? donation.date : '-'}">-</td>
                                     <td th:text="${donation != null ? donation.paymentMethod : '-'}">-</td>
                                     <td>
-                                        <span class="badge badge-soft"
+                                        <span class="admin-badge"
                                               th:classappend="${donation != null and donation.status != null ? ' badge-' + #strings.toLowerCase(donation.status) : ' badge-pending'}"
                                               th:text="${donation != null and donation.status != null ? donation.status : 'UNKNOWN'}">UNKNOWN</span>
                                     </td>
@@ -506,8 +327,8 @@
                             </table>
                         </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </div>
         </main>
     </div>
 </div>
