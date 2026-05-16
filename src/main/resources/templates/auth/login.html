@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/head :: head('Connexion')}"></head>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:lang="${#locale.language}"
+      th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}">
+<head th:replace="~{fragments/head :: head(#{auth.login.page.title})}"></head>
 <body class="auth-page">
 
 <main class="auth-split-wrapper">
@@ -10,9 +12,9 @@
                 <img th:src="@{/images/logo-charite.png}" alt="Charite">
                 <span class="text-white">Charite</span>
             </div>
-            <h2 class="display-4 fw-bold text-white mb-4">Chaque geste compte pour un avenir meilleur.</h2>
-            <p class="lead text-white-50">Rejoignez des milliers de donateurs et d'organisations pour crÃ©er un impact rÃ©el au Maroc.</p>
-            
+            <h2 class="display-4 fw-bold text-white mb-4" th:text="#{auth.login.tagline}">Chaque geste compte pour un avenir meilleur.</h2>
+            <p class="lead text-white-50" th:text="#{auth.login.lead}">Rejoignez des milliers de donateurs.</p>
+
             <div class="auth-visual-footer mt-auto">
                 <div class="d-flex align-items-center gap-3">
                     <div class="avatar-group">
@@ -20,7 +22,7 @@
                         <div class="avatar-sm"></div>
                         <div class="avatar-sm"></div>
                     </div>
-                    <span class="text-white-50 small">+2,000 personnes nous font confiance</span>
+                    <span class="text-white-50 small" th:text="#{auth.login.trust}">+2 000 personnes nous font confiance</span>
                 </div>
             </div>
         </div>
@@ -37,58 +39,63 @@
             </div>
 
             <div class="auth-header mb-4">
-                <h1 class="h2 fw-bold mb-2">Bienvenue</h1>
-                <p class="text-muted">Ravis de vous revoir ! Connectez-vous Ã  votre compte.</p>
+                <h1 class="h2 fw-bold mb-2" th:text="#{auth.login.welcome}">Bienvenue</h1>
+                <p class="text-muted" th:text="#{auth.login.subtitle}">Ravis de vous revoir !</p>
             </div>
 
             <div th:if="${param.error}" class="alert alert-danger border-0 rounded-4 small mb-4">
-                <i class="bi bi-exclamation-circle me-2"></i> Email ou mot de passe incorrect.
+                <i class="bi bi-exclamation-circle me-2"></i>
+                <span th:text="#{auth.login.error}">Email ou mot de passe incorrect.</span>
             </div>
             <div th:if="${param.logout}" class="alert alert-success border-0 rounded-4 small mb-4">
-                <i class="bi bi-check-circle me-2"></i> Vous Ãªtes dÃ©connectÃ©.
+                <i class="bi bi-check-circle me-2"></i>
+                <span th:text="#{auth.login.logout}">Vous êtes déconnecté.</span>
             </div>
             <div th:if="${param.registered}" class="alert alert-success border-0 rounded-4 small mb-4">
-                <i class="bi bi-check-circle me-2"></i> Compte crÃ©Ã©. Veuillez vous connecter.
+                <i class="bi bi-check-circle me-2"></i>
+                <span th:text="#{auth.login.registered}">Compte créé. Veuillez vous connecter.</span>
             </div>
 
             <form th:action="@{/login}" method="post" class="needs-validation" novalidate>
                 <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                
+
                 <div class="mb-3">
-                    <label class="form-label" for="email">Adresse email</label>
+                    <label class="form-label" for="email" th:text="#{auth.login.email}">Adresse email</label>
                     <div class="premium-input">
-                        <input id="email" type="email" name="email" class="form-control" placeholder="nom@exemple.com" required>
+                        <input id="email" type="email" name="email" class="form-control"
+                               th:placeholder="#{auth.login.email}" required>
                     </div>
                 </div>
 
                 <div class="mb-4">
                     <div class="d-flex justify-content-between align-items-center mb-2">
-                        <label class="form-label mb-0" for="motDePasse">Mot de passe</label>
-                        <a href="#" class="small fw-bold text-primary">OubliÃ© ?</a>
+                        <label class="form-label mb-0" for="motDePasse" th:text="#{auth.login.password}">Mot de passe</label>
+                        <a href="#" class="small fw-bold text-primary" th:text="#{auth.login.forgot}">Oublié ?</a>
                     </div>
                     <div class="premium-input">
-                        <input id="motDePasse" type="password" name="motDePasse" class="form-control" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" required>
+                        <input id="motDePasse" type="password" name="motDePasse" class="form-control" placeholder="••••••••" required>
                     </div>
                 </div>
 
                 <div class="d-grid gap-4">
-                    <button type="submit" class="btn btn-success-pill btn-lg w-100">Se connecter</button>
-                    
+                    <button type="submit" class="btn btn-success-pill btn-lg w-100" th:text="#{auth.login.submit}">Se connecter</button>
+
                     <div class="position-relative text-center my-2">
                         <hr class="text-muted opacity-25">
-                        <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">OU</span>
+                        <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small" th:text="#{auth.login.or}">OU</span>
                     </div>
 
                     <div class="text-center">
-                        <span class="text-muted">Pas encore de compte ?</span>
-                        <a th:href="@{/register}" class="text-primary fw-bold ms-1">S'inscrire gratuitement</a>
+                        <span class="text-muted" th:text="#{auth.login.no.account}">Pas encore de compte ?</span>
+                        <a th:href="@{/register}" class="text-primary fw-bold ms-1" th:text="#{auth.login.register.link}">S'inscrire gratuitement</a>
                     </div>
                 </div>
             </form>
-            
+
             <footer class="mt-5 pt-4 text-center text-lg-start">
                 <a th:href="@{/}" class="btn btn-link btn-sm text-muted p-0">
-                    <i class="bi bi-arrow-left me-1"></i> Retour Ã  l'accueil
+                    <i class="bi bi-arrow-left me-1"></i>
+                    <span th:text="#{auth.back.home}">Retour à l'accueil</span>
                 </a>
             </footer>
         </div>

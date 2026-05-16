@@ -1,218 +1,53 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:lang="${#locale.language}"
+      th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}">
 <head>
     <th:block th:replace="~{fragments/head :: head('Détail action')}"></th:block>
-    <!-- Extra metadata for Stripe/CSRF -->
     <meta name="stripe-public-key" th:content="${stripePublicKey}">
     <meta name="_csrf" th:content="${_csrf != null ? _csrf.token : ''}">
     <meta name="_csrf_header" th:content="${_csrf != null ? _csrf.headerName : 'X-CSRF-TOKEN'}">
     <style>
-        :root {
-            --green-primary: #2d8c4e;
-            --green-light: #e8f5ee;
-            --green-mid: #4caf72;
-            --text-dark: #1a1a2e;
-            --text-muted: #6b7280;
-            --border: #e5e7eb;
-            --bg: #f7f8fa;
-        }
-
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text-dark);
-        }
-
-        /* ── Hero Section ── */
-        .action-hero {
-            background: #fff;
-            padding: 40px 0;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 30px;
-        }
-
-        .category-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            background: var(--green-light);
-            color: var(--green-primary);
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .action-title {
-            font-size: 2.2rem;
-            font-weight: 800;
-            margin-bottom: 15px;
-            line-height: 1.2;
-        }
-
-        .action-meta {
-            display: flex;
-            gap: 20px;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            flex-wrap: wrap;
-        }
-
-        .action-meta span {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .action-meta i {
-            color: var(--green-primary);
-        }
-
-        /* ── Sidebar Cards ── */
-        .sticky-sidebar {
-            position: sticky;
-            top: 20px;
-        }
-
-        .card-donation {
-            background: #fff;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            padding: 24px;
-            margin-bottom: 20px;
-        }
-
-        .progress-container {
-            margin-bottom: 20px;
-        }
-
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
-
-        .progress-label .amount {
-            font-size: 1.2rem;
-            color: var(--text-dark);
-        }
-
-        .progress-label .target {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        .progress-bar-wrap {
-            height: 10px;
-            background: #eee;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            background: var(--green-primary);
-            border-radius: 10px;
-            transition: width 0.6s ease;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-            border-top: 1px solid var(--border);
-            padding-top: 20px;
-        }
-
-        .stat-box {
-            text-align: center;
-        }
-
-        .stat-box .val {
-            display: block;
-            font-size: 1.1rem;
-            font-weight: 700;
-        }
-
-        .stat-box .lbl {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        /* ── Content ── */
-        .content-section {
-            background: #fff;
-            border-radius: 16px;
-            padding: 30px;
-            margin-bottom: 30px;
-            border: 1px solid var(--border);
-        }
-
-        .content-section h4 {
-            font-weight: 700;
-            margin-bottom: 20px;
-            position: relative;
-            padding-bottom: 10px;
-        }
-
-        .content-section h4::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 40px;
-            height: 3px;
-            background: var(--green-primary);
-        }
-
-        .description {
-            line-height: 1.7;
-            color: #4b5563;
-        }
-
-        /* ── Payment & Participation ── */
-        .btn-pay {
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.2s;
-        }
-
-        .btn-stripe { background: #6366f1; color: #fff; border: none; }
-        .btn-stripe:hover { background: #4f46e5; }
-
-        .btn-paypal { background: #ffc439; color: #000; border: none; }
-        .btn-paypal:hover { background: #f2ba2b; }
-
-        .btn-participate { background: var(--green-primary); color: #fff; border: none; }
-        .btn-participate:hover { background: var(--green-mid); color: #fff; }
-
-        .form-label-custom {
-            font-size: 0.85rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        #card-element {
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            background: #fff;
-        }
+        :root { --green-primary:#2d8c4e;--green-light:#e8f5ee;--green-mid:#4caf72;--text-dark:#1a1a2e;--text-muted:#6b7280;--border:#e5e7eb;--bg:#f7f8fa; }
+        body { font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-dark); }
+        .action-hero { background:#fff;padding:40px 0;border-bottom:1px solid var(--border);margin-bottom:30px; }
+        .category-badge { display:inline-block;padding:4px 12px;background:var(--green-light);color:var(--green-primary);border-radius:20px;font-size:.8rem;font-weight:600;margin-bottom:15px; }
+        .action-title { font-size:2.2rem;font-weight:800;margin-bottom:15px;line-height:1.2; }
+        .action-meta { display:flex;gap:20px;color:var(--text-muted);font-size:.9rem;flex-wrap:wrap; }
+        .action-meta span { display:flex;align-items:center;gap:6px; }
+        .action-meta i { color:var(--green-primary); }
+        .sticky-sidebar { position:sticky;top:20px; }
+        .card-donation { background:#fff;border-radius:16px;border:1px solid var(--border);box-shadow:0 4px 20px rgba(0,0,0,.05);padding:24px;margin-bottom:20px; }
+        .progress-container { margin-bottom:20px; }
+        .progress-label { display:flex;justify-content:space-between;margin-bottom:8px;font-weight:700; }
+        .progress-label .amount { font-size:1.2rem;color:var(--text-dark); }
+        .progress-label .target { font-size:.9rem;color:var(--text-muted); }
+        .progress-bar-wrap { height:10px;background:#eee;border-radius:10px;overflow:hidden; }
+        .progress-bar-fill { height:100%;background:var(--green-primary);border-radius:10px;transition:width .6s ease; }
+        .stats-grid { display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:20px;border-top:1px solid var(--border);padding-top:20px; }
+        .stat-box { text-align:center; }
+        .stat-box .val { display:block;font-size:1.1rem;font-weight:700; }
+        .stat-box .lbl { font-size:.75rem;color:var(--text-muted);text-transform:uppercase; }
+        .content-section { background:#fff;border-radius:16px;padding:30px;margin-bottom:30px;border:1px solid var(--border); }
+        .content-section h4 { font-weight:700;margin-bottom:20px;position:relative;padding-bottom:10px; }
+        .content-section h4::after { content:'';position:absolute;bottom:0;left:0;width:40px;height:3px;background:var(--green-primary); }
+        .description { line-height:1.7;color:#4b5563; }
+        .btn-pay { padding:12px;border-radius:10px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s; }
+        .btn-stripe { background:#6366f1;color:#fff;border:none; }
+        .btn-stripe:hover { background:#4f46e5; }
+        .btn-paypal { background:#ffc439;color:#000;border:none; }
+        .btn-paypal:hover { background:#f2ba2b; }
+        .btn-participate { background:var(--green-primary);color:#fff;border:none; }
+        .btn-participate:hover { background:var(--green-mid);color:#fff; }
+        .form-label-custom { font-size:.85rem;font-weight:700;margin-bottom:8px;display:block; }
+        #card-element { padding:12px;border:1px solid var(--border);border-radius:8px;background:#fff; }
     </style>
 </head>
 <body class="public-page">
 <div th:replace="~{fragments/public-navbar :: navbar}"></div>
 
-<!-- ── Hero ── -->
+<!-- Hero -->
 <div class="action-hero" th:if="${action != null}">
     <div class="container">
         <div class="row align-items-center">
@@ -221,10 +56,10 @@
                 <h1 class="action-title" th:text="${action.titre}"></h1>
                 <div class="action-meta">
                     <span><i class="bi bi-geo-alt"></i> <span th:text="${action.lieu}"></span></span>
-                    <span><i class="bi bi-calendar-event"></i> 
+                    <span><i class="bi bi-calendar-event"></i>
                         <span th:text="${action.dateDebut != null ? #temporals.format(action.dateDebut, 'dd MMM yyyy') : ''}"></span>
                     </span>
-                    <span><i class="bi bi-building"></i> <span th:text="${action.organisation != null ? action.organisation.nom : 'Organisation'}"></span></span>
+                    <span><i class="bi bi-building"></i> <span th:text="${action.organisation != null ? action.organisation.nom : ''}"></span></span>
                     <span th:if="${action.status != null}">
                         <i class="bi bi-info-circle"></i>
                         <span th:text="${action.status}"></span>
@@ -233,8 +68,9 @@
             </div>
             <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
                 <div class="d-flex gap-2 justify-content-lg-end">
-                    <a th:href="@{/actions}" class="btn btn-outline-secondary px-4">Retour</a>
-                    <a th:if="${canManage}" th:href="@{/actions/edit/{id}(id=${action.id})}" class="btn btn-primary px-4">Modifier</a>
+                    <a th:href="@{/actions}" class="btn btn-outline-secondary px-4" th:text="#{action.detail.back}">Retour</a>
+                    <a th:if="${canManage}" th:href="@{/actions/edit/{id}(id=${action.id})}"
+                       class="btn btn-primary px-4" th:text="#{action.detail.edit}">Modifier</a>
                 </div>
             </div>
         </div>
@@ -242,8 +78,8 @@
 </div>
 
 <div class="container py-2" th:if="${action == null}">
-    <div class="alert alert-warning">Action introuvable.</div>
-    <a th:href="@{/actions}" class="btn btn-primary">Voir toutes les actions</a>
+    <div class="alert alert-warning" th:text="#{action.detail.not.found}">Action introuvable.</div>
+    <a th:href="@{/actions}" class="btn btn-primary" th:text="#{action.detail.see.all}">Voir toutes les actions</a>
 </div>
 
 <main class="container mb-5" th:if="${action != null}">
@@ -251,12 +87,12 @@
         <!-- Content -->
         <div class="col-lg-8">
             <div class="content-section">
-                <h4>Description de l'action</h4>
+                <h4 th:text="#{action.detail.description}">Description de l'action</h4>
                 <div class="description" th:text="${action.description}"></div>
             </div>
 
             <div class="content-section">
-                <h4>Informations détaillées</h4>
+                <h4 th:text="#{action.detail.info}">Informations détaillées</h4>
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="d-flex gap-3">
@@ -264,10 +100,12 @@
                                 <i class="bi bi-calendar-check fs-4"></i>
                             </div>
                             <div>
-                                <div class="text-muted small">Dates de l'action</div>
+                                <div class="text-muted small" th:text="#{action.detail.dates}">Dates de l'action</div>
                                 <div class="fw-bold">
-                                    Du <span th:text="${action.dateDebut != null ? #temporals.format(action.dateDebut, 'dd/MM/yyyy') : ''}"></span>
-                                    au <span th:text="${action.dateFin != null ? #temporals.format(action.dateFin, 'dd/MM/yyyy') : ''}"></span>
+                                    <span th:text="#{action.detail.dates.from}">Du</span>
+                                    <span th:text="${action.dateDebut != null ? #temporals.format(action.dateDebut, 'dd/MM/yyyy') : ''}"></span>
+                                    <span th:text="#{action.detail.dates.to}">au</span>
+                                    <span th:text="${action.dateFin != null ? #temporals.format(action.dateFin, 'dd/MM/yyyy') : ''}"></span>
                                 </div>
                             </div>
                         </div>
@@ -278,7 +116,7 @@
                                 <i class="bi bi-people fs-4"></i>
                             </div>
                             <div>
-                                <div class="text-muted small">Organisation</div>
+                                <div class="text-muted small" th:text="#{action.detail.org}">Organisation</div>
                                 <div class="fw-bold" th:text="${action.organisation != null ? action.organisation.nom : ''}"></div>
                             </div>
                         </div>
@@ -290,83 +128,88 @@
         <!-- Sidebar -->
         <div class="col-lg-4">
             <div class="sticky-sidebar">
-                <!-- Donation Card -->
                 <div class="card-donation">
                     <div class="progress-container">
                         <div class="progress-label">
                             <span class="amount" th:text="${(action.sommeActuelle != null ? action.sommeActuelle : 0) + ' MAD'}"></span>
-                            <span class="target" th:text="'sur ' + (action.objectifCollect != null ? action.objectifCollect : 0) + ' MAD'"></span>
+                            <span class="target">
+                                <span th:text="#{action.detail.sur}">sur</span>
+                                <span th:text="${(action.objectifCollect != null ? action.objectifCollect : 0) + ' MAD'}"></span>
+                            </span>
                         </div>
                         <div class="progress-bar-wrap">
                             <div class="progress-bar-fill" th:style="'width: ' + ${progression} + '%'"></div>
                         </div>
                         <div class="text-end mt-1 small text-muted fw-bold">
-                            <span th:text="${progression != null ? #numbers.formatDecimal(progression, 1, 0) : '0'} + '%'"></span> complété
+                            <span th:text="${progression != null ? #numbers.formatDecimal(progression, 1, 0) : '0'} + '%'"></span>
+                            <span th:text="#{action.detail.completed}">complété</span>
                         </div>
                     </div>
 
                     <div class="stats-grid">
                         <div class="stat-box">
                             <span class="val" th:text="${nbParticipants}">0</span>
-                            <span class="lbl">Participants</span>
+                            <span class="lbl" th:text="#{action.detail.participants}">Participants</span>
                         </div>
                         <div class="stat-box">
                             <span class="val" th:text="${nbDonsStripe + nbDonsPaypal}">0</span>
-                            <span class="lbl">Dons reçus</span>
+                            <span class="lbl" th:text="#{action.detail.donations}">Dons reçus</span>
                         </div>
                     </div>
 
-                    <!-- Status Alerts -->
                     <div th:if="${paymentSuccess}" class="alert alert-success small py-2 mb-3">
-                        <i class="bi bi-check-circle-fill me-1"></i> Merci pour votre don !
+                        <i class="bi bi-check-circle-fill me-1"></i> <span th:text="#{action.detail.thanks}">Merci pour votre don !</span>
                     </div>
                     <div th:if="${donError}" class="alert alert-danger small py-2 mb-3">
-                        <i class="bi bi-exclamation-triangle me-1"></i> Montant invalide.
+                        <i class="bi bi-exclamation-triangle me-1"></i> <span th:text="#{action.detail.invalid.amount}">Montant invalide.</span>
                     </div>
                     <div th:if="${objectifAtteint}" class="alert alert-info small py-2 mb-3">
-                        <i class="bi bi-trophy-fill me-1"></i> Objectif atteint !
+                        <i class="bi bi-trophy-fill me-1"></i> <span th:text="#{action.detail.goal.reached}">Objectif atteint !</span>
                     </div>
 
-                    <!-- Participation Section -->
+                    <!-- Participation -->
                     <div class="mb-4">
-                        <h6 class="fw-bold mb-3">Participer</h6>
+                        <h6 class="fw-bold mb-3" th:text="#{action.detail.participate}">Participer</h6>
                         <div sec:authorize="!isAuthenticated()" th:unless="${objectifAtteint}">
-                            <a th:href="@{/login}" class="btn btn-participate w-100">Connectez-vous</a>
+                            <a th:href="@{/login}" class="btn btn-participate w-100" th:text="#{action.detail.login.cta}">Connectez-vous</a>
                         </div>
                         <div sec:authorize="isAuthenticated()" th:if="${dejaInscrit and not objectifAtteint}">
                             <div class="alert alert-success small py-2 mb-0 text-center">
-                                <i class="bi bi-check-circle"></i> Déjà inscrit
+                                <i class="bi bi-check-circle"></i> <span th:text="#{action.detail.already.registered}">Déjà inscrit</span>
                             </div>
                         </div>
                         <div sec:authorize="isAuthenticated()" th:unless="${dejaInscrit or objectifAtteint}">
                             <form th:action="@{/actions/{id}/participer(id=${action.id})}" method="post">
-                                <button type="submit" class="btn btn-participate w-100">Participer</button>
+                                <button type="submit" class="btn btn-participate w-100" th:text="#{action.detail.participate}">Participer</button>
                             </form>
                         </div>
                     </div>
 
-                    <!-- Payment Section -->
+                    <!-- Paiement -->
                     <div th:unless="${objectifAtteint}">
-                        <h6 class="fw-bold mb-3">Faire un don</h6>
+                        <h6 class="fw-bold mb-3" th:text="#{action.detail.donate}">Faire un don</h6>
                         <div sec:authorize="!isAuthenticated()">
-                            <a th:href="@{/login}" class="btn btn-outline-primary w-100">Connectez-vous</a>
+                            <a th:href="@{/login}" class="btn btn-outline-primary w-100" th:text="#{action.detail.login.cta}">Connectez-vous</a>
                         </div>
-                        
+
                         <div sec:authorize="isAuthenticated()">
-                            <!-- Stripe Form -->
+                            <!-- Stripe -->
                             <div th:if="${not dejaPayeStripe}">
                                 <form id="stripeForm" th:data-action-id="${action.id}" class="mb-3">
                                     <div class="mb-3">
-                                        <label class="form-label-custom">Montant MAD</label>
-                                        <input type="number" id="stripeMontant" class="form-control" placeholder="Montant" min="1" step="1" th:max="${resteACollecte}" required>
+                                        <label class="form-label-custom" th:text="#{action.detail.amount.mad}">Montant MAD</label>
+                                        <input type="number" id="stripeMontant" class="form-control"
+                                               th:placeholder="#{action.detail.amount.mad}" min="1" step="1"
+                                               th:max="${resteACollecte}" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label-custom">Carte bancaire</label>
+                                        <label class="form-label-custom" th:text="#{action.detail.card}">Carte bancaire</label>
                                         <div id="card-element"></div>
                                         <div id="card-errors" class="text-danger mt-1 small"></div>
                                     </div>
                                     <button type="submit" id="stripeSubmitBtn" class="btn btn-pay btn-stripe w-100 mb-2">
-                                        <i class="bi bi-credit-card"></i> Payer par Carte
+                                        <i class="bi bi-credit-card"></i>
+                                        <span th:text="#{action.detail.pay.stripe}">Payer par Carte</span>
                                     </button>
                                     <div id="stripeSpinner" class="text-center d-none">
                                         <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
@@ -375,34 +218,40 @@
                                 </form>
                             </div>
                             <div th:if="${dejaPayeStripe}" class="alert alert-success small py-2 mb-3">
-                                <i class="bi bi-check-circle"></i> Don par carte effectué
+                                <i class="bi bi-check-circle"></i> <span th:text="#{action.detail.paid.stripe}">Don par carte effectué</span>
                             </div>
 
-                            <!-- PayPal Form -->
+                            <!-- PayPal -->
                             <div th:if="${not dejaPayePaypal}">
                                 <form th:action="@{/actions/{id}/paypal/create-order(id=${action.id})}" method="post">
                                     <div class="mb-3" th:if="${dejaPayeStripe}">
-                                        <label class="form-label-custom">Montant MAD</label>
-                                        <input type="number" name="montant" class="form-control" placeholder="Montant" min="1" step="1" th:max="${resteACollecte}" required>
+                                        <label class="form-label-custom" th:text="#{action.detail.amount.mad}">Montant MAD</label>
+                                        <input type="number" name="montant" class="form-control"
+                                               th:placeholder="#{action.detail.amount.mad}" min="1" step="1"
+                                               th:max="${resteACollecte}" required>
                                     </div>
                                     <button type="submit" class="btn btn-pay btn-paypal w-100">
-                                        <i class="bi bi-paypal"></i> Payer avec PayPal
+                                        <i class="bi bi-paypal"></i>
+                                        <span th:text="#{action.detail.pay.paypal}">Payer avec PayPal</span>
                                     </button>
                                 </form>
                             </div>
                             <div th:if="${dejaPayePaypal}" class="alert alert-success small py-2 mt-2">
-                                <i class="bi bi-check-circle"></i> Don PayPal effectué
+                                <i class="bi bi-check-circle"></i> <span th:text="#{action.detail.paid.paypal}">Don PayPal effectué</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Admin Gestion -->
+                <!-- Gestion admin -->
                 <div class="card-donation py-3" th:if="${canManage}">
-                    <h6 class="fw-bold mb-3">Gestion de l'action</h6>
+                    <h6 class="fw-bold mb-3" th:text="#{action.detail.manage}">Gestion de l'action</h6>
                     <div class="d-grid gap-2">
-                        <a th:href="@{/actions/edit/{id}(id=${action.id})}" class="btn btn-outline-primary btn-sm">Modifier</a>
-                        <a th:href="@{/actions/delete/{id}(id=${action.id})}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Supprimer définitivement ?')">Supprimer</a>
+                        <a th:href="@{/actions/edit/{id}(id=${action.id})}" class="btn btn-outline-primary btn-sm" th:text="#{action.detail.edit}">Modifier</a>
+                        <a th:href="@{/actions/delete/{id}(id=${action.id})}" class="btn btn-outline-danger btn-sm"
+                           th:onclick="'return confirm(\'' + #{action.detail.delete.confirm} + '\')'">
+                            <span th:text="#{action.detail.delete}">Supprimer</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -410,55 +259,43 @@
     </div>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://js.stripe.com/v3/"></script>
 <script>
     (function () {
-        const stripeForm  = document.getElementById('stripeForm');
+        const stripeForm = document.getElementById('stripeForm');
         if (!stripeForm) return;
-
-        const actionId  = stripeForm.dataset.actionId;
+        const actionId = stripeForm.dataset.actionId;
         const submitBtn = document.getElementById('stripeSubmitBtn');
-        const spinner   = document.getElementById('stripeSpinner');
-        const errorDiv  = document.getElementById('stripeError');
-
+        const spinner = document.getElementById('stripeSpinner');
+        const errorDiv = document.getElementById('stripeError');
         const pkMeta = document.querySelector('meta[name="stripe-public-key"]');
         if (!pkMeta || !pkMeta.content || typeof Stripe === 'undefined') return;
-
-        const stripe      = Stripe(pkMeta.content);
+        const stripe = Stripe(pkMeta.content);
         const cardElement = stripe.elements().create('card', {
-            style: {
-                base:    { fontSize: '16px', color: '#1a1a2e', '::placeholder': { color: '#6b7280' } },
-                invalid: { color: '#dc3545' }
-            }
+            style: { base: { fontSize: '16px', color: '#1a1a2e', '::placeholder': { color: '#6b7280' } }, invalid: { color: '#dc3545' } }
         });
         cardElement.mount('#card-element');
         cardElement.on('change', (ev) => {
             document.getElementById('card-errors').textContent = ev.error ? ev.error.message : '';
         });
-
         stripeForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const montant = document.getElementById('stripeMontant').value;
-            const csrf    = document.querySelector('meta[name="_csrf"]').content;
+            const csrf = document.querySelector('meta[name="_csrf"]').content;
             const csrfHdr = document.querySelector('meta[name="_csrf_header"]').content;
-
             submitBtn.disabled = true;
             spinner.classList.remove('d-none');
             errorDiv.classList.add('d-none');
-
             try {
-                const intentRes  = await fetch(`/actions/${actionId}/stripe/create-intent?montant=${montant}`, { method: 'POST', headers: { [csrfHdr]: csrf } });
+                const intentRes = await fetch(`/actions/${actionId}/stripe/create-intent?montant=${montant}`, { method: 'POST', headers: { [csrfHdr]: csrf } });
                 const intentData = await intentRes.json();
                 if (intentData.error) throw new Error(intentData.error);
-
                 const { error: stripeError } = await stripe.confirmCardPayment(intentData.clientSecret, { payment_method: { card: cardElement } });
                 if (stripeError) throw new Error(stripeError.message);
-
-                const confirmRes  = await fetch(`/actions/${actionId}/stripe/confirm/${intentData.donId}`, { method: 'POST', headers: { [csrfHdr]: csrf } });
+                const confirmRes = await fetch(`/actions/${actionId}/stripe/confirm/${intentData.donId}`, { method: 'POST', headers: { [csrfHdr]: csrf } });
                 const confirmData = await confirmRes.json();
                 if (confirmData.error) throw new Error(confirmData.error);
-
                 window.location.href = `/actions/${actionId}?don=payment-success`;
             } catch (err) {
                 errorDiv.textContent = err.message;

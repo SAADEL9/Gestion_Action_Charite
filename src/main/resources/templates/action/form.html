@@ -1,6 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/head :: head(${action != null and action.id != null ? 'Modifier action' : 'Nouvelle action'})}"></head>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:lang="${#locale.language}"
+      th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}">
+<head th:replace="~{fragments/head :: head(${action != null and action.id != null ? #{action.form.title.edit} : #{action.form.title.create}})}"></head>
 <body class="bg-light">
     <div th:replace="~{fragments/public-navbar :: navbar}"></div>
 
@@ -11,14 +14,19 @@
                     <div>
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-1">
-                                <li class="breadcrumb-item"><a th:href="@{/actions}" class="text-decoration-none">Actions</a></li>
-                                <li class="breadcrumb-item active" aria-current="page" th:text="${action.id != null ? 'Modifier' : 'Créer'}"></li>
+                                <li class="breadcrumb-item">
+                                    <a th:href="@{/actions}" class="text-decoration-none" th:text="#{action.form.breadcrumb.actions}">Actions</a>
+                                </li>
+                                <li class="breadcrumb-item active" aria-current="page"
+                                    th:text="${action.id != null ? #{action.form.breadcrumb.edit} : #{action.form.breadcrumb.create}}">Créer</li>
                             </ol>
                         </nav>
-                        <h1 class="h3 fw-bold mb-0" th:text="${action.id != null ? 'Modifier l''action' : 'Nouvelle Action'}"></h1>
+                        <h1 class="h3 fw-bold mb-0"
+                            th:text="${action.id != null ? #{action.form.title.edit} : #{action.form.title.create}}">Nouvelle Action</h1>
                     </div>
                     <a th:href="@{/actions}" class="btn btn-outline-secondary btn-sm">
-                        <i class="bi bi-arrow-left me-1"></i> Retour à la liste
+                        <i class="bi bi-arrow-left me-1"></i>
+                        <span th:text="#{action.form.back}">Retour à la liste</span>
                     </a>
                 </div>
 
@@ -27,41 +35,44 @@
                     <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
                     <div class="row g-4">
-                        <!-- Main Content -->
                         <div class="col-lg-8">
                             <div class="card border-0 shadow-sm mb-4">
                                 <div class="card-header bg-white py-3">
-                                    <h5 class="card-title mb-0 fw-bold">Informations Générales</h5>
+                                    <h5 class="card-title mb-0 fw-bold" th:text="#{action.form.general}">Informations Générales</h5>
                                 </div>
                                 <div class="card-body p-4">
                                     <div class="mb-4">
-                                        <label for="titre" class="form-label fw-semibold">Titre de l'action *</label>
-                                        <input type="text" class="form-control form-control-lg bg-light border-0" id="titre" th:field="*{titre}" placeholder="Ex: Soutien aux orphelins de Casablanca" required>
-                                        <div class="invalid-feedback">Le titre est requis.</div>
+                                        <label for="titre" class="form-label fw-semibold" th:text="#{action.form.titre}">Titre *</label>
+                                        <input type="text" class="form-control form-control-lg bg-light border-0" id="titre"
+                                               th:field="*{titre}" th:placeholder="#{action.form.titre.placeholder}" required>
+                                        <div class="invalid-feedback" th:text="#{action.form.titre.required}">Le titre est requis.</div>
                                     </div>
 
                                     <div class="mb-4">
-                                        <label for="description" class="form-label fw-semibold">Description détaillée *</label>
-                                        <textarea class="form-control bg-light border-0" id="description" th:field="*{description}" rows="6" placeholder="Décrivez votre action en détail..." required></textarea>
-                                        <div class="invalid-feedback">La description est requise.</div>
+                                        <label for="description" class="form-label fw-semibold" th:text="#{action.form.description}">Description *</label>
+                                        <textarea class="form-control bg-light border-0" id="description"
+                                                  th:field="*{description}" rows="6"
+                                                  th:placeholder="#{action.form.description.placeholder}" required></textarea>
+                                        <div class="invalid-feedback" th:text="#{action.form.description.required}">La description est requise.</div>
                                     </div>
 
                                     <div class="row g-3">
                                         <div class="col-md-6">
-                                            <label for="lieu" class="form-label fw-semibold">Lieu *</label>
+                                            <label for="lieu" class="form-label fw-semibold" th:text="#{action.form.lieu}">Lieu *</label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-light border-0"><i class="bi bi-geo-alt"></i></span>
-                                                <input type="text" class="form-control bg-light border-0" id="lieu" th:field="*{lieu}" placeholder="Ville, Quartier..." required>
+                                                <input type="text" class="form-control bg-light border-0" id="lieu"
+                                                       th:field="*{lieu}" th:placeholder="#{action.form.lieu.placeholder}" required>
                                             </div>
-                                            <div class="invalid-feedback">Le lieu est requis.</div>
+                                            <div class="invalid-feedback" th:text="#{action.form.lieu.required}">Le lieu est requis.</div>
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="categorie" class="form-label fw-semibold">Catégorie *</label>
+                                            <label for="categorie" class="form-label fw-semibold" th:text="#{action.form.categorie}">Catégorie *</label>
                                             <select class="form-select bg-light border-0" id="categorie" th:field="*{categorie.id}" required>
-                                                <option value="">Sélectionner une catégorie</option>
+                                                <option value="" th:text="#{action.form.categorie.select}">Sélectionner</option>
                                                 <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.nom}"></option>
                                             </select>
-                                            <div class="invalid-feedback">Veuillez choisir une catégorie.</div>
+                                            <div class="invalid-feedback" th:text="#{action.form.categorie.required}">Veuillez choisir une catégorie.</div>
                                         </div>
                                     </div>
                                 </div>
@@ -69,96 +80,101 @@
 
                             <div class="card border-0 shadow-sm mb-4">
                                 <div class="card-header bg-white py-3">
-                                    <h5 class="card-title mb-0 fw-bold">Planification & Objectifs</h5>
+                                    <h5 class="card-title mb-0 fw-bold" th:text="#{action.form.planning}">Planification & Objectifs</h5>
                                 </div>
                                 <div class="card-body p-4">
                                     <div class="row g-4 mb-4">
                                         <div class="col-md-6">
-                                            <label for="dateDebut" class="form-label fw-semibold">Date de début *</label>
+                                            <label for="dateDebut" class="form-label fw-semibold" th:text="#{action.form.date.debut}">Date de début *</label>
                                             <input type="date" class="form-control bg-light border-0" id="dateDebut" th:field="*{dateDebut}" required>
                                         </div>
                                         <div class="col-md-6">
-                                            <label for="dateFin" class="form-label fw-semibold">Date de fin *</label>
+                                            <label for="dateFin" class="form-label fw-semibold" th:text="#{action.form.date.fin}">Date de fin *</label>
                                             <input type="date" class="form-control bg-light border-0" id="dateFin" th:field="*{dateFin}" required>
                                         </div>
                                     </div>
-
                                     <div class="mb-0">
-                                        <label for="objectifCollect" class="form-label fw-semibold">Objectif financier (MAD) *</label>
+                                        <label for="objectifCollect" class="form-label fw-semibold" th:text="#{action.form.objectif}">Objectif (MAD) *</label>
                                         <div class="input-group input-group-lg">
                                             <span class="input-group-text bg-light border-0 fw-bold text-success">DH</span>
-                                            <input type="number" class="form-control bg-light border-0 fw-bold" id="objectifCollect" th:field="*{objectifCollect}" step="0.01" min="0" placeholder="0.00" required>
+                                            <input type="number" class="form-control bg-light border-0 fw-bold" id="objectifCollect"
+                                                   th:field="*{objectifCollect}" step="0.01" min="0" placeholder="0.00" required>
                                         </div>
-                                        <div class="form-text mt-2 text-muted">Indiquez le montant total que vous souhaitez collecter pour cette action.</div>
+                                        <div class="form-text mt-2 text-muted" th:text="#{action.form.objectif.hint}">Indiquez le montant total.</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Sidebar -->
                         <div class="col-lg-4">
-                            <!-- Image Card -->
+                            <!-- Image -->
                             <div class="card border-0 shadow-sm mb-4 overflow-hidden">
                                 <div class="card-header bg-white py-3">
-                                    <h5 class="card-title mb-0 fw-bold">Image Principale</h5>
+                                    <h5 class="card-title mb-0 fw-bold" th:text="#{action.form.image}">Image Principale</h5>
                                 </div>
                                 <div class="card-body p-4 text-center">
                                     <div class="mb-3">
-                                        <div id="imagePreviewContainer" class="rounded-3 bg-light d-flex align-items-center justify-content-center border-dashed mb-3" style="height: 200px; border: 2px dashed #dee2e6;">
-                                            <img id="imagePreview" th:src="${action.imagePrincipale != null ? action.imagePrincipale : '/images/placeholder-action.svg'}" class="img-fluid rounded-3 h-100 w-100 object-fit-cover" th:classappend="${action.imagePrincipale == null ? 'd-none' : ''}">
+                                        <div id="imagePreviewContainer" class="rounded-3 bg-light d-flex align-items-center justify-content-center border-dashed mb-3"
+                                             style="height: 200px; border: 2px dashed #dee2e6;">
+                                            <img id="imagePreview"
+                                                 th:src="${action.imagePrincipale != null ? action.imagePrincipale : '/images/placeholder-action.svg'}"
+                                                 class="img-fluid rounded-3 h-100 w-100 object-fit-cover"
+                                                 th:classappend="${action.imagePrincipale == null ? 'd-none' : ''}">
                                             <div id="previewPlaceholder" th:classappend="${action.imagePrincipale != null ? 'd-none' : ''}">
                                                 <i class="bi bi-image text-muted display-4"></i>
-                                                <p class="text-muted small mt-2">Cliquez pour choisir une image</p>
+                                                <p class="text-muted small mt-2" th:text="#{action.form.image.click}">Cliquez pour choisir une image</p>
                                             </div>
                                         </div>
                                         <input class="form-control d-none" type="file" id="imageFile" name="imageFile" accept="image/*">
-                                        <button type="button" class="btn btn-outline-primary btn-sm w-100" onclick="document.getElementById('imageFile').click()">
-                                            <i class="bi bi-upload me-2"></i> Choisir une image
+                                        <button type="button" class="btn btn-outline-primary btn-sm w-100"
+                                                onclick="document.getElementById('imageFile').click()">
+                                            <i class="bi bi-upload me-2"></i>
+                                            <span th:text="#{action.form.image.choose}">Choisir une image</span>
                                         </button>
                                     </div>
-                                    <p class="small text-muted mb-0">Recommandé: 1200x800px. JPG, PNG ou WebP.</p>
+                                    <p class="small text-muted mb-0" th:text="#{action.form.image.hint}">Recommandé : 1200x800px.</p>
                                 </div>
                             </div>
 
-                            <!-- Settings Card -->
+                            <!-- Configuration -->
                             <div class="card border-0 shadow-sm mb-4">
                                 <div class="card-header bg-white py-3">
-                                    <h5 class="card-title mb-0 fw-bold">Configuration</h5>
+                                    <h5 class="card-title mb-0 fw-bold" th:text="#{action.form.config}">Configuration</h5>
                                 </div>
                                 <div class="card-body p-4">
                                     <div class="mb-4">
-                                        <label for="organisation" class="form-label fw-semibold">Organisation *</label>
+                                        <label for="organisation" class="form-label fw-semibold" th:text="#{action.form.org}">Organisation *</label>
                                         <select class="form-select bg-light border-0" id="organisation" th:field="*{organisation.id}" required>
-                                            <option value="">Choisir une organisation</option>
+                                            <option value="" th:text="#{action.form.org.select}">Choisir une organisation</option>
                                             <option th:each="org : ${organisations}" th:value="${org.id}" th:text="${org.nom}"></option>
                                         </select>
                                     </div>
 
                                     <div class="mb-4">
-                                        <label for="status" class="form-label fw-semibold">Statut Initial</label>
+                                        <label for="status" class="form-label fw-semibold" th:text="#{action.form.status}">Statut Initial</label>
                                         <select class="form-select bg-light border-0" id="status" th:field="*{status}">
-                                            <option value="BROUILLON">Brouillon (Non visible)</option>
-                                            <option value="PUBLIEE">Publiée (En ligne)</option>
-                                            <option value="EN_COURS">En cours</option>
-                                            <option value="TERMINEE">Terminée</option>
-                                            <option value="ARCHIVEE">Archivée</option>
+                                            <option value="BROUILLON" th:text="#{action.form.status.draft}">Brouillon</option>
+                                            <option value="PUBLIEE" th:text="#{action.form.status.published}">Publiée</option>
+                                            <option value="EN_COURS" th:text="#{action.form.status.ongoing}">En cours</option>
+                                            <option value="TERMINEE" th:text="#{action.form.status.done}">Terminée</option>
+                                            <option value="ARCHIVEE" th:text="#{action.form.status.archived}">Archivée</option>
                                         </select>
                                     </div>
 
                                     <div class="d-grid gap-2 pt-2">
                                         <button type="submit" class="btn btn-primary btn-lg shadow-sm">
-                                            <i class="bi bi-check-circle me-2"></i> Enregistrer
+                                            <i class="bi bi-check-circle me-2"></i>
+                                            <span th:text="#{action.form.save}">Enregistrer</span>
                                         </button>
-                                        <a th:href="@{/actions}" class="btn btn-light btn-lg text-muted border-0">Annuler</a>
+                                        <a th:href="@{/actions}" class="btn btn-light btn-lg text-muted border-0" th:text="#{action.form.cancel}">Annuler</a>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Gallery Preview (Coming Soon Placeholder) -->
+
                             <div class="card border-0 shadow-sm bg-gradient-light border-start border-primary border-4" th:if="${action.id != null}">
                                 <div class="card-body">
-                                    <h6 class="fw-bold mb-2">Galerie d'images</h6>
-                                    <p class="small text-muted mb-0">Vous pourrez ajouter plusieurs photos à la galerie après l'enregistrement initial.</p>
+                                    <h6 class="fw-bold mb-2" th:text="#{action.form.gallery}">Galerie d'images</h6>
+                                    <p class="small text-muted mb-0" th:text="#{action.form.gallery.hint}">Vous pourrez ajouter des photos après l'enregistrement.</p>
                                 </div>
                             </div>
                         </div>
@@ -170,24 +186,19 @@
 
     <div th:replace="~{fragments/public-footer :: footer}"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Form validation
         (function () {
             'use strict'
             var forms = document.querySelectorAll('.needs-validation')
             Array.prototype.slice.call(forms).forEach(function (form) {
                 form.addEventListener('submit', function (event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                    }
+                    if (!form.checkValidity()) { event.preventDefault(); event.stopPropagation(); }
                     form.classList.add('was-validated')
                 }, false)
             })
         })()
 
-        // Image preview logic
         document.getElementById('imageFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -195,7 +206,6 @@
                 reader.onload = function(event) {
                     const preview = document.getElementById('imagePreview');
                     const placeholder = document.getElementById('previewPlaceholder');
-                    
                     preview.src = event.target.result;
                     preview.classList.remove('d-none');
                     placeholder.classList.add('d-none');
@@ -204,48 +214,22 @@
             }
         });
 
-        // Date validation
         const dateDebut = document.getElementById('dateDebut');
         const dateFin = document.getElementById('dateFin');
-
         dateDebut.addEventListener('change', function() {
-            if (dateFin.value && dateFin.value < this.value) {
-                dateFin.value = this.value;
-            }
+            if (dateFin.value && dateFin.value < this.value) dateFin.value = this.value;
             dateFin.min = this.value;
         });
-
         dateFin.addEventListener('change', function() {
-            if (dateDebut.value && dateDebut.value > this.value) {
-                dateDebut.value = this.value;
-            }
+            if (dateDebut.value && dateDebut.value > this.value) dateDebut.value = this.value;
             dateDebut.max = this.value;
         });
     </script>
-    
     <style>
-        .object-fit-cover {
-            object-fit: cover;
-        }
-        .border-dashed {
-            transition: all 0.2s ease-in-out;
-            cursor: pointer;
-        }
-        .border-dashed:hover {
-            border-color: #0d6efd !important;
-            background-color: #f8f9fa !important;
-        }
-        .form-control:focus, .form-select:focus {
-            box-shadow: none;
-            background-color: #fff !important;
-            border: 1px solid #0d6efd !important;
-        }
-        .breadcrumb-item + .breadcrumb-item::before {
-            content: "\F138";
-            font-family: "bootstrap-icons";
-            font-size: 0.7rem;
-            color: #adb5bd;
-        }
+        .object-fit-cover { object-fit: cover; }
+        .border-dashed { transition: all 0.2s ease-in-out; cursor: pointer; }
+        .border-dashed:hover { border-color: #0d6efd !important; background-color: #f8f9fa !important; }
+        .form-control:focus, .form-select:focus { box-shadow: none; background-color: #fff !important; border: 1px solid #0d6efd !important; }
     </style>
 </body>
 </html>

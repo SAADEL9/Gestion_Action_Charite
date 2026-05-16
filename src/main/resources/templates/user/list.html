@@ -1,13 +1,16 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/head :: head('Utilisateurs')}"></head>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:lang="${#locale.language}"
+      th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}">
+<head th:replace="~{fragments/head :: head(#{user.list.title})}"></head>
 <body class="public-page">
     <div th:replace="~{fragments/public-navbar :: navbar}"></div>
 
     <main class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="page-title mb-0">Liste des utilisateurs</h1>
-            <a th:href="@{/users/create}" class="btn btn-primary">+ Ajouter un utilisateur</a>
+            <h1 class="page-title mb-0" th:text="#{user.list.title}">Liste des utilisateurs</h1>
+            <a th:href="@{/users/create}" class="btn btn-primary" th:text="#{user.add}">+ Ajouter un utilisateur</a>
         </div>
 
         <div class="card">
@@ -15,13 +18,13 @@
                 <table class="table table-striped align-middle mb-0">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nom</th>
-                            <th>Pr&eacute;nom</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Demande org.</th>
-                            <th class="text-end">Actions</th>
+                            <th th:text="#{user.table.id}">ID</th>
+                            <th th:text="#{user.table.nom}">Nom</th>
+                            <th th:text="#{user.table.prenom}">Prénom</th>
+                            <th th:text="#{user.table.email}">Email</th>
+                            <th th:text="#{user.table.role}">Rôle</th>
+                            <th th:text="#{user.table.org.request}">Demande org.</th>
+                            <th class="text-end" th:text="#{user.table.actions}">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -32,19 +35,23 @@
                             <td th:text="${user.email}"></td>
                             <td><span class="badge bg-secondary" th:text="${user.role}"></span></td>
                             <td>
-                                <span th:if="${user.organisationRequestPending}" class="badge bg-warning text-dark">En attente</span>
+                                <span th:if="${user.organisationRequestPending}" class="badge bg-warning text-dark" th:text="#{user.request.pending}">En attente</span>
                                 <span th:unless="${user.organisationRequestPending}" class="text-muted">-</span>
                             </td>
                             <td class="text-end">
                                 <div class="d-inline-flex gap-2">
-                                    <a th:href="@{/users/{id}(id=${user.id})}" class="btn btn-sm btn-outline-primary">Voir</a>
-                                    <a th:href="@{/users/edit/{id}(id=${user.id})}" class="btn btn-sm btn-outline-secondary">Modifier</a>
-                                    <form th:if="${user.organisationRequestPending}" th:action="@{/users/{id}/approve-organisation(id=${user.id})}" method="post" class="d-inline">
+                                    <a th:href="@{/users/{id}(id=${user.id})}" class="btn btn-sm btn-outline-primary" th:text="#{user.view}">Voir</a>
+                                    <a th:href="@{/users/edit/{id}(id=${user.id})}" class="btn btn-sm btn-outline-secondary" th:text="#{user.edit}">Modifier</a>
+                                    <form th:if="${user.organisationRequestPending}"
+                                          th:action="@{/users/{id}/approve-organisation(id=${user.id})}"
+                                          method="post" class="d-inline">
                                         <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                        <button type="submit" class="btn btn-sm btn-success">Approuver org.</button>
+                                        <button type="submit" class="btn btn-sm btn-success" th:text="#{user.approve.org}">Approuver org.</button>
                                     </form>
                                     <a th:href="@{/users/delete/{id}(id=${user.id})}" class="btn btn-sm btn-outline-danger"
-                                       onclick="return confirm('Etes-vous sur ?')">Supprimer</a>
+                                       th:onclick="'return confirm(\'' + #{user.delete.confirm} + '\')'">
+                                        <span th:text="#{user.delete}">Supprimer</span>
+                                    </a>
                                 </div>
                             </td>
                         </tr>
@@ -54,6 +61,6 @@
         </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

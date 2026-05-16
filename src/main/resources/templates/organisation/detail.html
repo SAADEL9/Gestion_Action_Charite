@@ -1,309 +1,65 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:lang="${#locale.language}"
+      th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}">
 <head>
-    <th:block th:replace="~{fragments/head :: head('DÃ©tail organisation')}"></th:block>
+    <th:block th:replace="~{fragments/head :: head('Organisation')}"></th:block>
     <style>
-        :root {
-            --green-primary: #2d8c4e;
-            --green-light: #e8f5ee;
-            --green-mid: #4caf72;
-            --text-dark: #1a1a2e;
-            --text-muted: #6b7280;
-            --border: #f1f3f5;
-            --bg: #f8fafc;
-        }
-
-        * { box-sizing: border-box; }
-
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text-dark);
-            margin: 0;
-            line-height: 1.6;
-        }
-
-        /* â”€â”€ Cover â”€â”€ */
-        .org-cover-wrap {
-            width: 100%;
-            height: 300px;
-            overflow: hidden;
-            background: #c8ddd0;
-            position: relative;
-        }
-
-        .org-cover-wrap img.org-cover {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .org-cover-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 100px;
-            background: gradient(linear, left top, left bottom, from(transparent), to(rgba(0,0,0,0.3)));
-        }
-
-        /* â”€â”€ Header â”€â”€ */
-        .org-header-wrapper {
-            background: #fff;
-            margin-top: -60px;
-            position: relative;
-            z-index: 10;
-            border-radius: 24px 24px 0 0;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
-        }
-
-        .org-header-inner {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 20px 30px 40px 30px;
-        }
-
-        .org-profile-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 32px;
-        }
-
-        .org-logo-wrap {
-            flex-shrink: 0;
-            width: 160px;
-            height: 160px;
-            border-radius: 20px;
-            border: 6px solid #fff;
-            background: #fff;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-            overflow: hidden;
-            margin-top: -80px;
-        }
-
-        .org-logo-wrap img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            padding: 10px;
-        }
-
-        .org-name-block {
-            flex: 1;
-            padding-top: 10px;
-        }
-
-        .org-name-block h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            margin: 0 0 8px 0;
-            color: var(--text-dark);
-            letter-spacing: -0.01em;
-            line-height: 1.2;
-        }
-
-        .badge-status {
-            display: none;
-        }
-
-        .org-meta-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 5px;
-        }
-
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        .meta-item i {
-            width: 36px;
-            height: 36px;
-            background: #f1f5f9;
-            color: var(--green-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-            font-size: 1.1rem;
-        }
-
-        /* â”€â”€ Info Cards â”€â”€ */
-        .info-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 15px;
-            padding-top: 25px;
-            border-top: 1px solid var(--border);
-        }
-
-        .info-card {
-            background: #fff;
-            padding: 25px;
-            border-radius: 18px;
-            border: 1px solid var(--border);
-        }
-
-        .info-card h3 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: var(--text-dark);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .info-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .info-list li {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px dashed var(--border);
-            font-size: 0.9rem;
-        }
-
-        .info-list li:last-child { border-bottom: none; }
-        .info-list .label { color: var(--text-muted); font-weight: 500; }
-        .info-list .value { color: var(--text-dark); font-weight: 600; }
-
-        /* â”€â”€ Actions Section â”€â”€ */
-        .actions-section {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 60px 30px;
-        }
-
-        .section-header {
-            margin-bottom: 40px;
-            text-align: center;
-        }
-
-        .section-header h2 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: var(--text-dark);
-            margin-bottom: 10px;
-        }
-
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
-        }
-
-        .action-card-v3 {
-            background: #fff;
-            border-radius: 24px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .action-card-v3:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-            border-color: var(--green-mid);
-        }
-
-        .action-card-v3 .card-img-wrap {
-            height: 220px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .action-card-v3 .card-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s ease;
-        }
-
-        .action-card-v3:hover .card-img {
-            transform: scale(1.1);
-        }
-
-        .action-card-v3 .card-content {
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
-
-        .action-card-v3 .card-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            color: var(--text-dark);
-            line-height: 1.4;
-        }
-
-        .progress-bar-container {
-            margin-top: auto;
-        }
-
-        .progress-track {
-            height: 10px;
-            background: #f1f5f9;
-            border-radius: 20px;
-            margin-bottom: 12px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--green-primary), var(--green-mid));
-            border-radius: 20px;
-        }
-
-        .progress-stats {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            font-weight: 700;
-        }
-
-        .pct-val { color: var(--green-primary); }
-        .amt-val { color: var(--text-muted); }
-
-        .btn-manage {
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            transition: all 0.2s;
-        }
+        :root{--green-primary:#2d8c4e;--green-light:#e8f5ee;--green-mid:#4caf72;--text-dark:#1a1a2e;--text-muted:#6b7280;--border:#f1f3f5;--bg:#f8fafc;}
+        *{box-sizing:border-box;}
+        body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-dark);margin:0;line-height:1.6;}
+        .org-cover-wrap{width:100%;height:300px;overflow:hidden;background:#c8ddd0;position:relative;}
+        .org-cover-wrap img.org-cover{width:100%;height:100%;object-fit:cover;}
+        .org-cover-overlay{position:absolute;bottom:0;left:0;right:0;height:100px;}
+        .org-header-wrapper{background:#fff;margin-top:-60px;position:relative;z-index:10;border-radius:24px 24px 0 0;box-shadow:0 -10px 30px rgba(0,0,0,.05);}
+        .org-header-inner{max-width:1100px;margin:0 auto;padding:20px 30px 40px;}
+        .org-profile-row{display:flex;align-items:flex-start;gap:32px;}
+        .org-logo-wrap{flex-shrink:0;width:160px;height:160px;border-radius:20px;border:6px solid #fff;background:#fff;box-shadow:0 10px 25px rgba(0,0,0,.08);overflow:hidden;margin-top:-80px;}
+        .org-logo-wrap img{width:100%;height:100%;object-fit:contain;padding:10px;}
+        .org-name-block{flex:1;padding-top:10px;}
+        .org-name-block h1{font-size:1.8rem;font-weight:800;margin:0 0 8px;color:var(--text-dark);line-height:1.2;}
+        .org-meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-top:5px;}
+        .meta-item{display:flex;align-items:center;gap:12px;color:var(--text-muted);font-size:.95rem;}
+        .meta-item i{width:36px;height:36px;background:#f1f5f9;color:var(--green-primary);display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:1.1rem;}
+        .info-section{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:30px;margin-top:15px;padding-top:25px;border-top:1px solid var(--border);}
+        .info-card{background:#fff;padding:25px;border-radius:18px;border:1px solid var(--border);}
+        .info-card h3{font-size:1.1rem;font-weight:700;margin-bottom:20px;color:var(--text-dark);display:flex;align-items:center;gap:10px;}
+        .info-list{list-style:none;padding:0;margin:0;}
+        .info-list li{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px dashed var(--border);font-size:.9rem;}
+        .info-list li:last-child{border-bottom:none;}
+        .info-list .label{color:var(--text-muted);font-weight:500;}
+        .info-list .value{color:var(--text-dark);font-weight:600;}
+        .actions-section{max-width:1100px;margin:0 auto;padding:60px 30px;}
+        .section-header{margin-bottom:40px;text-align:center;}
+        .section-header h2{font-size:2.2rem;font-weight:800;color:var(--text-dark);margin-bottom:10px;}
+        .actions-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:30px;}
+        .action-card-v3{background:#fff;border-radius:24px;overflow:hidden;border:1px solid var(--border);transition:all .4s cubic-bezier(.165,.84,.44,1);text-decoration:none;color:inherit;display:flex;flex-direction:column;height:100%;}
+        .action-card-v3:hover{transform:translateY(-10px);box-shadow:0 20px 40px rgba(0,0,0,.08);border-color:var(--green-mid);}
+        .action-card-v3 .card-img-wrap{height:220px;overflow:hidden;position:relative;}
+        .action-card-v3 .card-img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease;}
+        .action-card-v3:hover .card-img{transform:scale(1.1);}
+        .action-card-v3 .card-content{padding:24px;display:flex;flex-direction:column;flex-grow:1;}
+        .action-card-v3 .card-title{font-size:1.25rem;font-weight:700;margin-bottom:15px;color:var(--text-dark);line-height:1.4;}
+        .progress-bar-container{margin-top:auto;}
+        .progress-track{height:10px;background:#f1f5f9;border-radius:20px;margin-bottom:12px;overflow:hidden;}
+        .progress-fill{height:100%;background:linear-gradient(90deg,var(--green-primary),var(--green-mid));border-radius:20px;}
+        .progress-stats{display:flex;justify-content:space-between;font-size:.85rem;font-weight:700;}
+        .pct-val{color:var(--green-primary);}
+        .amt-val{color:var(--text-muted);}
+        .btn-manage{padding:12px 24px;border-radius:12px;font-weight:700;font-size:.95rem;transition:all .2s;}
     </style>
 </head>
 <body>
 <div th:replace="~{fragments/public-navbar :: navbar}"></div>
 
 <div th:if="${organisation != null}">
-    <!-- â”€â”€ Cover â”€â”€ -->
     <div class="org-cover-wrap">
         <img th:src="${#strings.isEmpty(organisation.coverImage) ? 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1200' : organisation.coverImage}"
-             class="org-cover"
-             th:alt="${organisation.nom}">
+             class="org-cover" th:alt="${organisation.nom}">
         <div class="org-cover-overlay"></div>
     </div>
 
-    <!-- â”€â”€ Header & Info â”€â”€ -->
     <div class="org-header-wrapper">
         <div class="org-header-inner">
             <div class="org-profile-row">
@@ -313,7 +69,6 @@
                 </div>
                 <div class="org-name-block">
                     <h1 th:text="${organisation.nom}">Nom de l'organisation</h1>
-                    
                     <div class="org-meta-grid">
                         <div class="meta-item">
                             <i class="bi bi-geo-alt"></i>
@@ -329,92 +84,86 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="d-flex flex-column gap-2">
                     <a th:if="${canEdit}" th:href="@{/organisations/edit/{id}(id=${organisation.id})}"
                        class="btn btn-outline-primary btn-manage">
-                        <i class="bi bi-pencil me-2"></i> Modifier Profil
+                        <i class="bi bi-pencil me-2"></i> <span th:text="#{org.detail.edit}">Modifier Profil</span>
                     </a>
                     <a th:if="${canEdit}" th:href="@{/actions/create(organisationId=${organisation.id})}"
                        class="btn btn-primary btn-manage">
-                        <i class="bi bi-plus-circle me-2"></i> Nouvelle Action
+                        <i class="bi bi-plus-circle me-2"></i> <span th:text="#{org.detail.new.action}">Nouvelle Action</span>
                     </a>
                 </div>
             </div>
 
-            <!-- Organisation Details Grid -->
             <div class="info-section">
-                <!-- Description -->
                 <div class="info-card">
-                    <h3><i class="bi bi-info-circle text-primary"></i> Mission</h3>
-                    <p class="text-muted mb-0" th:text="${#strings.isEmpty(organisation.description) ? 'Aucune description disponible.' : organisation.description}"></p>
+                    <h3><i class="bi bi-info-circle text-primary"></i> <span th:text="#{org.detail.mission}">Mission</span></h3>
+                    <p class="text-muted mb-0"
+                       th:text="${#strings.isEmpty(organisation.description) ? #{org.detail.no.desc} : organisation.description}"></p>
                 </div>
 
-                <!-- Legal Info -->
                 <div class="info-card">
-                    <h3><i class="bi bi-shield-lock text-primary"></i> Informations LÃ©gales</h3>
+                    <h3><i class="bi bi-shield-lock text-primary"></i> <span th:text="#{org.detail.legal}">Informations Légales</span></h3>
                     <ul class="info-list">
-                        <li><span class="label">NumÃ©ro Fiscal</span> <span class="value" th:text="${organisation.numeroFiscal}">-</span></li>
-                        <li><span class="label">Adresse LÃ©gale</span> <span class="value" th:text="${organisation.adresseLegal}">-</span></li>
-                        <li><span class="label">Contact Principal</span> <span class="value" th:text="${organisation.contactPrincipal}">-</span></li>
-                        <li><span class="label">Membre depuis</span> <span class="value" th:text="${#temporals.format(organisation.dateCreation, 'dd/MM/yyyy')}"></span></li>
+                        <li><span class="label" th:text="#{org.detail.fiscal}">Numéro Fiscal</span> <span class="value" th:text="${organisation.numeroFiscal}">-</span></li>
+                        <li><span class="label" th:text="#{org.detail.legal.address}">Adresse Légale</span> <span class="value" th:text="${organisation.adresseLegal}">-</span></li>
+                        <li><span class="label" th:text="#{org.detail.contact}">Contact Principal</span> <span class="value" th:text="${organisation.contactPrincipal}">-</span></li>
+                        <li><span class="label" th:text="#{org.detail.member.since}">Membre depuis</span> <span class="value" th:text="${#temporals.format(organisation.dateCreation, 'dd/MM/yyyy')}"></span></li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- â”€â”€ Actions Section â”€â”€ -->
     <div class="actions-section">
         <div class="section-header">
-            <h2>Actions en cours</h2>
-            <p class="text-muted">DÃ©couvrez et soutenez les projets humanitaires portÃ©s par cette organisation.</p>
+            <h2 th:text="#{org.detail.actions}">Actions en cours</h2>
+            <p class="text-muted" th:text="#{org.detail.actions.desc}">Découvrez et soutenez les projets humanitaires.</p>
         </div>
 
         <div class="actions-grid" th:if="${actions != null and not #lists.isEmpty(actions)}">
             <a th:href="@{/actions/{id}(id=${action.id})}" class="action-card-v3" th:each="action : ${actions}">
                 <div class="card-img-wrap">
                     <img th:src="${#strings.isEmpty(action.imagePrincipale) ? 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=600' : action.imagePrincipale}"
-                         class="card-img"
-                         th:alt="${action.titre}">
+                         class="card-img" th:alt="${action.titre}">
                 </div>
                 <div class="card-content">
                     <h3 class="card-title" th:text="${action.titre}">Titre du projet</h3>
-                    
                     <div class="progress-bar-container">
                         <div class="progress-track">
                             <div class="progress-fill"
-                                 th:style="'width:' + (action.sommeActuelle != null ? (action.sommeActuelle * 100 / action.objectifCollect) : 0) + '%'">
-                            </div>
+                                 th:style="'width:' + (action.sommeActuelle != null ? (action.sommeActuelle * 100 / action.objectifCollect) : 0) + '%'"></div>
                         </div>
                         <div class="progress-stats">
-                            <span class="pct-val" th:text="${#numbers.formatInteger(action.sommeActuelle != null ? (action.sommeActuelle * 100 / action.objectifCollect) : 0, 1) + '% collectÃ©s'}"></span>
-                            <span class="amt-val" th:text="${(action.sommeActuelle != null ? action.sommeActuelle : 0) + ' / ' + action.objectifCollect + ' MAD'}"></span>
+                            <span class="pct-val"
+                                  th:text="${#numbers.formatInteger(action.sommeActuelle != null ? (action.sommeActuelle * 100 / action.objectifCollect) : 0, 1)} + #{org.detail.collected}">0%</span>
+                            <span class="amt-val"
+                                  th:text="${(action.sommeActuelle != null ? action.sommeActuelle : 0) + ' / ' + action.objectifCollect + ' MAD'}"></span>
                         </div>
                     </div>
                 </div>
             </a>
         </div>
 
-        <!-- Empty State -->
         <div th:if="${actions == null or #lists.isEmpty(actions)}" class="text-center py-5">
             <div class="bg-white p-5 rounded-4 border border-dashed shadow-sm d-inline-block">
                 <i class="bi bi-box2-heart display-1 text-light mb-4 d-block"></i>
-                <h4 class="text-muted">Aucune action disponible</h4>
-                <p class="text-muted small mb-4">Cette organisation n'a pas encore de projets actifs.</p>
-                <a th:if="${canEdit}" th:href="@{/actions/create(organisationId=${organisation.id})}" class="btn btn-primary px-4 py-2 rounded-3">
-                    CrÃ©er la premiÃ¨re action
-                </a>
+                <h4 class="text-muted" th:text="#{org.detail.empty}">Aucune action disponible</h4>
+                <p class="text-muted small mb-4" th:text="#{org.detail.empty.desc}">Cette organisation n'a pas encore de projets actifs.</p>
+                <a th:if="${canEdit}" th:href="@{/actions/create(organisationId=${organisation.id})}"
+                   class="btn btn-primary px-4 py-2 rounded-3" th:text="#{org.detail.first.action}">Créer la première action</a>
             </div>
         </div>
     </div>
 </div>
 
 <div th:if="${organisation == null}" class="container py-5 text-center">
-    <div class="alert alert-warning shadow-sm border-0">Organisation introuvable.</div>
-    <a th:href="@{/organisations}" class="btn btn-outline-secondary rounded-3 px-4">Retour au catalogue</a>
+    <div class="alert alert-warning shadow-sm border-0" th:text="#{org.detail.not.found}">Organisation introuvable.</div>
+    <a th:href="@{/organisations}" class="btn btn-outline-secondary rounded-3 px-4" th:text="#{org.detail.back}">Retour au catalogue</a>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

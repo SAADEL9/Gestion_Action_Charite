@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:lang="${#locale.language}"
+      th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}">
 <head th:replace="~{fragments/head :: head('Accueil')}"></head>
 <body class="public-page">
 <div th:replace="~{fragments/public-navbar :: navbar}"></div>
@@ -9,12 +11,12 @@
         <div class="row align-items-center g-4 g-xl-5">
             <div class="col-lg-6">
                 <div class="hero-copy">
-                    <span class="section-chip">Solidarite connectee</span>
-                    <h1>Ensemble, creons un impact positif.</h1>
-                    <p>Rejoignez des milliers de personnes qui soutiennent des actions solidaires, suivent les resultats en temps reel et changent des vies.</p>
+                    <span class="section-chip" th:text="#{home.hero.chip}">Solidarité connectée</span>
+                    <h1 th:text="#{home.hero.title}">Ensemble, créons un impact positif.</h1>
+                    <p th:text="#{home.hero.desc}">Rejoignez des milliers de personnes.</p>
                     <div class="d-flex flex-wrap gap-3">
-                        <a th:href="@{/actions}" class="btn btn-success-pill btn-lg">Explorer les actions</a>
-                        <a href="#how-it-works" class="btn btn-ghost btn-lg">Comment ca marche</a>
+                        <a th:href="@{/actions}" class="btn btn-success-pill btn-lg" th:text="#{home.hero.cta.explore}">Explorer les actions</a>
+                        <a href="#how-it-works" class="btn btn-ghost btn-lg" th:text="#{home.hero.cta.how}">Comment ça marche</a>
                     </div>
 
                     <div class="hero-stats row g-3">
@@ -23,7 +25,7 @@
                                 <i class="bi bi-heart-pulse"></i>
                                 <div>
                                     <strong th:text="${totalActions} + '+'">2450+</strong>
-                                    <span>Actions creees</span>
+                                    <span th:text="#{home.hero.stat.actions}">Actions créées</span>
                                 </div>
                             </div>
                         </div>
@@ -32,7 +34,7 @@
                                 <i class="bi bi-people"></i>
                                 <div>
                                     <strong th:text="${totalParticipants} + '+'">18700+</strong>
-                                    <span>Donateurs</span>
+                                    <span th:text="#{home.hero.stat.donors}">Donateurs</span>
                                 </div>
                             </div>
                         </div>
@@ -41,7 +43,7 @@
                                 <i class="bi bi-cash-coin"></i>
                                 <div>
                                     <strong th:text="${totalDons} + '+'">1200+</strong>
-                                    <span>Dons confirmes</span>
+                                    <span th:text="#{home.hero.stat.donations}">Dons confirmés</span>
                                 </div>
                             </div>
                         </div>
@@ -63,8 +65,8 @@
     <section class="container-xxl section-gap">
         <div class="section-heading">
             <div>
-                <h2>Categories populaires</h2>
-                <p>Trouvez des actions qui vous tiennent a coeur.</p>
+                <h2 th:text="#{home.section.categories.title}">Catégories populaires</h2>
+                <p th:text="#{home.section.categories.desc}">Trouvez des actions qui vous tiennent à cœur.</p>
             </div>
         </div>
         <div class="row g-3">
@@ -74,6 +76,8 @@
                         <i th:class="${category.icon}"></i>
                     </div>
                     <h3 th:text="${category.name}">Education</h3>
+                    <span th:text="${category.count} + ' ' + #{home.section.categories.count(1)}"
+                          th:if="${false}">462 actions</span>
                     <span th:text="${category.count} + ' actions'">462 actions</span>
                 </article>
             </div>
@@ -83,10 +87,10 @@
     <section class="container-xxl section-gap">
         <div class="section-heading">
             <div>
-                <h2>Actions en vedette</h2>
-                <p>Decouvrez les initiatives les plus populaires.</p>
+                <h2 th:text="#{home.section.featured.title}">Actions en vedette</h2>
+                <p th:text="#{home.section.featured.desc}">Découvrez les initiatives les plus populaires.</p>
             </div>
-            <a th:href="@{/actions}" class="section-link">Voir toutes</a>
+            <a th:href="@{/actions}" class="section-link" th:text="#{home.section.featured.all}">Voir toutes</a>
         </div>
         <div class="row g-4" th:if="${!#lists.isEmpty(featuredProjects)}">
             <div class="col-md-6 col-xl-3" th:each="project : ${featuredProjects}">
@@ -95,20 +99,20 @@
                         <img th:src="${project.image}" th:alt="${project.title}" class="feature-image">
                     </a>
                     <div class="feature-body">
-                        <span class="tag" th:text="${project.category}">Sante</span>
-                        <h3><a th:href="@{/actions/{id}(id=${project.id})}" th:text="${project.title}">Aidez a construire un centre de sante</a></h3>
+                        <span class="tag" th:text="${project.category}">Santé</span>
+                        <h3><a th:href="@{/actions/{id}(id=${project.id})}" th:text="${project.title}">Titre</a></h3>
                         <div class="feature-meta">
                             <i class="bi bi-geo-alt"></i>
                             <span th:text="${project.location}">Casablanca, Maroc</span>
                         </div>
                         <div class="progress-block">
-                            <div class="progress-caption"><span th:text="${project.progressLabel}">72% de l'objectif</span></div>
+                            <div class="progress-caption"><span th:text="${project.progressLabel}">72%</span></div>
                             <div class="progress premium-progress">
                                 <div class="progress-bar" th:style="'width:' + ${project.progress} + '%'"></div>
                             </div>
                             <div class="d-flex justify-content-between small text-muted">
-                                <span th:text="${project.raised}">7,200 MAD</span>
-                                <span th:text="${project.goal}">10,000 MAD</span>
+                                <span th:text="${project.raised}">7 200 MAD</span>
+                                <span th:text="${project.goal}">10 000 MAD</span>
                             </div>
                         </div>
                     </div>
@@ -116,8 +120,8 @@
             </div>
         </div>
         <div class="empty-state card-surface" th:if="${#lists.isEmpty(featuredProjects)}">
-            <h3>Aucune action publique disponible pour le moment.</h3>
-            <p>Publiez une action ou validez une organisation pour afficher du contenu ici.</p>
+            <h3 th:text="#{home.empty.actions}">Aucune action publique disponible pour le moment.</h3>
+            <p th:text="#{home.empty.actions.desc}">Publiez une action ou validez une organisation.</p>
         </div>
     </section>
 
@@ -127,7 +131,7 @@
                 <div class="col-lg-4" th:each="step : ${howItWorks}">
                     <div class="step-item">
                         <div class="step-icon"><i th:class="${step.icon}"></i></div>
-                        <h3 th:text="${step.title}">Decouvrez</h3>
+                        <h3 th:text="${step.title}">Découvrez</h3>
                         <p th:text="${step.description}">Trouvez des actions qui vous inspirent.</p>
                     </div>
                 </div>
@@ -140,20 +144,19 @@
             <div class="col-lg-7">
                 <div class="campaign-gallery card-surface h-100">
                     <img th:src="${featuredOrganisation.coverImage}" alt="Organisation en vedette" class="detail-cover organisation-preview-cover">
-                    
                     <div class="p-4">
                         <div class="row g-4">
                             <div class="col-md-7">
                                 <h3 th:text="${featuredOrganisation.name}" class="fw-bold">Association</h3>
-                                <p class="text-muted mb-0" th:text="${featuredOrganisation.description}">Description organisation.</p>
+                                <p class="text-muted mb-0" th:text="${featuredOrganisation.description}">Description.</p>
                             </div>
                             <div class="col-md-5">
-                                <h3 class="h6 fw-bold text-uppercase tracking-wider text-muted mb-3">Détails</h3>
+                                <h3 class="h6 fw-bold text-uppercase tracking-wider text-muted mb-3" th:text="#{home.org.details}">Détails</h3>
                                 <ul class="detail-list">
-                                    <li><span>Ville</span><strong th:text="${featuredOrganisation.city}">Casablanca</strong></li>
-                                    <li><span>Statut</span><strong class="text-success">APPROUVÉE</strong></li>
-                                    <li><span>Actions publiques</span><strong th:text="${featuredOrganisation.actionsCount}">0</strong></li>
-                                    <li><span>Fiche complète</span><strong><a th:href="@{/organisations/{id}(id=${featuredOrganisation.id})}">Consulter</a></strong></li>
+                                    <li><span th:text="#{home.org.city}">Ville</span><strong th:text="${featuredOrganisation.city}">Casablanca</strong></li>
+                                    <li><span th:text="#{home.org.status}">Statut</span><strong class="text-success" th:text="#{home.org.status.approved}">APPROUVÉE</strong></li>
+                                    <li><span th:text="#{home.org.actions.count}">Actions publiques</span><strong th:text="${featuredOrganisation.actionsCount}">0</strong></li>
+                                    <li><span th:text="#{home.org.full.profile}">Fiche complète</span><strong><a th:href="@{/organisations/{id}(id=${featuredOrganisation.id})}" th:text="#{home.org.consult}">Consulter</a></strong></li>
                                 </ul>
                             </div>
                         </div>
@@ -162,24 +165,24 @@
             </div>
             <div class="col-lg-5">
                 <div class="donation-summary card-surface h-100">
-                    <h3>Reseau solidaire</h3>
+                    <h3 th:text="#{home.section.network.title}">Réseau solidaire</h3>
                     <div class="amount-xl" th:text="${totalOrganisations}">0</div>
-                    <p class="text-success fw-semibold mb-2">organisations approuvees</p>
+                    <p class="text-success fw-semibold mb-2" th:text="#{home.section.network.orgs}">organisations approuvées</p>
                     <div class="summary-stats">
-                        <div><strong th:text="${totalActions}">0</strong><span>actions visibles</span></div>
-                        <div><strong th:text="${totalParticipants}">0</strong><span>participants</span></div>
+                        <div><strong th:text="${totalActions}">0</strong><span th:text="#{home.section.network.actions}">actions visibles</span></div>
+                        <div><strong th:text="${totalParticipants}">0</strong><span th:text="#{home.section.network.participants}">participants</span></div>
                     </div>
                     <div class="d-grid gap-3 mt-auto">
-                        <a th:href="@{/organisations/{id}(id=${featuredOrganisation.id})}" class="btn btn-success-pill">Voir l'organisation</a>
-                        <a th:href="@{/actions}" class="btn btn-ghost">Explorer les actions</a>
-                        <a th:href="@{/organisations}" class="btn btn-soft">Toutes les organisations</a>
+                        <a th:href="@{/organisations/{id}(id=${featuredOrganisation.id})}" class="btn btn-success-pill" th:text="#{home.section.network.cta.org}">Voir l'organisation</a>
+                        <a th:href="@{/actions}" class="btn btn-ghost" th:text="#{home.section.network.cta.explore}">Explorer les actions</a>
+                        <a th:href="@{/organisations}" class="btn btn-soft" th:text="#{home.section.network.cta.all}">Toutes les organisations</a>
                     </div>
                 </div>
             </div>
         </div>
         <div class="empty-state card-surface" th:if="${featuredOrganisation == null}">
-            <h3>Aucune organisation approuvee disponible.</h3>
-            <p>Les organisations validees apparaitront ici automatiquement.</p>
+            <h3 th:text="#{home.empty.org}">Aucune organisation approuvée disponible.</h3>
+            <p th:text="#{home.empty.org.desc}">Les organisations validées apparaîtront ici automatiquement.</p>
         </div>
     </section>
 </main>

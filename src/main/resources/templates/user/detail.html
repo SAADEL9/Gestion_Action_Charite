@@ -1,143 +1,57 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:lang="${#locale.language}"
+      th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}">
 <head>
     <th:block th:replace="~{fragments/head :: head('Mon Profil')}"></th:block>
     <style>
-        :root {
-            --green-primary: #2d8c4e;
-            --green-light: #e8f5ee;
-            --text-dark: #1a1a2e;
-            --text-muted: #6b7280;
-            --border: #e5e7eb;
-            --bg: #f7f8fa;
-        }
-
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text-dark);
-        }
-
-        .profile-header {
-            background: #fff;
-            border-bottom: 1px solid var(--border);
-            padding: 40px 0;
-            margin-bottom: 30px;
-        }
-
-        .profile-avatar-wrap {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: var(--green-light);
-            color: var(--green-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-right: 25px;
-            border: 4px solid #fff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-
-        .profile-info h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            margin-bottom: 5px;
-        }
-
-        .role-badge {
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 4px 12px;
-            border-radius: 20px;
-        }
-
-        .badge-user { background: #e0e7ff; color: #4338ca; }
-        .badge-org-admin { background: #dcfce7; color: #15803d; }
-        .badge-admin { background: #fef3c7; color: #b45309; }
-
-        .card-profile {
-            background: #fff;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-            margin-bottom: 24px;
-        }
-
-        .card-profile .card-header {
-            background: transparent;
-            border-bottom: 1px solid var(--border);
-            padding: 20px 24px;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        .card-profile .card-body {
-            padding: 24px;
-        }
-
-        .info-item {
-            margin-bottom: 20px;
-        }
-
-        .info-item:last-child { margin-bottom: 0; }
-
-        .info-label {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-
-        .info-value {
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .btn-action {
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-
-        .apply-card {
-            background: linear-gradient(135deg, #2d8c4e 0%, #1a5c32 100%);
-            color: #fff;
-            border: none;
-        }
-
-        .apply-card .btn-light {
-            color: var(--green-primary);
-            font-weight: 800;
-            border: none;
-        }
+        :root{--green-primary:#2d8c4e;--green-light:#e8f5ee;--text-dark:#1a1a2e;--text-muted:#6b7280;--border:#e5e7eb;--bg:#f7f8fa;}
+        body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text-dark);}
+        .profile-header{background:#fff;border-bottom:1px solid var(--border);padding:40px 0;margin-bottom:30px;}
+        .profile-avatar-wrap{width:100px;height:100px;border-radius:50%;background:var(--green-light);color:var(--green-primary);display:flex;align-items:center;justify-content:center;font-size:2.5rem;font-weight:700;margin-right:25px;border:4px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.08);}
+        .profile-info h1{font-size:1.8rem;font-weight:800;margin-bottom:5px;}
+        .role-badge{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:4px 12px;border-radius:20px;}
+        .badge-user{background:#e0e7ff;color:#4338ca;}
+        .badge-org-admin{background:#dcfce7;color:#15803d;}
+        .badge-admin{background:#fef3c7;color:#b45309;}
+        .card-profile{background:#fff;border-radius:16px;border:1px solid var(--border);box-shadow:0 4px 20px rgba(0,0,0,.03);margin-bottom:24px;}
+        .card-profile .card-header{background:transparent;border-bottom:1px solid var(--border);padding:20px 24px;font-weight:700;font-size:1.1rem;}
+        .card-profile .card-body{padding:24px;}
+        .info-item{margin-bottom:20px;}
+        .info-item:last-child{margin-bottom:0;}
+        .info-label{font-size:.8rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;margin-bottom:4px;}
+        .info-value{font-size:1rem;font-weight:600;}
+        .btn-action{padding:10px 20px;border-radius:10px;font-weight:700;font-size:.9rem;transition:all .2s;}
+        .apply-card{background:linear-gradient(135deg,#2d8c4e 0%,#1a5c32 100%);color:#fff;border:none;}
+        .apply-card .btn-light{color:var(--green-primary);font-weight:800;border:none;}
     </style>
 </head>
 <body class="public-page">
 <div th:replace="~{fragments/public-navbar :: navbar}"></div>
 
-<!-- â”€â”€ Header â”€â”€ -->
 <div class="profile-header" th:if="${user != null}">
     <div class="container">
         <div class="d-flex align-items-center">
-            <div class="profile-avatar-wrap" th:text="${#strings.substring(user.nom, 0, 1) + #strings.substring(user.prenom, 0, 1)}"></div>
+            <div class="profile-avatar-wrap"
+                 th:text="${#strings.substring(user.nom, 0, 1) + #strings.substring(user.prenom, 0, 1)}"></div>
             <div class="profile-info flex-grow-1">
                 <h1 th:text="${user.prenom + ' ' + user.nom}"></h1>
                 <div class="d-flex align-items-center gap-3">
-                    <span class="role-badge" th:classappend="'badge-' + ${user.role.name().toLowerCase().replace('_','-')}" th:text="${user.role}"></span>
-                    <span class="text-muted small"><i class="bi bi-calendar-check me-1"></i> Membre depuis <span th:text="${#temporals.format(user.dateInscription, 'MMMM yyyy')}"></span></span>
+                    <span class="role-badge"
+                          th:classappend="'badge-' + ${user.role.name().toLowerCase().replace('_','-')}"
+                          th:text="${user.role}"></span>
+                    <span class="text-muted small">
+                        <i class="bi bi-calendar-check me-1"></i>
+                        <span th:text="#{user.detail.member.since}">Membre depuis</span>
+                        <span th:text="${#temporals.format(user.dateInscription, 'MMMM yyyy')}"></span>
+                    </span>
                 </div>
             </div>
             <div class="d-flex gap-2">
                 <a th:href="@{/users/edit/{id}(id=${user.id})}" class="btn btn-action btn-outline-primary">
-                    <i class="bi bi-pencil-square me-2"></i>Modifier le profil
+                    <i class="bi bi-pencil-square me-2"></i>
+                    <span th:text="#{user.detail.edit}">Modifier le profil</span>
                 </a>
             </div>
         </div>
@@ -146,100 +60,100 @@
 
 <main class="container mb-5" th:if="${user != null}">
     <div th:if="${param.requested}" class="alert alert-success alert-dismissible fade show mb-4 rounded-3 border-0 shadow-sm">
-        <i class="bi bi-check-circle-fill me-2"></i> Votre demande pour devenir organisation a Ã©tÃ© envoyÃ©e avec succÃ¨s !
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="#{user.detail.request.org.sent}">Votre demande a été envoyée avec succès !</span>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
     <div class="row g-4">
-        <!-- Informations personnelles -->
         <div class="col-lg-8">
             <div class="card card-profile">
                 <div class="card-header">
-                    <i class="bi bi-person-circle me-2"></i>Informations personnelles
+                    <i class="bi bi-person-circle me-2"></i>
+                    <span th:text="#{user.detail.personal.info}">Informations personnelles</span>
                 </div>
                 <div class="card-body">
                     <div class="row g-4">
                         <div class="col-md-6">
                             <div class="info-item">
-                                <div class="info-label">Nom complet</div>
+                                <div class="info-label" th:text="#{user.detail.fullname}">Nom complet</div>
                                 <div class="info-value" th:text="${user.prenom + ' ' + user.nom}"></div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="info-item">
-                                <div class="info-label">Adresse Email</div>
+                                <div class="info-label" th:text="#{user.detail.email}">Adresse Email</div>
                                 <div class="info-value" th:text="${user.email}"></div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="info-item">
-                                <div class="info-label">NumÃ©ro de tÃ©lÃ©phone</div>
-                                <div class="info-value" th:text="${#strings.isEmpty(user.telephone) ? 'Non renseignÃ©' : user.telephone}"></div>
+                                <div class="info-label" th:text="#{user.detail.phone}">Numéro de téléphone</div>
+                                <div class="info-value"
+                                     th:text="${#strings.isEmpty(user.telephone) ? #{user.detail.not.provided} : user.telephone}"></div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="info-item">
-                                <div class="info-label">Adresse physique</div>
-                                <div class="info-value" th:text="${#strings.isEmpty(user.adresse) ? 'Non renseignÃ©e' : user.adresse}"></div>
+                                <div class="info-label" th:text="#{user.detail.address}">Adresse physique</div>
+                                <div class="info-value"
+                                     th:text="${#strings.isEmpty(user.adresse) ? #{user.detail.not.provided.f} : user.adresse}"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Mes participations (Placeholder for future) -->
             <div class="card card-profile">
                 <div class="card-header">
-                    <i class="bi bi-heart-fill me-2 text-danger"></i>Mes actions solidaires
+                    <i class="bi bi-heart-fill me-2 text-danger"></i>
+                    <span th:text="#{user.detail.actions.title}">Mes actions solidaires</span>
                 </div>
                 <div class="card-body text-center py-5">
-                    <div class="text-muted mb-3">Vous n'avez pas encore participÃ© Ã  des actions.</div>
-                    <a th:href="@{/actions}" class="btn btn-outline-success rounded-pill">Explorer les actions</a>
+                    <div class="text-muted mb-3" th:text="#{user.detail.no.actions}">Vous n'avez pas encore participé à des actions.</div>
+                    <a th:href="@{/actions}" class="btn btn-outline-success rounded-pill" th:text="#{user.detail.explore}">Explorer les actions</a>
                 </div>
             </div>
         </div>
 
-        <!-- Sidebar / Actions -->
         <div class="col-lg-4">
-            <!-- Apply for organisation -->
+            <!-- Demande organisation (USER) -->
             <div class="card card-profile apply-card p-4" th:if="${user.role.name() == 'USER'}">
-                <h4 class="fw-bold mb-3">CrÃ©ez votre organisation</h4>
-                <p class="small opacity-75 mb-4">Vous reprÃ©sentez une association ? Demandez un accÃ¨s gestionnaire pour publier vos propres actions de charitÃ©.</p>
-                
+                <h4 class="fw-bold mb-3" th:text="#{user.detail.create.org}">Créez votre organisation</h4>
+                <p class="small opacity-75 mb-4" th:text="#{user.detail.create.org.desc}">Vous représentez une association ?</p>
+
                 <div th:if="${user.organisationRequestPending}" class="bg-white bg-opacity-10 rounded-3 p-3 text-center">
-                    <div class="fw-bold"><i class="bi bi-hourglass-split me-2"></i>Demande en attente</div>
-                    <div class="small opacity-75">Un administrateur examine votre demande.</div>
+                    <div class="fw-bold"><i class="bi bi-hourglass-split me-2"></i><span th:text="#{user.detail.request.pending}">Demande en attente</span></div>
+                    <div class="small opacity-75" th:text="#{user.detail.request.pending.desc}">Un administrateur examine votre demande.</div>
                 </div>
 
                 <form th:if="${!user.organisationRequestPending}" th:action="@{/users/me/request-organisation}" method="post">
                     <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                    <button type="submit" class="btn btn-light w-100 py-2">
-                        Postuler maintenant
-                    </button>
+                    <button type="submit" class="btn btn-light w-100 py-2" th:text="#{user.detail.apply}">Postuler maintenant</button>
                 </form>
             </div>
 
-            <!-- Manage organisation (if ORG_ADMIN) -->
+            <!-- Gestionnaire (ORG_ADMIN) -->
             <div class="card card-profile p-4" th:if="${user.role.name() == 'ORG_ADMIN'}">
-                <h5 class="fw-bold mb-3"><i class="bi bi-building me-2"></i>Gestionnaire</h5>
-                <p class="text-muted small">Vous avez un accÃ¨s gestionnaire. Vous pouvez crÃ©er et gÃ©rer les actions de votre organisation.</p>
-                <a th:href="@{/actions/create}" class="btn btn-success w-100 mb-2">Publier une action</a>
-                <a th:href="@{/organisations}" class="btn btn-outline-secondary w-100">Voir les organisations</a>
+                <h5 class="fw-bold mb-3"><i class="bi bi-building me-2"></i><span th:text="#{user.detail.manager}">Gestionnaire</span></h5>
+                <p class="text-muted small" th:text="#{user.detail.manager.desc}">Vous avez un accès gestionnaire.</p>
+                <a th:href="@{/actions/create}" class="btn btn-success w-100 mb-2" th:text="#{user.detail.publish}">Publier une action</a>
+                <a th:href="@{/organisations}" class="btn btn-outline-secondary w-100" th:text="#{user.detail.see.orgs}">Voir les organisations</a>
             </div>
 
             <div class="card card-profile" sec:authorize="hasRole('ADMIN')">
-                <div class="card-header">SÃ©curitÃ©</div>
+                <div class="card-header" th:text="#{user.detail.security}">Sécurité</div>
                 <div class="card-body">
-                    <a th:href="@{/users/edit/{id}(id=${user.id})}" class="btn btn-outline-dark w-100 mb-2">Changer le mot de passe</a>
+                    <a th:href="@{/users/edit/{id}(id=${user.id})}" class="btn btn-outline-dark w-100 mb-2"
+                       th:text="#{user.detail.change.password}">Changer le mot de passe</a>
                 </div>
             </div>
 
-            <!-- Logout always visible -->
             <div class="card card-profile">
                 <div class="card-body">
                     <form th:action="@{/logout}" method="post">
                         <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                        <button type="submit" class="btn btn-outline-danger w-100">DÃ©connexion</button>
+                        <button type="submit" class="btn btn-outline-danger w-100" th:text="#{user.detail.logout}">Déconnexion</button>
                     </form>
                 </div>
             </div>
@@ -248,10 +162,10 @@
 </main>
 
 <div th:if="${user == null}" class="container py-5 text-center">
-    <div class="alert alert-warning">Utilisateur introuvable.</div>
-    <a th:href="@{/}" class="btn btn-primary">Retour Ã  l'accueil</a>
+    <div class="alert alert-warning" th:text="#{user.detail.not.found}">Utilisateur introuvable.</div>
+    <a th:href="@{/}" class="btn btn-primary" th:text="#{user.detail.back}">Retour à l'accueil</a>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
