@@ -29,9 +29,18 @@ public class PayPalPaymentController {
     @PostMapping("/{id}/paypal/create-order")
     @PreAuthorize("isAuthenticated()")
     public String createOrder(@PathVariable Long id,
-                              @RequestParam Double montant,
+                              @RequestParam(name = "montant", required = false) String montantStr,
                               @AuthenticationPrincipal UserDetails principal,
                               HttpServletRequest servletRequest) {
+
+        double montant;
+        try {
+            if (montantStr == null || montantStr.isBlank()) return "redirect:/actions/" + id + "?don=error";
+            montant = Double.parseDouble(montantStr.replace(",", ".").trim());
+            if (montant <= 0) return "redirect:/actions/" + id + "?don=error";
+        } catch (NumberFormatException e) {
+            return "redirect:/actions/" + id + "?don=error";
+        }
 
         var action = actionChariteService.findById(id)
                 .orElseThrow(() -> new RuntimeException("Action introuvable : " + id));
@@ -43,7 +52,6 @@ public class PayPalPaymentController {
         }
 
         try {
-            // 1. Sauvegarder le don avec un transactionId temporaire pour obtenir son ID
             var user = userService.findEntityByEmail(principal.getUsername());
             Don don = Don.builder()
                     .user(user)
@@ -54,7 +62,6 @@ public class PayPalPaymentController {
                     .build();
             Don savedDon = donService.saveEnAttente(don);
 
-            // 2. Créer la commande PayPal avec donId dans l'URL de retour
             String base = servletRequest.getScheme() + "://"
                     + servletRequest.getServerName() + ":" + servletRequest.getServerPort();
             Map<String, Object> order = payPalService.createOrder(
@@ -63,7 +70,6 @@ public class PayPalPaymentController {
                     base + "/actions/" + id + "/paypal/cancel"
             );
 
-            // 3. Mettre à jour le don avec le vrai orderId PayPal
             savedDon.setTransactionId((String) order.get("id"));
             donService.saveEnAttente(savedDon);
 

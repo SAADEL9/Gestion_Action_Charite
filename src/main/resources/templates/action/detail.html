@@ -224,11 +224,12 @@
                             <!-- PayPal -->
                             <div th:if="${not dejaPayePaypal}">
                                 <form th:action="@{/actions/{id}/paypal/create-order(id=${action.id})}" method="post">
-                                    <div class="mb-3" th:if="${dejaPayeStripe}">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <div class="mb-3">
                                         <label class="form-label-custom" th:text="#{action.detail.amount.mad}">Montant MAD</label>
                                         <input type="number" name="montant" class="form-control"
                                                th:placeholder="#{action.detail.amount.mad}" min="1" step="1"
-                                               th:max="${resteACollecte}" required>
+                                               th:max="${resteACollecte > 0 ? resteACollecte : 1000000}" required>
                                     </div>
                                     <button type="submit" class="btn btn-pay btn-paypal w-100">
                                         <i class="bi bi-paypal"></i>
