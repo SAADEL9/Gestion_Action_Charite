@@ -3,13 +3,14 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:lang="${#locale.language}"
       th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}">
-<head th:replace="~{fragments/head :: head(${organisation != null and organisation.id != null ? #{org.form.title.edit} : #{org.form.title.create}})}"></head>
+<head th:with="pageTitle=${organisation != null and organisation.id != null} ? #{org.form.title.edit} : #{org.form.title.create}"
+      th:replace="~{fragments/head :: head(${pageTitle})}"></head>
 <body class="public-page">
 <div th:replace="~{fragments/public-navbar :: navbar}"></div>
 
     <main class="container py-4">
         <h1 class="page-title mb-4"
-            th:text="${organisation != null and organisation.id != null ? #{org.form.title.edit} : #{org.form.title.create}}">Nouvelle organisation</h1>
+            th:text="${organisation != null and organisation.id != null} ? #{org.form.title.edit} : #{org.form.title.create}">Nouvelle organisation</h1>
 
         <form th:action="${organisation != null and organisation.id != null ? '/organisations/edit/' + organisation.id : '/organisations/create'}"
               th:object="${organisation}" method="post" class="needs-validation" novalidate enctype="multipart/form-data">
@@ -114,7 +115,7 @@
                             <div class="fw-semibold" th:text="*{email}"></div>
                             <div class="mt-3 text-muted" th:text="#{org.form.preview.status}">Statut</div>
                             <div class="fw-semibold"
-                                 th:text="${organisation != null and organisation.status != null ? organisation.status : #{org.form.status.auto}}"></div>
+                                 th:text="${organisation != null and organisation.status != null} ? ${organisation.status} : #{org.form.status.auto}"></div>
                         </div>
                     </div>
                 </div>

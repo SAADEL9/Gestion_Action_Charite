@@ -90,14 +90,14 @@
                             <div class="info-item">
                                 <div class="info-label" th:text="#{user.detail.phone}">Numéro de téléphone</div>
                                 <div class="info-value"
-                                     th:text="${#strings.isEmpty(user.telephone) ? #{user.detail.not.provided} : user.telephone}"></div>
+                                     th:text="${#strings.isEmpty(user.telephone)} ? #{user.detail.not.provided} : ${user.telephone}"></div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="info-item">
                                 <div class="info-label" th:text="#{user.detail.address}">Adresse physique</div>
                                 <div class="info-value"
-                                     th:text="${#strings.isEmpty(user.adresse) ? #{user.detail.not.provided.f} : user.adresse}"></div>
+                                     th:text="${#strings.isEmpty(user.adresse)} ? #{user.detail.not.provided.f} : ${user.adresse}"></div>
                             </div>
                         </div>
                     </div>

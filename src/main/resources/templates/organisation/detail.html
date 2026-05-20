@@ -94,6 +94,15 @@
                        class="btn btn-primary btn-manage">
                         <i class="bi bi-plus-circle me-2"></i> <span th:text="#{org.detail.new.action}">Nouvelle Action</span>
                     </a>
+                    <form sec:authorize="hasRole('ADMIN')"
+                          th:action="@{/organisations/delete/{id}(id=${organisation.id})}"
+                          method="post"
+                          onsubmit="return confirm('Supprimer cette organisation et toutes ses actions ?')">
+                        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <button type="submit" class="btn btn-danger btn-manage w-100">
+                            <i class="bi bi-trash me-2"></i> Supprimer
+                        </button>
+                    </form>
                 </div>
             </div>
 
@@ -101,7 +110,7 @@
                 <div class="info-card">
                     <h3><i class="bi bi-info-circle text-primary"></i> <span th:text="#{org.detail.mission}">Mission</span></h3>
                     <p class="text-muted mb-0"
-                       th:text="${#strings.isEmpty(organisation.description) ? #{org.detail.no.desc} : organisation.description}"></p>
+                       th:text="${#strings.isEmpty(organisation.description)} ? #{org.detail.no.desc} : ${organisation.description}"></p>
                 </div>
 
                 <div class="info-card">
@@ -110,7 +119,7 @@
                         <li><span class="label" th:text="#{org.detail.fiscal}">Numéro Fiscal</span> <span class="value" th:text="${organisation.numeroFiscal}">-</span></li>
                         <li><span class="label" th:text="#{org.detail.legal.address}">Adresse Légale</span> <span class="value" th:text="${organisation.adresseLegal}">-</span></li>
                         <li><span class="label" th:text="#{org.detail.contact}">Contact Principal</span> <span class="value" th:text="${organisation.contactPrincipal}">-</span></li>
-                        <li><span class="label" th:text="#{org.detail.member.since}">Membre depuis</span> <span class="value" th:text="${#temporals.format(organisation.dateCreation, 'dd/MM/yyyy')}"></span></li>
+                        <li><span class="label" th:text="#{org.detail.member.since}">Membre depuis</span> <span class="value" th:text="${organisation.dateCreation != null} ? ${#temporals.format(organisation.dateCreation, 'dd/MM/yyyy')} : '-'"></span></li>
                     </ul>
                 </div>
             </div>

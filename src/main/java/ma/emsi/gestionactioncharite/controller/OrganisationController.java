@@ -136,7 +136,7 @@ public class OrganisationController {
         return "admin".equals(from) ? "redirect:/admin/dashboard" : "redirect:/organisations";
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public String delete(@PathVariable Long id) {
         organisationService.delete(id);

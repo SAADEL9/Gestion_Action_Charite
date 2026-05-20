@@ -3,7 +3,8 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:lang="${#locale.language}"
       th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}">
-<head th:replace="~{fragments/head :: head(${action != null and action.id != null ? #{action.form.title.edit} : #{action.form.title.create}})}"></head>
+<head th:with="pageTitle=${action != null and action.id != null} ? #{action.form.title.edit} : #{action.form.title.create}"
+      th:replace="~{fragments/head :: head(${pageTitle})}"></head>
 <body class="bg-light">
     <div th:replace="~{fragments/public-navbar :: navbar}"></div>
 
@@ -18,11 +19,11 @@
                                     <a th:href="@{/actions}" class="text-decoration-none" th:text="#{action.form.breadcrumb.actions}">Actions</a>
                                 </li>
                                 <li class="breadcrumb-item active" aria-current="page"
-                                    th:text="${action.id != null ? #{action.form.breadcrumb.edit} : #{action.form.breadcrumb.create}}">Créer</li>
+                                    th:text="${action.id != null} ? #{action.form.breadcrumb.edit} : #{action.form.breadcrumb.create}">Créer</li>
                             </ol>
                         </nav>
                         <h1 class="h3 fw-bold mb-0"
-                            th:text="${action.id != null ? #{action.form.title.edit} : #{action.form.title.create}}">Nouvelle Action</h1>
+                            th:text="${action.id != null} ? #{action.form.title.edit} : #{action.form.title.create}">Nouvelle Action</h1>
                     </div>
                     <a th:href="@{/actions}" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-arrow-left me-1"></i>

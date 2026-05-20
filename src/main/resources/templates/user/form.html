@@ -3,13 +3,14 @@
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:lang="${#locale.language}"
       th:dir="${#locale.language == 'ar' ? 'rtl' : 'ltr'}">
-<head th:replace="~{fragments/head :: head(${user != null and user.id != null ? #{user.form.title.edit} : #{user.form.title.create}})}"></head>
+<head th:with="pageTitle=${user != null and user.id != null} ? #{user.form.title.edit} : #{user.form.title.create}"
+      th:replace="~{fragments/head :: head(${pageTitle})}"></head>
 <body class="public-page">
     <div th:replace="~{fragments/public-navbar :: navbar}"></div>
 
     <main class="container py-4">
         <h1 class="page-title mb-4"
-            th:text="${user != null and user.id != null ? #{user.form.title.edit} : #{user.form.title.create}}">Utilisateur</h1>
+            th:text="${user != null and user.id != null} ? #{user.form.title.edit} : #{user.form.title.create}">Utilisateur</h1>
 
         <form th:action="${user != null and user.id != null ? '/users/edit/' + user.id : '/users/create'}"
               th:object="${user}" method="post" class="needs-validation" novalidate>

@@ -90,8 +90,8 @@
             <div class="admin-topbar">
                 <div>
                     <span class="admin-dashboard-eyebrow"
-                          th:text="${isSuperAdmin ? #{admin.topbar.super} : #{admin.topbar.org}}">Administration</span>
-                    <h1 th:text="${isSuperAdmin ? #{admin.topbar.global} : #{admin.topbar.org.dash}}">Dashboard</h1>
+                          th:text="${isSuperAdmin} ? #{admin.topbar.super} : #{admin.topbar.org}">Administration</span>
+                    <h1 th:text="${isSuperAdmin} ? #{admin.topbar.global} : #{admin.topbar.org.dash}">Dashboard</h1>
                     <p class="mb-0" th:text="#{admin.topbar.desc}">Une interface plus propre, plus lisible.</p>
                 </div>
 
@@ -100,7 +100,7 @@
                          th:text="${dashboard != null and dashboard.adminFullName != null and !#strings.isEmpty(dashboard.adminFullName) ? #strings.substring(dashboard.adminFullName, 0, 1) : 'A'}">A</div>
                     <div>
                         <strong th:text="${dashboard != null ? dashboard.adminFullName : 'Admin'}">Admin</strong>
-                        <span th:text="${isSuperAdmin ? #{admin.topbar.super.admin} : #{admin.topbar.org.manager}}">Administrateur</span>
+                        <span th:text="${isSuperAdmin} ? #{admin.topbar.super.admin} : #{admin.topbar.org.manager}">Administrateur</span>
                     </div>
                 </div>
             </div>
@@ -120,7 +120,7 @@
                                       th:text="${dashboard != null and dashboard.organisationStatus != null ? dashboard.organisationStatus : 'UNKNOWN'}">UNKNOWN</span>
                             </div>
                         </div>
-                        <p class="mb-0" th:text="${isSuperAdmin ? #{admin.hero.desc.super} : #{admin.hero.desc.org}}">Vue d'ensemble.</p>
+                        <p class="mb-0" th:text="${isSuperAdmin} ? #{admin.hero.desc.super} : #{admin.hero.desc.org}">Vue d'ensemble.</p>
                     </div>
 
                     <div class="admin-hero-actions">
@@ -147,39 +147,39 @@
                 <div class="admin-stat-card">
                     <div class="admin-stat-head">
                         <div>
-                            <div class="admin-table-muted" th:text="${isSuperAdmin ? #{admin.stat.actions.super} : #{admin.stat.actions.org}}">Actions</div>
+                            <div class="admin-table-muted" th:text="${isSuperAdmin} ? #{admin.stat.actions.super} : #{admin.stat.actions.org}">Actions</div>
                             <div class="admin-stat-value" th:text="${dashboard != null ? dashboard.totalActions : 0}">0</div>
                         </div>
                         <span class="admin-stat-icon"><i class="bi bi-kanban"></i></span>
                     </div>
                     <div class="admin-stat-copy">
-                        <p th:text="${isSuperAdmin ? #{admin.stat.actions.desc.super} : #{admin.stat.actions.desc.org}}"></p>
+                        <p th:text="${isSuperAdmin} ? #{admin.stat.actions.desc.super} : #{admin.stat.actions.desc.org}"></p>
                     </div>
                 </div>
 
                 <div class="admin-stat-card">
                     <div class="admin-stat-head">
                         <div>
-                            <div class="admin-table-muted" th:text="${isSuperAdmin ? #{admin.stat.donations.super} : #{admin.stat.donations.org}}">Dons</div>
+                            <div class="admin-table-muted" th:text="${isSuperAdmin} ? #{admin.stat.donations.super} : #{admin.stat.donations.org}">Dons</div>
                             <div class="admin-stat-value" th:text="${dashboard != null ? #numbers.formatDecimal(dashboard.totalDonationsAmount, 1, 0) + ' MAD' : '0 MAD'}">0 MAD</div>
                         </div>
                         <span class="admin-stat-icon"><i class="bi bi-cash-stack"></i></span>
                     </div>
                     <div class="admin-stat-copy">
-                        <p th:text="${isSuperAdmin ? #{admin.stat.donations.desc.super} : #{admin.stat.donations.desc.org}}"></p>
+                        <p th:text="${isSuperAdmin} ? #{admin.stat.donations.desc.super} : #{admin.stat.donations.desc.org}"></p>
                     </div>
                 </div>
 
                 <div class="admin-stat-card">
                     <div class="admin-stat-head">
                         <div>
-                            <div class="admin-table-muted" th:text="${isSuperAdmin ? #{admin.stat.participants.super} : #{admin.stat.participants.org}}">Participants</div>
+                            <div class="admin-table-muted" th:text="${isSuperAdmin} ? #{admin.stat.participants.super} : #{admin.stat.participants.org}">Participants</div>
                             <div class="admin-stat-value" th:text="${dashboard != null ? dashboard.totalParticipants : 0}">0</div>
                         </div>
                         <span class="admin-stat-icon"><i class="bi bi-people-fill"></i></span>
                     </div>
                     <div class="admin-stat-copy">
-                        <p th:text="${isSuperAdmin ? #{admin.stat.participants.desc.super} : #{admin.stat.participants.desc.org}}"></p>
+                        <p th:text="${isSuperAdmin} ? #{admin.stat.participants.desc.super} : #{admin.stat.participants.desc.org}"></p>
                     </div>
                 </div>
 
